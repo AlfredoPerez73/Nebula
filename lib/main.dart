@@ -1,10 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:nebula/firebase_options.dart';
+import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'views/frmRegistro.dart';
+import 'controllers/usuario.controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // Inicializar Firebase
-  runApp(MyApp());
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    print("Error al inicializar Firebase: $e");
+  }
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UsuarioController()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -14,10 +32,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Fitness AI App',
-      home: Scaffold(
-        appBar: AppBar(title: Text("Bienvenido a Fitness AI")),
-        body: Center(child: Text("Firebase configurado con éxito 🎉")),
-      ),
+      home: UsuarioScreen(),
     );
   }
 }

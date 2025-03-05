@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "992872060483",
+    "project_id": "nebulabd",
+    "storage_bucket": "nebulabd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:992872060483:android:e596143cb64267c5b926f6",
+        "android_client_info": {
+          "package_name": "com.example.nebula"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSF-8_P1rskYsguYf7OJdGbUvZmTtTa4A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
