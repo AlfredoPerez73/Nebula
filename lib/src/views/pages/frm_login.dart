@@ -6,7 +6,7 @@ import 'package:nebula/src/services/push_notification.services.dart';
 import 'package:nebula/src/utils/show_snackbar.dart';
 import 'package:nebula/src/views/home.dart';
 import 'package:provider/provider.dart';
-import '../pages/frm_registro_primario.dart';
+import '../pages/frm_registro.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -219,8 +219,7 @@ class _LoginPageState extends State<LoginPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    const RegisterPrimaryPage()),
+                                builder: (context) => const RegisterPage()),
                           );
                         },
                         style: TextButton.styleFrom(

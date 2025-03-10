@@ -16,13 +16,13 @@ class RegisterProvider extends ChangeNotifier {
     required String username,
     required String email,
     required String password,
-    required UserRole role,
+    required String role,
     required String nivelExperiencia,
     required double peso,
     required double altura,
     required String objetivo,
     required String token,
-    required Function createdAt,
+    required String createdAt,
     //required Function onSuccess,
     required Function(String) onError,
   }) async {
@@ -70,6 +70,15 @@ class RegisterProvider extends ChangeNotifier {
     final QuerySnapshot result = await _firestore
         .collection('users')
         .where('username', isEqualTo: usernameLowerCase)
+        .limit(1)
+        .get();
+    return result.docs.isNotEmpty;
+  }
+
+  Future<bool> checkEmail(String emailLowerCase) async {
+    final QuerySnapshot result = await _firestore
+        .collection('users')
+        .where('email', isEqualTo: emailLowerCase)
         .limit(1)
         .get();
     return result.docs.isNotEmpty;

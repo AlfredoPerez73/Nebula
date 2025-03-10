@@ -1,5 +1,14 @@
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nebula/src/provider/registro.provider.dart';
+import 'package:nebula/src/services/push_notification.services.dart';
+import 'package:nebula/src/utils/show_snackBar.dart';
 import 'package:nebula/src/views/pages/frm_login.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -21,6 +30,14 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _isPasswordVisible = false;
   int _step = 1;
 
+  static String? token;
+
+  @override
+  void initState() {
+    super.initState();
+    token = PushNotificationServices.token;
+  }
+
   @override
   void dispose() {
     _usernameController.dispose();
@@ -31,6 +48,52 @@ class _RegisterPageState extends State<RegisterPage> {
     _alturaController.dispose();
     _objetivoController.dispose();
     super.dispose();
+  }
+
+  void submitRegister() async {
+    final registerProvider =
+        Provider.of<RegisterProvider>(context, listen: false);
+    //verificar si el usuario existe
+    final bool existUsername =
+        await registerProvider.checkUser(_usernameController.text);
+    if (existUsername) {
+      showSnackbar(context, "El nombre de usuario ya existe");
+      return;
+    }
+    //verificar si el email existe
+    final bool existEmail =
+        await registerProvider.checkEmail(_emailController.text);
+    if (existEmail) {
+      showSnackbar(context, "El correo de usuario ya existe");
+      return;
+    }
+    final date = DateTime.now();
+    String datef = DateFormat("dd/MM/yyyy").format(date);
+    //registro final
+    try {
+      await registerProvider.registerUser(
+          username: _usernameController.text,
+          email: _emailController.text,
+          password: _passwordController.text,
+          role: "superAdmin",
+          nivelExperiencia: _nivelExperienciaController.text,
+          peso: double.parse(_pesoController.text),
+          altura: double.parse(_alturaController.text),
+          objetivo: _objetivoController.text,
+          token: token!,
+          createdAt: datef,
+          onError: (error) {
+            showSnackbar(context, error);
+          });
+      //enviar correo de verificacion
+      await FirebaseAuth.instance.currentUser!.sendEmailVerification();
+      showSnackbar(context, "Revise su correo para validar su cuenta");
+      Navigator.pushNamedAndRemoveUntil(context, "/login", (route) => false);
+    } on FirebaseAuthException catch (e) {
+      showSnackbar(context, e.toString());
+    } catch (e) {
+      showSnackbar(context, e.toString());
+    }
   }
 
   @override
@@ -225,7 +288,7 @@ class _RegisterPageState extends State<RegisterPage> {
             icon: Icons.flag_outlined),
         const SizedBox(height: 25),
         ElevatedButton(
-          onPressed: () {},
+          onPressed: submitRegister,
           style: ElevatedButton.styleFrom(
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),

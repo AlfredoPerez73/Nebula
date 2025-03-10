@@ -11,6 +11,19 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenPageState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Home"),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text("Bienvido ${widget.userData['username']}"),
+            Text("con Email ${widget.userData['email']}")
+          ],
+        ),
+      ),
+    );
   }
 }
