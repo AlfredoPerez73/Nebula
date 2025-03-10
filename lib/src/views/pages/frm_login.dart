@@ -1,5 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../pages/frm_registro.dart';
+import 'package:nebula/src/provider/login.provider.dart';
+import 'package:nebula/src/services/local_storage.services.dart';
+import 'package:nebula/src/services/push_notification.services.dart';
+import 'package:nebula/src/utils/show_snackbar.dart';
+import 'package:nebula/src/views/home.dart';
+import 'package:provider/provider.dart';
+import '../pages/frm_registro_primario.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -9,15 +16,55 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _usernameOrEmailController =
+      TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
 
+  static String? token;
+
+  @override
+  void initState() {
+    super.initState();
+    token = PushNotificationServices.token;
+  }
+
   @override
   void dispose() {
-    _usernameController.dispose();
+    _usernameOrEmailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  void onFormLogin(String usernameOrEmail, String password, context) async {
+    final loginProvider = Provider.of<LoginProvider>(context, listen: false);
+
+    final String usernameOrEmailLower = usernameOrEmail.toLowerCase();
+    await loginProvider.loginUser(
+        usernameOrEmail: usernameOrEmailLower,
+        password: password,
+        token: token!,
+        onSuccess: () async {
+          //verificar si el usuario verifico su email
+          User? user = FirebaseAuth.instance.currentUser;
+          if (user != null && user.emailVerified) {
+            //cambiar despues
+            dynamic userData = await loginProvider.getUserData(user.email!);
+            await LocalStorage().saveUserData(
+                _usernameOrEmailController.text, _passwordController.text);
+            await LocalStorage().setIsSignedIn(true);
+            loginProvider.checkAuthState();
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) {
+              return HomeScreen(
+                userData: userData,
+              );
+            }));
+          } else {}
+        },
+        onError: (error) {
+          showSnackbar(context, error);
+        });
   }
 
   @override
@@ -91,11 +138,11 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       const SizedBox(height: 30),
-                      
+
                       // Campos de texto
                       _buildTextField(
-                        controller: _usernameController,
-                        label: "Username",
+                        controller: _usernameOrEmailController,
+                        label: "Username o Email",
                         icon: Icons.person_outline,
                       ),
                       const SizedBox(height: 12),
@@ -106,10 +153,13 @@ class _LoginPageState extends State<LoginPage> {
                         icon: Icons.lock_outline,
                       ),
                       const SizedBox(height: 25),
-                      
+
                       // Botón de login
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          onFormLogin(_usernameOrEmailController.text,
+                              _passwordController.text, context);
+                        },
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),
@@ -133,7 +183,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Separador
                       Row(
                         children: [
@@ -162,13 +212,15 @@ class _LoginPageState extends State<LoginPage> {
                         ],
                       ),
                       const SizedBox(height: 16),
-                      
+
                       // Botón de registro
                       TextButton(
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const RegisterPage()),
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const RegisterPrimaryPage()),
                           );
                         },
                         style: TextButton.styleFrom(
@@ -237,7 +289,8 @@ class _LoginPageState extends State<LoginPage> {
                 )
               : null,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
         ),
       ),
     );

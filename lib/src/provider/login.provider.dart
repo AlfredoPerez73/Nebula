@@ -13,6 +13,7 @@ class LoginProvider extends ChangeNotifier {
   Future<void> loginUser({
     required String usernameOrEmail,
     required String password,
+    required String token,
     required Function onSuccess,
     required Function(String) onError,
   }) async {
@@ -60,5 +61,32 @@ class LoginProvider extends ChangeNotifier {
     } catch (e) {
       onError(e.toString());
     }
+  }
+
+  //verfiicar el estado del usuario
+  void checkAuthState() {
+    _auth.authStateChanges().listen((User? user) {
+      if (user == null) {
+        authStatus = AuthStatus.notAuthentication;
+      } else {
+        authStatus = AuthStatus.authenticated;
+      }
+      notifyListeners();
+    });
+  }
+
+  //obtener datos del usuario
+  Future<dynamic> getUserData(String email) async {
+    final QuerySnapshot<Map<String, dynamic>> result = await _firestore
+        .collection('users')
+        .where('email', isEqualTo: email)
+        .limit(1)
+        .get();
+
+    if (result.docs.isEmpty) {
+      final userData = result.docs[0].data();
+      return userData;
+    }
+    return null;
   }
 }

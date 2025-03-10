@@ -1,0 +1,2 @@
+C:/Users/Alfredo/Downloads/Nebula/android/app/.cxx/Debug/4y2z5b3n/x86/CMakeFiles/edit_cache.dir
+C:/Users/Alfredo/Downloads/Nebula/android/app/.cxx/Debug/4y2z5b3n/x86/CMakeFiles/rebuild_cache.dir
