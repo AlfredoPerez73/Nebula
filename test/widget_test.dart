@@ -9,13 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:nebula/main.dart';
-import 'package:nebula/src/services/local_storage.services.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    final isLogged = LocalStorage().getIsLoggedIn();
-    await tester.pumpWidget(MyApp(isLogged: isLogged));
+    await tester.pumpWidget(MyApp());
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

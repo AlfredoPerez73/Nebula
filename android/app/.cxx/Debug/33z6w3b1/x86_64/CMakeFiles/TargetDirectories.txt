@@ -1,0 +1,2 @@
+C:/Users/Angie Zarate/Downloads/Nebula/android/app/.cxx/Debug/33z6w3b1/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/Angie Zarate/Downloads/Nebula/android/app/.cxx/Debug/33z6w3b1/x86_64/CMakeFiles/rebuild_cache.dir
