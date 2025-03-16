@@ -13,11 +13,28 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _nivelExperienciaController =
-      TextEditingController();
   final TextEditingController _pesoController = TextEditingController();
   final TextEditingController _alturaController = TextEditingController();
-  final TextEditingController _objetivoController = TextEditingController();
+
+  // Values for dropdowns
+  String _selectedNivelExperiencia = 'Principiante';
+  String _selectedObjetivo = 'Pérdida de peso';
+
+  // Options for dropdowns
+  final List<String> _nivelesExperiencia = [
+    'Principiante',
+    'Intermedio',
+    'Avanzado',
+    'Experto'
+  ];
+
+  final List<String> _objetivos = [
+    'Pérdida de peso',
+    'Ganancia de masa muscular',
+    'Tonificación',
+    'Mejorar resistencia',
+    'Mejorar flexibilidad'
+  ];
 
   // Initialize the auth controller
   final AuthController _authController = Get.isRegistered<AuthController>()
@@ -31,10 +48,8 @@ class _RegisterPageState extends State<RegisterPage> {
     _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _nivelExperienciaController.dispose();
     _pesoController.dispose();
     _alturaController.dispose();
-    _objetivoController.dispose();
     super.dispose();
   }
 
@@ -139,12 +154,20 @@ class _RegisterPageState extends State<RegisterPage> {
             icon: Icons.lock_outline),
         const SizedBox(height: 12),
 
-        // Información física y objetivos
-        _buildTextField(
-            controller: _nivelExperienciaController,
-            label: "Nivel de Experiencia",
-            icon: Icons.star_outline),
+        // Dropdown para nivel de experiencia
+        _buildDropdown(
+          label: "Nivel de Experiencia",
+          icon: Icons.star_outline,
+          value: _selectedNivelExperiencia,
+          items: _nivelesExperiencia,
+          onChanged: (String? newValue) {
+            setState(() {
+              _selectedNivelExperiencia = newValue!;
+            });
+          },
+        ),
         const SizedBox(height: 12),
+
         _buildTextField(
             controller: _pesoController,
             label: "Peso (kg)",
@@ -155,10 +178,19 @@ class _RegisterPageState extends State<RegisterPage> {
             label: "Altura (cm)",
             icon: Icons.height),
         const SizedBox(height: 12),
-        _buildTextField(
-            controller: _objetivoController,
-            label: "Objetivo",
-            icon: Icons.flag_outlined),
+
+        // Dropdown para objetivo
+        _buildDropdown(
+          label: "Objetivo",
+          icon: Icons.flag_outlined,
+          value: _selectedObjetivo,
+          items: _objetivos,
+          onChanged: (String? newValue) {
+            setState(() {
+              _selectedObjetivo = newValue!;
+            });
+          },
+        ),
         const SizedBox(height: 25),
 
         // Botón de registro
@@ -166,14 +198,12 @@ class _RegisterPageState extends State<RegisterPage> {
               onPressed: _authController.isLoading.value
                   ? null
                   : () async {
-                      // Validar todos los campos
+                      // Validar campos obligatorios
                       if (_usernameController.text.isEmpty ||
                           _emailController.text.isEmpty ||
                           _passwordController.text.isEmpty ||
-                          _nivelExperienciaController.text.isEmpty ||
                           _pesoController.text.isEmpty ||
-                          _alturaController.text.isEmpty ||
-                          _objetivoController.text.isEmpty) {
+                          _alturaController.text.isEmpty) {
                         Get.snackbar(
                           "Error",
                           "Por favor, complete todos los campos",
@@ -210,15 +240,15 @@ class _RegisterPageState extends State<RegisterPage> {
                         return;
                       }
 
-                      // Registrar usuario
+                      // Registrar usuario con los valores de los dropdowns
                       await _authController.register(
                         _usernameController.text,
                         _emailController.text,
                         _passwordController.text,
-                        _nivelExperienciaController.text,
+                        _selectedNivelExperiencia, // Usar el valor seleccionado
                         peso,
                         altura,
-                        _objetivoController.text,
+                        _selectedObjetivo, // Usar el valor seleccionado
                       );
                     },
               style: ElevatedButton.styleFrom(
@@ -332,6 +362,61 @@ class _RegisterPageState extends State<RegisterPage> {
           border: InputBorder.none,
           contentPadding:
               const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+        ),
+      ),
+    );
+  }
+
+  // New method to build dropdown fields
+  Widget _buildDropdown({
+    required String label,
+    required IconData icon,
+    required String value,
+    required List<String> items,
+    required void Function(String?) onChanged,
+  }) {
+    return Container(
+      height: 55,
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(25),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16, right: 8),
+        child: Row(
+          children: [
+            Icon(icon, color: const Color(0xFF8D86C9), size: 20),
+            const SizedBox(width: 16),
+            Expanded(
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: value,
+                  dropdownColor: const Color(0xFF242038),
+                  icon: const Icon(Icons.arrow_drop_down,
+                      color: Color(0xFF8D86C9)),
+                  isExpanded: true,
+                  hint: Text(
+                    label,
+                    style: TextStyle(
+                      color: const Color(0xFFCAC4CE).withOpacity(0.7),
+                      fontSize: 14,
+                    ),
+                  ),
+                  style: const TextStyle(
+                    color: Color(0xFFF7ECE1),
+                    fontSize: 14,
+                  ),
+                  onChanged: onChanged,
+                  items: items.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

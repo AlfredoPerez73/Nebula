@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nebula/src/views/pages/edit_profile.dart';
+import 'package:nebula/src/views/pages/WorkoutHistoryPage.dart';
+import 'package:nebula/src/views/pages/EditProfilePage.dart';
+import 'package:nebula/src/views/pages/BMICalculatorPage.dart';
 import '../../controllers/user.controller.dart';
 import 'package:amicons/amicons.dart';
 
@@ -493,19 +495,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                // Implementar navegación a la pantalla de progreso detallado
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                backgroundColor: const Color(0xFF9067C6),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-              child: const Text("Ver progreso detallado"),
-            ),
           ),
         ],
       ),
@@ -603,7 +592,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Amicons.remix_history,
             Colors.teal.withOpacity(0.4),
             () {
-              // Implementar navegación al historial de entrenamientos
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const WorkoutHistoryPage()),
+              );
             },
           ),
           const SizedBox(height: 10),
@@ -612,7 +605,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Amicons.remix_body_scan,
             Colors.deepPurple.withOpacity(0.4),
             () {
-              // Implementar navegación a medidas corporales
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const BMICalculatorPage()),
+              );
             },
           ),
           const SizedBox(height: 10),

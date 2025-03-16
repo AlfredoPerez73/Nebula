@@ -1,11 +1,12 @@
 import 'package:amicons/amicons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:nebula/src/views/pages/EditProfilePageSkills.dart';
 import '../controllers/user.controller.dart';
-import '../views/pages/profile.dart';
-import '../views/pages/ejercices_page.dart';
+import 'pages/ProfileScreen.dart';
+import 'pages/ExercisesPage.dart';
 import '../utils/navigate_bar.dart';
-import '../views/pages/routines_page.dart';
+import 'pages/RoutinesPage.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -263,13 +264,13 @@ class _HomeScreenPageState extends State<HomeScreen> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                // Implementar navegación a la pantalla de edición de perfil
+                Get.to(() => const EditProfilePageSkills());
               },
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
-                backgroundColor: const Color(0xFF9067C6),
+                backgroundColor: const Color.fromARGB(255, 6, 6, 7),
                 padding: const EdgeInsets.symmetric(vertical: 12),
               ),
               child: const Text("Editar perfil"),

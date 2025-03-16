@@ -1,4 +1,4 @@
-import '../views/pages/auth/frm_login.dart';
+import '../views/pages/auth/LoginPage.dart';
 import 'package:get_storage/get_storage.dart';
 import '../views/home.dart';
 import '../services/user.services.dart';
@@ -126,6 +126,37 @@ class AuthController extends GetxController {
         peso: userModel.value!.peso,
         altura: userModel.value!.altura,
         objetivo: userModel.value!.objetivo,
+      );
+
+      // Actualizar el estado de userModel con la nueva instancia
+      userModel.value = updatedUser;
+    } catch (e) {
+      Get.snackbar("Error", "No se pudieron actualizar los datos del perfil");
+    }
+  }
+
+  Future<void> updateUserProfileSkills(
+    String nivelExperiencia,
+    double peso,
+    double altura,
+    String objetivo,
+  ) async {
+    try {
+      String uid = userModel.value!.uid;
+
+      // Llamar al método del servicio para actualizar los datos en Firestore
+      await _firebaseService.updateUserProfileSkills(
+          uid, nivelExperiencia, peso, altura, objetivo);
+
+      // Crear una nueva instancia de UserModel con los datos actualizados
+      Usuario updatedUser = Usuario(
+        uid: userModel.value!.uid,
+        nombre: userModel.value!.nombre,
+        email: userModel.value!.email,
+        nivelExperiencia: nivelExperiencia,
+        peso: peso,
+        altura: altura,
+        objetivo: objetivo,
       );
 
       // Actualizar el estado de userModel con la nueva instancia

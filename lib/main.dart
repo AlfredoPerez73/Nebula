@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nebula/src/views/pages/auth/frm_login.dart';
+import 'package:nebula/src/views/pages/auth/LoginPage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get_storage/get_storage.dart';
 

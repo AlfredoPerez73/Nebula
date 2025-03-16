@@ -109,4 +109,24 @@ class FirebaseService {
       throw Exception("No se pudo actualizar el perfil");
     }
   }
+
+  Future<void> updateUserProfileSkills(
+    String uid,
+    String nivelExperiencia,
+    double peso,
+    double altura,
+    String objetivo,
+  ) async {
+    try {
+      await _firestore.collection('users').doc(uid).update({
+        'nivelExperiencia': nivelExperiencia,
+        'peso': peso,
+        'altura': altura,
+        'objetivo': objetivo,
+      });
+    } catch (e) {
+      print("Error al actualizar el perfil del usuario: $e");
+      throw Exception("No se pudo actualizar el perfil");
+    }
+  }
 }
