@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nebula/src/views/pages/WorkoutHistoryPage.dart';
+import 'package:nebula/src/views/pages/workoutHistoryPage.dart';
 import 'package:nebula/src/views/pages/EditProfilePage.dart';
-import 'package:nebula/src/views/pages/BMICalculatorPage.dart';
+import 'package:nebula/src/views/pages/iMCCalculatorPage.dart';
 import '../../controllers/user.controller.dart';
 import 'package:amicons/amicons.dart';
 

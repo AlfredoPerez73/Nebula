@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'RegisterPage.dart';
+import 'registerPage.dart';
 import 'package:get/get.dart';
 import '../../../controllers/user.controller.dart'; // Import the auth controller
 

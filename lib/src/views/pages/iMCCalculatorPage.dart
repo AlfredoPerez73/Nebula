@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:amicons/amicons.dart';
-import 'package:nebula/src/views/pages/ProfileScreen.dart';
+import 'package:nebula/src/views/pages/profileScreen.dart';
 import '../../controllers/user.controller.dart';
 
 class BMICalculatorPage extends StatefulWidget {

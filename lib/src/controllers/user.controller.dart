@@ -1,4 +1,4 @@
-import '../views/pages/auth/LoginPage.dart';
+import '../views/pages/auth/loginPage.dart';
 import 'package:get_storage/get_storage.dart';
 import '../views/home.dart';
 import '../services/user.services.dart';

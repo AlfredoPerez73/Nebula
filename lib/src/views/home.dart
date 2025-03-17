@@ -1,12 +1,12 @@
 import 'package:amicons/amicons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:nebula/src/views/pages/EditProfilePageSkills.dart';
+import 'package:nebula/src/views/pages/editProfilePageSkills.dart';
 import '../controllers/user.controller.dart';
-import 'pages/ProfileScreen.dart';
-import 'pages/ExercisesPage.dart';
+import 'pages/profileScreen.dart';
+import 'pages/exercisesPage.dart';
 import '../utils/navigate_bar.dart';
-import 'pages/RoutinesPage.dart';
+import 'pages/routinesPage.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
