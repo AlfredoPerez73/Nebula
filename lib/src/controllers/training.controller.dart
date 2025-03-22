@@ -31,7 +31,6 @@ class EntrenamientoController extends GetxController {
     _setEstadoCargando(true);
     try {
       _entrenamientos = await _firebaseService.obtenerEntrenamientosUsuario();
-      _error = null;
     } catch (e) {
       _error = "Error al cargar entrenamientos: ${e.toString()}";
     } finally {

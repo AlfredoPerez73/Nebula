@@ -29,11 +29,10 @@ class _RegisterPageState extends State<RegisterPage> {
   ];
 
   final List<String> _objetivos = [
-    'Pérdida de peso',
-    'Ganancia de masa muscular',
-    'Tonificación',
-    'Mejorar resistencia',
-    'Mejorar flexibilidad'
+    'Perder peso',
+    'Ganar masa muscular',
+    'Mantener forma física',
+    'Mejorar resistencia'
   ];
 
   // Initialize the auth controller

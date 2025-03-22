@@ -23,7 +23,8 @@ class _EditProfilePageState extends State<EditProfilePageSkills> {
   final List<String> nivelesExperiencia = [
     'Principiante',
     'Intermedio',
-    'Avanzado'
+    'Avanzado',
+    'Experto'
   ];
   final List<String> objetivos = [
     'Perder peso',

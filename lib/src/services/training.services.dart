@@ -141,7 +141,7 @@ class FirebaseService {
     for (var doc in snapshot.docs) {
       // Obtener los ejercicios asociados al entrenamiento
       final ejerciciosSnapshot = await _firestore
-          .collection(_entrenamientosCollection)
+          .collection('training')
           .doc(doc.id)
           .collection('exercise')
           .get();
