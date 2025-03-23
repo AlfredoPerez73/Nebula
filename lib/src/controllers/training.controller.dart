@@ -1,4 +1,4 @@
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+import 'package:get/get.dart';
 import 'package:nebula/src/models/exercises.model.dart';
 import 'package:nebula/src/models/training.model.dart';
 import 'package:nebula/src/services/training.services.dart';
@@ -8,8 +8,6 @@ class EntrenamientoController extends GetxController {
 
   // Estado
   List<Entrenamiento> _entrenamientos = [];
-  // Getter para acceder a los ejercicios del entrenamiento actual
-  List<Ejercicio> get ejercicios => _entrenamientoActual?.ejercicios ?? [];
   Entrenamiento? _entrenamientoActual;
   bool _cargando = false;
   String? _error;
@@ -17,13 +15,32 @@ class EntrenamientoController extends GetxController {
   // Getters
   List<Entrenamiento> get entrenamientos => _entrenamientos;
   Entrenamiento? get entrenamientoActual => _entrenamientoActual;
+  List<Ejercicio> get ejercicios => _entrenamientoActual?.ejercicios ?? [];
   bool get cargando => _cargando;
   String? get error => _error;
   bool get tieneError => _error != null;
 
   // Constructor
-  EntrenamientoController() {
+  @override
+  void onInit() {
+    super.onInit();
     cargarEntrenamientos();
+  }
+
+  String diaSeleccionado = 'Lunes';
+
+  // ... (resto del controlador)
+
+  void seleccionarDia(String dia) {
+    diaSeleccionado = dia;
+    update(); // Notifica a los widgets que dependen de este controlador
+  }
+
+  // Método para obtener ejercicios por el día seleccionado
+  List<Ejercicio> get ejerciciosPorDia {
+    return ejercicios
+        .where((e) => e.dia.toLowerCase() == diaSeleccionado.toLowerCase())
+        .toList();
   }
 
   // Cargar todos los entrenamientos del usuario
@@ -31,8 +48,10 @@ class EntrenamientoController extends GetxController {
     _setEstadoCargando(true);
     try {
       _entrenamientos = await _firebaseService.obtenerEntrenamientosUsuario();
+      update(); // Notificar a los listeners
     } catch (e) {
       _error = "Error al cargar entrenamientos: ${e.toString()}";
+      update();
     } finally {
       _setEstadoCargando(false);
     }
@@ -45,9 +64,11 @@ class EntrenamientoController extends GetxController {
       String id = await _firebaseService.crearEntrenamiento(nombre);
       await cargarEntrenamientos(); // Recargar la lista
       _error = null;
+      update();
       return id;
     } catch (e) {
       _error = "Error al crear entrenamiento: ${e.toString()}";
+      update();
       return null;
     } finally {
       _setEstadoCargando(false);
@@ -61,8 +82,10 @@ class EntrenamientoController extends GetxController {
       _entrenamientoActual =
           await _firebaseService.obtenerEntrenamiento(entrenamientoId);
       _error = null;
+      update();
     } catch (e) {
       _error = "Error al cargar el entrenamiento: ${e.toString()}";
+      update();
     } finally {
       _setEstadoCargando(false);
     }
@@ -72,6 +95,7 @@ class EntrenamientoController extends GetxController {
   Future<void> agregarEjercicio(Ejercicio ejercicio) async {
     if (_entrenamientoActual == null) {
       _error = "No hay un entrenamiento seleccionado";
+      update();
       return;
     }
 
@@ -83,8 +107,10 @@ class EntrenamientoController extends GetxController {
       // Recargar el entrenamiento para obtener los cambios
       await cargarEntrenamiento(_entrenamientoActual!.id);
       _error = null;
+      update();
     } catch (e) {
       _error = "Error al agregar ejercicio: ${e.toString()}";
+      update();
     } finally {
       _setEstadoCargando(false);
     }
@@ -94,6 +120,7 @@ class EntrenamientoController extends GetxController {
   Future<void> eliminarEjercicio(String ejercicioId) async {
     if (_entrenamientoActual == null) {
       _error = "No hay un entrenamiento seleccionado";
+      update();
       return;
     }
 
@@ -105,8 +132,10 @@ class EntrenamientoController extends GetxController {
       // Recargar el entrenamiento para reflejar los cambios
       await cargarEntrenamiento(_entrenamientoActual!.id);
       _error = null;
+      update();
     } catch (e) {
       _error = "Error al eliminar ejercicio: ${e.toString()}";
+      update();
     } finally {
       _setEstadoCargando(false);
     }
@@ -138,9 +167,11 @@ class EntrenamientoController extends GetxController {
         // Recargar la lista de entrenamientos
         await cargarEntrenamientos();
         _error = null;
+        update();
       }
     } catch (e) {
       _error = "Error al eliminar entrenamiento: ${e.toString()}";
+      update();
     } finally {
       _setEstadoCargando(false);
     }
@@ -150,6 +181,7 @@ class EntrenamientoController extends GetxController {
   Future<void> actualizarEjercicio(Ejercicio ejercicio) async {
     if (_entrenamientoActual == null) {
       _error = "No hay un entrenamiento seleccionado";
+      update();
       return;
     }
 
@@ -161,8 +193,10 @@ class EntrenamientoController extends GetxController {
       // Recargar el entrenamiento para obtener los cambios
       await cargarEntrenamiento(_entrenamientoActual!.id);
       _error = null;
+      update();
     } catch (e) {
       _error = "Error al actualizar ejercicio: ${e.toString()}";
+      update();
     } finally {
       _setEstadoCargando(false);
     }
@@ -171,11 +205,13 @@ class EntrenamientoController extends GetxController {
   // Método auxiliar para actualizar el estado de carga
   void _setEstadoCargando(bool valor) {
     _cargando = valor;
+    update();
   }
 
   // Limpiar errores
   void limpiarError() {
     _error = null;
+    update();
   }
 
   void seleccionarEntrenamiento(String id) {
@@ -192,12 +228,14 @@ class EntrenamientoController extends GetxController {
       _firebaseService.guardarUltimoEntrenamientoSeleccionado(id);
 
       // Notify listeners about the change
+      update();
     } catch (e) {
       // If no training with the given ID is found, select the first one if available
       if (_entrenamientos.isNotEmpty) {
         _entrenamientoActual = _entrenamientos.first;
         _firebaseService
             .guardarUltimoEntrenamientoSeleccionado(_entrenamientos.first.id);
+        update();
       }
     }
   }

@@ -155,7 +155,6 @@ class FirebaseService {
       entrenamientos.add(Entrenamiento.fromFirestore(doc.data(), doc.id,
           ejercicios: ejercicios));
     }
-    print('Total entrenamientos cargados: ${entrenamientos.length}');
     return entrenamientos;
   }
 

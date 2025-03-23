@@ -12,8 +12,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await initializeDateFormatting('es', null);
-  Get.put(EntrenamientoController());
   Get.put(AuthController());
+  Get.put(EntrenamientoController());
   runApp(const MyApp());
 }
 

@@ -1,30 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
-import 'package:amicons/amicons.dart';
 import 'package:nebula/src/controllers/training.controller.dart';
 import 'package:nebula/src/models/exercises.model.dart';
-import 'package:nebula/src/models/training.model.dart';
+import 'package:flutter/services.dart';
 
-class RoutinesPage extends StatefulWidget {
-  const RoutinesPage({Key? key}) : super(key: key);
+class Routinespage extends StatelessWidget {
+  final EntrenamientoController controller = Get.put(EntrenamientoController());
 
-  @override
-  State<RoutinesPage> createState() => _RoutinesPageState();
-}
-
-class _RoutinesPageState extends State<RoutinesPage> {
-  // Current week's Monday date
-  late DateTime _currentWeekMonday;
-
-  // Selected day in the calendar
-  late DateTime _selectedDate;
-
-  // Controller for routine name input
-  final TextEditingController _routineNameController = TextEditingController();
-
-  // Day names
-  final List<String> dayNamesSpanish = [
+  // Datos constantes
+  final List<String> diasSemanaCortos = [
+    'Lun',
+    'Mar',
+    'Mié',
+    'Jue',
+    'Vie',
+    'Sáb',
+    'Dom'
+  ];
+  final List<String> diasSemanaCompletos = [
     'Lunes',
     'Martes',
     'Miércoles',
@@ -34,1258 +27,1047 @@ class _RoutinesPageState extends State<RoutinesPage> {
     'Domingo'
   ];
 
-  final List<String> dayNamesEnglish = [
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday'
-  ];
+  // Esquema de colores refinado
+  final ColorScheme colorScheme = const ColorScheme(
+    primary: Color(0xFF6A3DE8),
+    primaryContainer: Color(0xFF53379B),
+    secondary: Color(0xFF8C65F7),
+    secondaryContainer: Color(0xFF35244F),
+    surface: Color(0xFF1E1728),
+    background: Color(0xFF121016),
+    error: Color(0xFFFF5252),
+    onPrimary: Colors.white,
+    onSecondary: Colors.white,
+    onSurface: Colors.white,
+    onBackground: Colors.white70,
+    onError: Colors.white,
+    brightness: Brightness.dark,
+  );
 
-  @override
-  void initState() {
-    super.initState();
+  // Estilos de texto consistentes
+  final TextStyle titleStyle = const TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    letterSpacing: 0.5,
+  );
 
-    Get.find<EntrenamientoController>()
-        .cargarEntrenamientos(); // Añade esta línea
-    _calculateCurrentWeekMonday();
-    _calculateCurrentWeekMonday();
-    _selectedDate = _currentWeekMonday;
-  }
+  final TextStyle subtitleStyle = const TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+  );
 
-  // Calculate the Monday date of the current week
-  void _calculateCurrentWeekMonday() {
-    final now = DateTime.now();
-    final int currentWeekday = now.weekday;
-    _currentWeekMonday = now.subtract(Duration(days: currentWeekday - 1));
-  }
+  final TextStyle bodyStyle = const TextStyle(
+    fontSize: 14,
+    letterSpacing: 0.25,
+  );
 
-  // Get the day name in Spanish for a given date
-  String _getDayName(DateTime date) {
-    return dayNamesSpanish[date.weekday - 1];
-  }
-
-  // Get the short day name in English for a given date (used for data mapping)
-  String _getShortDayNameEnglish(DateTime date) {
-    return dayNamesEnglish[date.weekday - 1];
-  }
-
-  // Navigate to the previous week
-  void _prevWeek() {
-    setState(() {
-      _currentWeekMonday = _currentWeekMonday.subtract(const Duration(days: 7));
-      _selectedDate = _currentWeekMonday;
-    });
-  }
-
-  // Navigate to the next week
-  void _nextWeek() {
-    setState(() {
-      _currentWeekMonday = _currentWeekMonday.add(const Duration(days: 7));
-      _selectedDate = _currentWeekMonday;
-    });
-  }
-
-  // Check if a workout exists for the selected day in the currently selected routine
-  bool _hasWorkoutForSelectedDay(Entrenamiento? entrenamiento) {
-    if (entrenamiento == null) return false;
-    String dayName = dayNamesEnglish[_selectedDate.weekday - 1];
-    // Filter exercises that belong to the selected day
-    return entrenamiento.ejercicios
-        .any((ejercicio) => ejercicio.dia == dayName);
-  }
-
-  // Get the workouts for the selected day in the current routine
-  List<Ejercicio> _getWorkoutsForSelectedDay(Entrenamiento? entrenamiento) {
-    if (entrenamiento == null) return [];
-
-    final String dayName = _getShortDayNameEnglish(_selectedDate);
-    // Filter exercises that belong to the selected day
-    return entrenamiento.ejercicios
-        .where((ejercicio) => ejercicio.dia == dayName)
-        .toList();
-  }
-
-  // Improved modal for adding a workout
-  void _addWorkout(EntrenamientoController controller) {
-    final String dayName = _getShortDayNameEnglish(_selectedDate);
-    final String displayDayName = _getDayName(_selectedDate);
-
-    final nameController = TextEditingController();
-    final setsController = TextEditingController(text: "3");
-    final repsController = TextEditingController(text: "10-12");
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF242038),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: [
-            const Icon(Amicons.iconly_activity,
-                color: Color(0xFF9067C6), size: 22),
-            const SizedBox(width: 10),
-            Text(
-              'Agregar Ejercicio - $displayDayName',
-              style: const TextStyle(
-                color: Color(0xFFF7ECE1),
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-          ],
-        ),
-        content: Container(
-          width: double.maxFinite,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Padding(
-                padding: EdgeInsets.only(bottom: 8),
-                child: Text(
-                  'Añade un nuevo ejercicio a tu rutina',
-                  style: TextStyle(color: Color(0xFFCAC4CE), fontSize: 14),
-                ),
-              ),
-              const SizedBox(height: 12),
-              // Exercise name input
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white.withOpacity(0.15)),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                child: TextField(
-                  controller: nameController,
-                  style: const TextStyle(color: Color(0xFFF7ECE1)),
-                  decoration: InputDecoration(
-                    hintText: 'Nombre del ejercicio',
-                    hintStyle: TextStyle(
-                      color: const Color(0xFFCAC4CE).withOpacity(0.8),
-                      fontSize: 15,
-                    ),
-                    border: InputBorder.none,
-                    prefixIcon: Icon(
-                      Icons.fitness_center,
-                      color: const Color(0xFFCAC4CE).withOpacity(0.8),
-                      size: 20,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 15),
-              // Sets and reps inputs
-              Row(
-                children: [
-                  // Sets input
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.08),
-                        borderRadius: BorderRadius.circular(12),
-                        border:
-                            Border.all(color: Colors.white.withOpacity(0.15)),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 5),
-                      child: TextField(
-                        controller: setsController,
-                        style: const TextStyle(color: Color(0xFFF7ECE1)),
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          hintText: 'Series',
-                          hintStyle: TextStyle(
-                            color: const Color(0xFFCAC4CE).withOpacity(0.8),
-                            fontSize: 15,
-                          ),
-                          border: InputBorder.none,
-                          prefixIcon: Icon(
-                            Icons.repeat,
-                            color: const Color(0xFFCAC4CE).withOpacity(0.8),
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  // Reps input
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.08),
-                        borderRadius: BorderRadius.circular(12),
-                        border:
-                            Border.all(color: Colors.white.withOpacity(0.15)),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 5),
-                      child: TextField(
-                        controller: repsController,
-                        style: const TextStyle(color: Color(0xFFF7ECE1)),
-                        decoration: InputDecoration(
-                          hintText: 'Repeticiones',
-                          hintStyle: TextStyle(
-                            color: const Color(0xFFCAC4CE).withOpacity(0.8),
-                            fontSize: 15,
-                          ),
-                          border: InputBorder.none,
-                          prefixIcon: Icon(
-                            Icons.format_list_numbered,
-                            color: const Color(0xFFCAC4CE).withOpacity(0.8),
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          Row(
-            children: [
-              Expanded(
-                child: TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: TextButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(
-                        color: const Color(0xFFCAC4CE).withOpacity(0.3),
-                      ),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  child: Text(
-                    'Cancelar',
-                    style: TextStyle(
-                      color: const Color(0xFFCAC4CE).withOpacity(0.8),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (controller.entrenamientoActual != null) {
-                      // Crear un nuevo ejercicio
-                      final ejercicio = Ejercicio(
-                        id: '', // Firebase generará el ID
-                        nombre: nameController.text.isEmpty
-                            ? 'Nuevo ejercicio'
-                            : nameController.text,
-                        series: int.tryParse(setsController.text) ?? 3,
-                        repeticiones: repsController.text.isEmpty
-                            ? '10-12'
-                            : repsController.text,
-                        dia: dayName,
-                      );
-
-                      // Añadir el ejercicio al entrenamiento actual
-                      controller.agregarEjercicio(ejercicio);
-                    }
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF9067C6),
-                    foregroundColor: const Color(0xFFF7ECE1),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  child: const Text('Agregar'),
-                ),
-              ),
-            ],
-          ),
-        ],
-        actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      ),
-    );
-  }
-
-  void _createRoutine(EntrenamientoController controller) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF242038),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(
-          children: [
-            Icon(Amicons.iconly_activity, color: Color(0xFF9067C6), size: 22),
-            SizedBox(width: 10),
-            Text(
-              'Nueva Rutina',
-              style: TextStyle(
-                color: Color(0xFFF7ECE1),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        content: Container(
-          width: double.maxFinite,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Padding(
-                padding: EdgeInsets.only(bottom: 8),
-                child: Text(
-                  'Crea una nueva rutina para tus entrenamientos',
-                  style: TextStyle(color: Color(0xFFCAC4CE), fontSize: 14),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white.withOpacity(0.15)),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                child: TextField(
-                  controller: _routineNameController,
-                  style: const TextStyle(color: Color(0xFFF7ECE1)),
-                  decoration: InputDecoration(
-                    hintText: 'Nombre de la rutina',
-                    hintStyle: TextStyle(
-                      color: const Color(0xFFCAC4CE).withOpacity(0.8),
-                      fontSize: 15,
-                    ),
-                    border: InputBorder.none,
-                    prefixIcon: Icon(
-                      Icons.edit_note,
-                      color: const Color(0xFFCAC4CE).withOpacity(0.8),
-                      size: 20,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          Row(
-            children: [
-              Expanded(
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    _routineNameController.clear();
-                  },
-                  style: TextButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(
-                        color: const Color(0xFFCAC4CE).withOpacity(0.3),
-                      ),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  child: Text(
-                    'Cancelar',
-                    style: TextStyle(
-                      color: const Color(0xFFCAC4CE).withOpacity(0.8),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () async {
-                    String nombre = _routineNameController.text.isEmpty
-                        ? 'Nueva Rutina ${controller.entrenamientos.length + 1}'
-                        : _routineNameController.text;
-// Crear una nueva rutina y cargarla
-                    String? nuevaRutinaId =
-                        await controller.crearEntrenamiento(nombre);
-                    if (nuevaRutinaId != null) {
-                      await controller.cargarEntrenamientos();
-                      controller.seleccionarEntrenamiento(nuevaRutinaId);
-                    }
-
-                    Navigator.pop(context);
-                    _routineNameController.clear();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF9067C6),
-                    foregroundColor: const Color(0xFFF7ECE1),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  child: const Text('Crear'),
-                ),
-              ),
-            ],
-          ),
-        ],
-        actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      ),
-    );
-  }
+  Routinespage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<EntrenamientoController>();
+    // Configuración del sistema para UI inmersiva
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      systemNavigationBarColor: colorScheme.background,
+      systemNavigationBarIconBrightness: Brightness.light,
+    ));
+
     return Scaffold(
-      backgroundColor: const Color(0xFF18141C),
-      body: SafeArea(
+      backgroundColor: colorScheme.background,
+      appBar: _buildAppBar(context),
+      body: GetBuilder<EntrenamientoController>(
+        init: controller,
+        builder: (controller) {
+          // Si está en proceso de carga, mostrar indicador
+          if (controller.cargando) {
+            return _buildLoadingState();
+          }
+
+          // Si hay error, limpiar y reintentar
+          if (controller.tieneError) {
+            controller.limpiarError();
+            controller.cargarEntrenamientos();
+            return _buildLoadingState(); // Mostrar carga mientras reintenta
+          }
+
+          // Si los datos ya se inicializaron pero están vacíos, mostrar estado vacío
+          if (controller.entrenamientos.isEmpty) {
+            return _buildEmptyState(context);
+          }
+
+          // Si hay datos, mostrar el contenido
+          return _buildContent();
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        onPressed: () => _mostrarDialogoAgregarEjercicio(context),
+        child: const Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+    );
+  }
+
+  // AppBar con diseño mejorado
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
+    return AppBar(
+      backgroundColor: colorScheme.surface,
+      elevation: 0,
+      centerTitle: true,
+      title: Text(
+        'Programación de Rutina',
+        style: titleStyle.copyWith(
+          color: colorScheme.onSurface,
+        ),
+      ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.more_vert),
+          color: colorScheme.onSurface,
+          onPressed: () => _mostrarOpcionesMenu(context),
+        ),
+      ],
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(20),
+        ),
+      ),
+    );
+  }
+
+  // Estado de carga
+  Widget _buildLoadingState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 60,
+            height: 60,
+            child: CircularProgressIndicator(
+              color: colorScheme.primary,
+              strokeWidth: 3,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Cargando rutinas...',
+            style: bodyStyle.copyWith(color: colorScheme.onBackground),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Estado de error
+  Widget _buildErrorState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Top header with week navigation
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Week navigation buttons
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back_ios,
-                            color: Color(0xFF9067C6), size: 16),
-                        onPressed: _prevWeek,
-                      ),
-                      Text(
-                        'Semana ${DateFormat('d MMM', 'es').format(_currentWeekMonday)} - ${DateFormat('d MMM', 'es').format(_currentWeekMonday.add(const Duration(days: 6)))}',
-                        style: const TextStyle(
-                          color: Color(0xFFF7ECE1),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.arrow_forward_ios,
-                            color: Color(0xFF9067C6), size: 16),
-                        onPressed: _nextWeek,
-                      ),
-                    ],
-                  ),
-                  // Dropdown or selector for current routine
-                  controller.entrenamientoActual != null
-                      ? GestureDetector(
-                          onTap: () {
-                            // Show routine selector
-                            showModalBottomSheet(
-                              context: context,
-                              backgroundColor: const Color(0xFF242038),
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(20),
-                                ),
-                              ),
-                              builder: (context) => Container(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Padding(
-                                      padding:
-                                          EdgeInsets.only(left: 10, bottom: 12),
-                                      child: Text(
-                                        'Seleccionar Rutina',
-                                        style: TextStyle(
-                                          color: Color(0xFFF7ECE1),
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                    ),
-                                    const Divider(color: Color(0xFF333333)),
-                                    ListView.builder(
-                                      shrinkWrap: true,
-                                      physics: const BouncingScrollPhysics(),
-                                      itemCount:
-                                          controller.entrenamientos.length,
-                                      itemBuilder: (context, index) {
-                                        final entrenamiento =
-                                            controller.entrenamientos[index];
-                                        final isSelected = controller
-                                                .entrenamientoActual?.id ==
-                                            entrenamiento.id;
-                                        return ListTile(
-                                          title: Text(
-                                            entrenamiento.nombre,
-                                            style: TextStyle(
-                                              color: isSelected
-                                                  ? const Color(0xFF9067C6)
-                                                  : const Color(0xFFF7ECE1),
-                                              fontWeight: isSelected
-                                                  ? FontWeight.bold
-                                                  : FontWeight.normal,
-                                            ),
-                                          ),
-                                          leading: Icon(
-                                            Amicons.iconly_activity,
-                                            color: isSelected
-                                                ? const Color(0xFF9067C6)
-                                                : const Color(0xFFCAC4CE),
-                                            size: 20,
-                                          ),
-                                          trailing: isSelected
-                                              ? const Icon(Icons.check_circle,
-                                                  color: Color(0xFF9067C6))
-                                              : null,
-                                          onTap: () {
-                                            controller.seleccionarEntrenamiento(
-                                                entrenamiento.id);
-                                            Navigator.pop(context);
-                                            setState(
-                                                () {}); // Force rebuild after pop
-                                          },
-                                          // Long press to delete routine
-                                          onLongPress: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) => AlertDialog(
-                                                backgroundColor:
-                                                    const Color(0xFF242038),
-                                                title: const Text(
-                                                  'Eliminar Rutina',
-                                                  style: TextStyle(
-                                                      color: Color(0xFFF7ECE1)),
-                                                ),
-                                                content: Text(
-                                                  '¿Estás seguro de eliminar la rutina "${entrenamiento.nombre}"?',
-                                                  style: const TextStyle(
-                                                      color: Color(0xFFCAC4CE)),
-                                                ),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () =>
-                                                        Navigator.pop(context),
-                                                    child:
-                                                        const Text('Cancelar'),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () async {
-                                                      await controller
-                                                          .eliminarEntrenamiento(
-                                                              entrenamiento.id);
-                                                      Navigator.pop(
-                                                          context); // Close delete dialog
-                                                      Navigator.pop(
-                                                          context); // Close routine selector
-                                                    },
-                                                    child: const Text(
-                                                        'Eliminar',
-                                                        style: TextStyle(
-                                                            color: Colors.red)),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      },
-                                    ),
-                                    const SizedBox(height: 10),
-                                    // Button to create a new routine
-                                    SizedBox(
-                                      width: double.infinity,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          _createRoutine(controller);
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              const Color(0xFF9067C6),
-                                          foregroundColor:
-                                              const Color(0xFFF7ECE1),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                          ),
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 12),
-                                        ),
-                                        child: const Text('Nueva Rutina'),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF9067C6).withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                  color:
-                                      const Color(0xFF9067C6).withOpacity(0.3)),
-                            ),
-                            child: Row(
-                              children: [
-                                Text(
-                                  controller.entrenamientoActual!.nombre,
-                                  style: const TextStyle(
-                                    color: Color(0xFF9067C6),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(width: 5),
-                                const Icon(Icons.keyboard_arrow_down,
-                                    color: Color(0xFF9067C6), size: 16),
-                              ],
-                            ),
-                          ),
-                        )
-                      : ElevatedButton(
-                          onPressed: () => _createRoutine(controller),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF9067C6),
-                            foregroundColor: const Color(0xFFF7ECE1),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 8),
-                          ),
-                          child: const Text('Nueva Rutina'),
-                        ),
-                ],
-              ),
+            Icon(Icons.error_outline, size: 60, color: colorScheme.error),
+            const SizedBox(height: 16),
+            Text(
+              'Error: ${controller.error}',
+              style: subtitleStyle.copyWith(color: colorScheme.error),
+              textAlign: TextAlign.center,
             ),
-
-            // Calendar week view
-            Container(
-              height: 90,
-              margin: const EdgeInsets.symmetric(vertical: 8),
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 7,
-                itemBuilder: (context, index) {
-                  final day = _currentWeekMonday.add(Duration(days: index));
-                  final isSelected = _selectedDate.day == day.day &&
-                      _selectedDate.month == day.month &&
-                      _selectedDate.year == day.year;
-                  final bool hasWorkout =
-                      controller.entrenamientoActual != null &&
-                          controller.entrenamientoActual!.ejercicios.any(
-                              (ejercicio) =>
-                                  ejercicio.dia ==
-                                  dayNamesEnglish[day.weekday - 1]);
-
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedDate = day;
-                      });
-                    },
-                    child: Container(
-                      width: 60,
-                      margin: const EdgeInsets.symmetric(horizontal: 4),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? const Color(0xFF9067C6)
-                            : hasWorkout
-                                ? const Color(0xFF9067C6).withOpacity(0.15)
-                                : const Color(0xFF242038),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: isSelected
-                              ? Colors.transparent
-                              : hasWorkout
-                                  ? const Color(0xFF9067C6).withOpacity(0.3)
-                                  : Colors.transparent,
-                        ),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            _getDayName(day).substring(0, 3),
-                            style: TextStyle(
-                              color: isSelected
-                                  ? const Color(0xFFF7ECE1)
-                                  : hasWorkout
-                                      ? const Color(0xFF9067C6)
-                                      : const Color(0xFFCAC4CE),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Container(
-                            width: 36,
-                            height: 36,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: isSelected
-                                  ? Colors.white.withOpacity(0.2)
-                                  : Colors.transparent,
-                            ),
-                            child: Center(
-                              child: Text(
-                                day.day.toString(),
-                                style: TextStyle(
-                                  color: isSelected
-                                      ? const Color(0xFFF7ECE1)
-                                      : hasWorkout
-                                          ? const Color(0xFF9067C6)
-                                          : const Color(0xFFF7ECE1),
-                                  fontWeight: isSelected || hasWorkout
-                                      ? FontWeight.bold
-                                      : FontWeight.normal,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: colorScheme.primary,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
               ),
-            ),
-
-            // Main content area
-            Expanded(
-              child: controller.entrenamientoActual == null
-                  ? Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Amicons.iconly_activity,
-                            size: 50,
-                            color: const Color(0xFF9067C6).withOpacity(0.5),
-                          ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            'No tienes rutinas creadas',
-                            style: TextStyle(
-                              color: Color(0xFFF7ECE1),
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            'Crea una nueva rutina para comenzar',
-                            style: TextStyle(
-                              color: Color(0xFFCAC4CE),
-                              fontSize: 14,
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                          ElevatedButton(
-                            onPressed: () => _createRoutine(controller),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF9067C6),
-                              foregroundColor: const Color(0xFFF7ECE1),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 24, vertical: 12),
-                            ),
-                            child: const Text('Nueva Rutina'),
-                          ),
-                        ],
-                      ),
-                    )
-                  : _hasWorkoutForSelectedDay(controller.entrenamientoActual)
-                      ? ListView.builder(
-                          padding: const EdgeInsets.all(16),
-                          itemCount: _getWorkoutsForSelectedDay(
-                                  controller.entrenamientoActual)
-                              .length,
-                          itemBuilder: (context, index) {
-                            final ejercicio = _getWorkoutsForSelectedDay(
-                                controller.entrenamientoActual)[index];
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 12),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF242038),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 8),
-                                title: Text(
-                                  ejercicio.nombre,
-                                  style: const TextStyle(
-                                    color: Color(0xFFF7ECE1),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                subtitle: Padding(
-                                  padding: const EdgeInsets.only(top: 5),
-                                  child: Text(
-                                    '${ejercicio.series} series x ${ejercicio.repeticiones} repeticiones',
-                                    style: const TextStyle(
-                                      color: Color(0xFFCAC4CE),
-                                    ),
-                                  ),
-                                ),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    // Edit button
-                                    IconButton(
-                                      icon: const Icon(Icons.edit,
-                                          color: Color(0xFF9067C6), size: 20),
-                                      onPressed: () {
-                                        // Show edit dialog similar to add workout
-                                        final nameController =
-                                            TextEditingController(
-                                                text: ejercicio.nombre);
-                                        final setsController =
-                                            TextEditingController(
-                                                text: ejercicio.series
-                                                    .toString());
-                                        final repsController =
-                                            TextEditingController(
-                                                text: ejercicio.repeticiones);
-
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) => AlertDialog(
-                                            backgroundColor:
-                                                const Color(0xFF242038),
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20)),
-                                            title: const Row(
-                                              children: [
-                                                Icon(Amicons.iconly_activity,
-                                                    color: Color(0xFF9067C6),
-                                                    size: 22),
-                                                SizedBox(width: 10),
-                                                Text(
-                                                  'Editar Ejercicio',
-                                                  style: TextStyle(
-                                                    color: Color(0xFFF7ECE1),
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            content: Container(
-                                              width: double.maxFinite,
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  const Padding(
-                                                    padding: EdgeInsets.only(
-                                                        bottom: 8),
-                                                    child: Text(
-                                                      'Modifica los detalles del ejercicio',
-                                                      style: TextStyle(
-                                                          color:
-                                                              Color(0xFFCAC4CE),
-                                                          fontSize: 14),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 12),
-                                                  // Exercise name input
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.white
-                                                          .withOpacity(0.08),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              12),
-                                                      border: Border.all(
-                                                          color: Colors.white
-                                                              .withOpacity(
-                                                                  0.15)),
-                                                    ),
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 15,
-                                                        vertical: 5),
-                                                    child: TextField(
-                                                      controller:
-                                                          nameController,
-                                                      style: const TextStyle(
-                                                          color: Color(
-                                                              0xFFF7ECE1)),
-                                                      decoration:
-                                                          InputDecoration(
-                                                        hintText:
-                                                            'Nombre del ejercicio',
-                                                        hintStyle: TextStyle(
-                                                          color: const Color(
-                                                                  0xFFCAC4CE)
-                                                              .withOpacity(0.8),
-                                                          fontSize: 15,
-                                                        ),
-                                                        border:
-                                                            InputBorder.none,
-                                                        prefixIcon: Icon(
-                                                          Icons.fitness_center,
-                                                          color: const Color(
-                                                                  0xFFCAC4CE)
-                                                              .withOpacity(0.8),
-                                                          size: 20,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 15),
-                                                  // Sets and reps inputs
-                                                  Row(
-                                                    children: [
-                                                      // Sets input
-                                                      Expanded(
-                                                        child: Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: Colors.white
-                                                                .withOpacity(
-                                                                    0.08),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        12),
-                                                            border: Border.all(
-                                                                color: Colors
-                                                                    .white
-                                                                    .withOpacity(
-                                                                        0.15)),
-                                                          ),
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  horizontal:
-                                                                      15,
-                                                                  vertical: 5),
-                                                          child: TextField(
-                                                            controller:
-                                                                setsController,
-                                                            style: const TextStyle(
-                                                                color: Color(
-                                                                    0xFFF7ECE1)),
-                                                            keyboardType:
-                                                                TextInputType
-                                                                    .number,
-                                                            decoration:
-                                                                InputDecoration(
-                                                              hintText:
-                                                                  'Series',
-                                                              hintStyle:
-                                                                  TextStyle(
-                                                                color: const Color(
-                                                                        0xFFCAC4CE)
-                                                                    .withOpacity(
-                                                                        0.8),
-                                                                fontSize: 15,
-                                                              ),
-                                                              border:
-                                                                  InputBorder
-                                                                      .none,
-                                                              prefixIcon: Icon(
-                                                                Icons.repeat,
-                                                                color: const Color(
-                                                                        0xFFCAC4CE)
-                                                                    .withOpacity(
-                                                                        0.8),
-                                                                size: 20,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 10),
-                                                      // Reps input
-                                                      Expanded(
-                                                        child: Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: Colors.white
-                                                                .withOpacity(
-                                                                    0.08),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        12),
-                                                            border: Border.all(
-                                                                color: Colors
-                                                                    .white
-                                                                    .withOpacity(
-                                                                        0.15)),
-                                                          ),
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  horizontal:
-                                                                      15,
-                                                                  vertical: 5),
-                                                          child: TextField(
-                                                            controller:
-                                                                repsController,
-                                                            style: const TextStyle(
-                                                                color: Color(
-                                                                    0xFFF7ECE1)),
-                                                            decoration:
-                                                                InputDecoration(
-                                                              hintText:
-                                                                  'Repeticiones',
-                                                              hintStyle:
-                                                                  TextStyle(
-                                                                color: const Color(
-                                                                        0xFFCAC4CE)
-                                                                    .withOpacity(
-                                                                        0.8),
-                                                                fontSize: 15,
-                                                              ),
-                                                              border:
-                                                                  InputBorder
-                                                                      .none,
-                                                              prefixIcon: Icon(
-                                                                Icons
-                                                                    .format_list_numbered,
-                                                                color: const Color(
-                                                                        0xFFCAC4CE)
-                                                                    .withOpacity(
-                                                                        0.8),
-                                                                size: 20,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            actions: [
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(
-                                                              context),
-                                                      style:
-                                                          TextButton.styleFrom(
-                                                        shape:
-                                                            RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(12),
-                                                          side: BorderSide(
-                                                            color: const Color(
-                                                                    0xFFCAC4CE)
-                                                                .withOpacity(
-                                                                    0.3),
-                                                          ),
-                                                        ),
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                vertical: 12),
-                                                      ),
-                                                      child: Text(
-                                                        'Cancelar',
-                                                        style: TextStyle(
-                                                          color: const Color(
-                                                                  0xFFCAC4CE)
-                                                              .withOpacity(0.8),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 12),
-                                                  Expanded(
-                                                    child: ElevatedButton(
-                                                      onPressed: () {
-                                                        // Update the exercise
-                                                        final updatedEjercicio =
-                                                            Ejercicio(
-                                                          id: ejercicio.id,
-                                                          nombre: nameController
-                                                                  .text.isEmpty
-                                                              ? ejercicio.nombre
-                                                              : nameController
-                                                                  .text,
-                                                          series: int.tryParse(
-                                                                  setsController
-                                                                      .text) ??
-                                                              ejercicio.series,
-                                                          repeticiones:
-                                                              repsController
-                                                                      .text
-                                                                      .isEmpty
-                                                                  ? ejercicio
-                                                                      .repeticiones
-                                                                  : repsController
-                                                                      .text,
-                                                          dia: ejercicio.dia,
-                                                        );
-
-                                                        controller
-                                                            .actualizarEjercicio(
-                                                                updatedEjercicio);
-                                                        Navigator.pop(context);
-                                                      },
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                        backgroundColor:
-                                                            const Color(
-                                                                0xFF9067C6),
-                                                        foregroundColor:
-                                                            const Color(
-                                                                0xFFF7ECE1),
-                                                        shape:
-                                                            RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(12),
-                                                        ),
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                vertical: 12),
-                                                      ),
-                                                      child:
-                                                          const Text('Guardar'),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                            actionsPadding:
-                                                const EdgeInsets.fromLTRB(
-                                                    20, 0, 20, 20),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                    // Delete button
-                                    IconButton(
-                                      icon: const Icon(Icons.delete,
-                                          color: Colors.redAccent, size: 20),
-                                      onPressed: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) => AlertDialog(
-                                            backgroundColor:
-                                                const Color(0xFF242038),
-                                            title: const Text(
-                                              'Eliminar Ejercicio',
-                                              style: TextStyle(
-                                                  color: Color(0xFFF7ECE1)),
-                                            ),
-                                            content: Text(
-                                              '¿Estás seguro de eliminar el ejercicio "${ejercicio.nombre}"?',
-                                              style: const TextStyle(
-                                                  color: Color(0xFFCAC4CE)),
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () =>
-                                                    Navigator.pop(context),
-                                                child: const Text('Cancelar'),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  controller.eliminarEjercicio(
-                                                      ejercicio.id);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: const Text('Eliminar',
-                                                    style: TextStyle(
-                                                        color: Colors.red)),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        )
-                      : Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.fitness_center,
-                                size: 50,
-                                color: Colors.white.withOpacity(0.2),
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                'No hay ejercicios para ${_getDayName(_selectedDate)}',
-                                style: const TextStyle(
-                                  color: Color(0xFFF7ECE1),
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              const Text(
-                                'Agrega ejercicios a tu rutina para este día',
-                                style: TextStyle(
-                                  color: Color(0xFFCAC4CE),
-                                  fontSize: 14,
-                                ),
-                              ),
-                              const SizedBox(height: 24),
-                              ElevatedButton(
-                                onPressed: () => _addWorkout(controller),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF9067C6),
-                                  foregroundColor: const Color(0xFFF7ECE1),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 24, vertical: 12),
-                                ),
-                                child: const Text('Agregar Ejercicio'),
-                              ),
-                            ],
-                          ),
-                        ),
+              icon: const Icon(Icons.refresh),
+              label: Text('Reintentar',
+                  style: subtitleStyle.copyWith(color: colorScheme.onPrimary)),
+              onPressed: () {
+                controller.limpiarError();
+                controller.cargarEntrenamientos();
+              },
             ),
           ],
         ),
       ),
-      // FAB to add workout for the currently selected day
-      floatingActionButton: controller.entrenamientoActual == null
-          ? null
-          : FloatingActionButton(
-              onPressed: () => _addWorkout(controller),
-              backgroundColor: const Color(0xFF9067C6),
-              child: const Icon(Icons.add, color: Color(0xFFF7ECE1)),
+    );
+  }
+
+  // Estado vacío
+  Widget _buildEmptyState(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.fitness_center,
+                size: 70, color: colorScheme.onBackground.withOpacity(0.3)),
+            const SizedBox(height: 24),
+            Text(
+              'No tienes entrenamientos creados',
+              style: subtitleStyle.copyWith(color: colorScheme.onBackground),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: colorScheme.primary,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                elevation: 4,
+              ),
+              icon: const Icon(Icons.add),
+              label: Text(
+                'Crear Entrenamiento o espera que se carguen los tuyos',
+                style: subtitleStyle.copyWith(color: colorScheme.onPrimary),
+              ),
+              onPressed: () => _mostrarDialogoCrearEntrenamiento(context),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Contenido principal
+  Widget _buildContent() {
+    return Column(
+      children: [
+        _buildRoutineSelector(),
+        _buildDaySelector(),
+        if (controller.entrenamientoActual != null) ...[
+          _buildExerciseHeader(),
+          _buildExerciseList(),
+        ],
+      ],
+    );
+  }
+
+  // Selector de rutina con diseño mejorado
+  Widget _buildRoutineSelector() {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            dropdownColor: colorScheme.surface,
+            isExpanded: true,
+            value: controller.entrenamientoActual?.id,
+            hint: Text(
+              'Selecciona una rutina',
+              style: bodyStyle.copyWith(color: colorScheme.onBackground),
+            ),
+            icon: Icon(Icons.keyboard_arrow_down,
+                color: colorScheme.onBackground),
+            style: subtitleStyle.copyWith(color: colorScheme.onSurface),
+            onChanged: (String? value) {
+              if (value != null) {
+                controller.seleccionarEntrenamiento(value);
+              }
+            },
+            items: controller.entrenamientos.map((entrenamiento) {
+              return DropdownMenuItem<String>(
+                value: entrenamiento.id,
+                child: Text(entrenamiento.nombre),
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Selector de días mejorado
+  Widget _buildDaySelector() {
+    return Container(
+      height: 100,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.only(top: 8, bottom: 8),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        itemCount: diasSemanaCortos.length,
+        itemBuilder: (context, index) {
+          final String diaCorto = diasSemanaCortos[index];
+          final String diaCompleto = diasSemanaCompletos[index];
+          final bool isSelected = diaCompleto == controller.diaSeleccionado;
+
+          return GestureDetector(
+            onTap: () {
+              controller.seleccionarDia(diaCompleto);
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 60,
+              margin: const EdgeInsets.symmetric(horizontal: 6),
+              decoration: BoxDecoration(
+                color: isSelected ? colorScheme.primary : colorScheme.surface,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: isSelected
+                        ? colorScheme.primary.withOpacity(0.4)
+                        : Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    diaCorto,
+                    style: TextStyle(
+                      color: isSelected
+                          ? colorScheme.onPrimary
+                          : colorScheme.onBackground,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? colorScheme.primaryContainer
+                          : colorScheme.surface.withOpacity(0.7),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        (10 + index).toString(),
+                        style: TextStyle(
+                          color: isSelected
+                              ? colorScheme.onPrimary
+                              : colorScheme.onSurface,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  if (isSelected)
+                    Container(
+                      margin: const EdgeInsets.only(top: 8),
+                      width: 5,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: colorScheme.onPrimary,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // Encabezado de ejercicios
+  Widget _buildExerciseHeader() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Ejercicios para ${controller.diaSeleccionado}',
+            style: titleStyle.copyWith(color: colorScheme.onBackground),
+          ),
+          TextButton.icon(
+            icon: Icon(Icons.delete_sweep, color: colorScheme.error, size: 20),
+            label: Text(
+              'Borrar todos',
+              style: bodyStyle.copyWith(color: colorScheme.error),
+            ),
+            style: TextButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            ),
+            onPressed: () {},
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Lista de ejercicios
+  Widget _buildExerciseList() {
+    return Expanded(
+      child: controller.ejerciciosPorDia.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.fitness_center,
+                      size: 50,
+                      color: colorScheme.onBackground.withOpacity(0.3)),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No hay ejercicios para este día',
+                    style: subtitleStyle.copyWith(
+                        color: colorScheme.onBackground.withOpacity(0.7)),
+                  ),
+                ],
+              ),
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.only(bottom: 80),
+              itemCount: controller.ejerciciosPorDia.length,
+              itemBuilder: (context, index) {
+                final ejercicio = controller.ejerciciosPorDia[index];
+                return _buildEjercicioCard(context, ejercicio);
+              },
             ),
     );
   }
 
-  @override
-  void dispose() {
-    _routineNameController.dispose();
-    super.dispose();
+  // Tarjeta de ejercicio rediseñada
+  Widget _buildEjercicioCard(BuildContext context, Ejercicio ejercicio) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(16),
+        leading: Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            color: colorScheme.primary.withOpacity(0.2),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            Icons.fitness_center,
+            color: colorScheme.primary,
+            size: 24,
+          ),
+        ),
+        title: Padding(
+          padding: const EdgeInsets.only(bottom: 6),
+          child: Text(
+            ejercicio.nombre,
+            style: subtitleStyle.copyWith(color: colorScheme.onSurface),
+          ),
+        ),
+        subtitle: Text(
+          '${ejercicio.series} series × ${ejercicio.repeticiones} repeticiones',
+          style: bodyStyle.copyWith(color: colorScheme.onBackground),
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: Icon(
+                Icons.edit_outlined,
+                color: colorScheme.secondary,
+                size: 22,
+              ),
+              splashRadius: 24,
+              tooltip: 'Editar',
+              onPressed: () =>
+                  _mostrarDialogoEditarEjercicio(context, ejercicio),
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.delete_outline,
+                color: colorScheme.error,
+                size: 22,
+              ),
+              splashRadius: 24,
+              tooltip: 'Eliminar',
+              onPressed: () =>
+                  _confirmarEliminarEjercicio(context, ejercicio.id),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Menú de opciones mejorado
+  void _mostrarOpcionesMenu(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                color: colorScheme.onBackground.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            ListTile(
+              leading: CircleAvatar(
+                backgroundColor: colorScheme.primary.withOpacity(0.2),
+                child: Icon(Icons.add, color: colorScheme.primary),
+              ),
+              title: Text(
+                'Crear nuevo entrenamiento',
+                style: subtitleStyle.copyWith(color: colorScheme.onSurface),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                _mostrarDialogoCrearEntrenamiento(context);
+              },
+            ),
+            if (controller.entrenamientoActual != null) ...[
+              const Divider(height: 1, thickness: 0.5),
+              ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: colorScheme.error.withOpacity(0.2),
+                  child: Icon(Icons.delete, color: colorScheme.error),
+                ),
+                title: Text(
+                  'Eliminar entrenamiento actual',
+                  style: subtitleStyle.copyWith(color: colorScheme.error),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _confirmarEliminarEntrenamiento(context);
+                },
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Diálogo para crear entrenamiento mejorado
+  void _mostrarDialogoCrearEntrenamiento(BuildContext context) {
+    final TextEditingController nombreController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: colorScheme.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'Crear Entrenamiento',
+          style: titleStyle.copyWith(color: colorScheme.onSurface),
+          textAlign: TextAlign.center,
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nombreController,
+              style: bodyStyle.copyWith(color: colorScheme.onSurface),
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: colorScheme.background.withOpacity(0.3),
+                labelText: 'Nombre del entrenamiento',
+                labelStyle: bodyStyle.copyWith(color: colorScheme.onBackground),
+                prefixIcon:
+                    Icon(Icons.fitness_center, color: colorScheme.primary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: colorScheme.primary),
+                ),
+              ),
+              autofocus: true,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Cancelar',
+              style: bodyStyle.copyWith(color: colorScheme.onBackground),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: colorScheme.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            ),
+            onPressed: () {
+              if (nombreController.text.isNotEmpty) {
+                controller.crearEntrenamiento(nombreController.text);
+                Navigator.pop(context);
+              }
+            },
+            child: Text(
+              'Crear',
+              style: subtitleStyle.copyWith(color: colorScheme.onPrimary),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Diálogo para agregar ejercicio mejorado
+  void _mostrarDialogoAgregarEjercicio(BuildContext context) {
+    final TextEditingController nombreController = TextEditingController();
+    final TextEditingController seriesController = TextEditingController();
+    final TextEditingController repeticionesController =
+        TextEditingController();
+    String selectedDay = controller.diaSeleccionado;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: colorScheme.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'Agregar Ejercicio',
+          style: titleStyle.copyWith(color: colorScheme.onSurface),
+          textAlign: TextAlign.center,
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Campo de nombre
+              TextField(
+                controller: nombreController,
+                style: bodyStyle.copyWith(color: colorScheme.onSurface),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: colorScheme.background.withOpacity(0.3),
+                  labelText: 'Nombre del ejercicio',
+                  labelStyle:
+                      bodyStyle.copyWith(color: colorScheme.onBackground),
+                  prefixIcon:
+                      Icon(Icons.fitness_center, color: colorScheme.primary),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: colorScheme.primary),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Selector de día
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: colorScheme.background.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: DropdownButtonFormField<String>(
+                  dropdownColor: colorScheme.surface,
+                  icon: Icon(Icons.arrow_drop_down, color: colorScheme.primary),
+                  value: selectedDay,
+                  style: bodyStyle.copyWith(color: colorScheme.onSurface),
+                  decoration: InputDecoration(
+                    prefixIcon:
+                        Icon(Icons.calendar_today, color: colorScheme.primary),
+                    labelText: 'Día',
+                    labelStyle:
+                        bodyStyle.copyWith(color: colorScheme.onBackground),
+                    border: InputBorder.none,
+                  ),
+                  onChanged: (String? newValue) {
+                    if (newValue != null) {
+                      selectedDay = newValue;
+                    }
+                  },
+                  items: diasSemanaCompletos
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Campo de series
+              TextField(
+                controller: seriesController,
+                style: bodyStyle.copyWith(color: colorScheme.onSurface),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: colorScheme.background.withOpacity(0.3),
+                  labelText: 'Series',
+                  labelStyle:
+                      bodyStyle.copyWith(color: colorScheme.onBackground),
+                  prefixIcon: Icon(Icons.repeat, color: colorScheme.primary),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: colorScheme.primary),
+                  ),
+                ),
+                keyboardType: TextInputType.number,
+              ),
+
+              const SizedBox(height: 16),
+
+              // Campo de repeticiones
+              TextField(
+                controller: repeticionesController,
+                style: bodyStyle.copyWith(color: colorScheme.onSurface),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: colorScheme.background.withOpacity(0.3),
+                  labelText: 'Repeticiones (ej: 10-12, 15)',
+                  labelStyle:
+                      bodyStyle.copyWith(color: colorScheme.onBackground),
+                  prefixIcon: Icon(Icons.loop, color: colorScheme.primary),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: colorScheme.primary),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Cancelar',
+              style: bodyStyle.copyWith(color: colorScheme.onBackground),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: colorScheme.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            ),
+            onPressed: () {
+              if (nombreController.text.isNotEmpty &&
+                  seriesController.text.isNotEmpty &&
+                  repeticionesController.text.isNotEmpty) {
+                // Crear nuevo ejercicio
+                final ejercicio = Ejercicio(
+                  id: DateTime.now().millisecondsSinceEpoch.toString(),
+                  nombre: nombreController.text,
+                  dia: selectedDay,
+                  series: int.tryParse(seriesController.text) ?? 0,
+                  repeticiones: repeticionesController.text,
+                );
+                controller.agregarEjercicio(ejercicio);
+                Navigator.pop(context);
+              }
+            },
+            child: Text(
+              'Agregar',
+              style: subtitleStyle.copyWith(color: colorScheme.onPrimary),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Diálogo para editar un ejercicio existente
+  void _mostrarDialogoEditarEjercicio(
+      BuildContext context, Ejercicio ejercicio) {
+    final TextEditingController nombreController =
+        TextEditingController(text: ejercicio.nombre);
+    final TextEditingController diaController =
+        TextEditingController(text: ejercicio.dia);
+    final TextEditingController seriesController =
+        TextEditingController(text: ejercicio.series.toString());
+    final TextEditingController repeticionesController =
+        TextEditingController(text: ejercicio.repeticiones);
+    String selectedDay = ejercicio.dia;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: colorScheme.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'Actualizar Ejercicio',
+          style: titleStyle.copyWith(color: colorScheme.onSurface),
+          textAlign: TextAlign.center,
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Campo de nombre
+              TextField(
+                controller: nombreController,
+                style: bodyStyle.copyWith(color: colorScheme.onSurface),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: colorScheme.background.withOpacity(0.3),
+                  labelText: 'Nombre del ejercicio',
+                  labelStyle:
+                      bodyStyle.copyWith(color: colorScheme.onBackground),
+                  prefixIcon:
+                      Icon(Icons.fitness_center, color: colorScheme.primary),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: colorScheme.primary),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Selector de día
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: colorScheme.background.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: DropdownButtonFormField<String>(
+                  dropdownColor: colorScheme.surface,
+                  icon: Icon(Icons.arrow_drop_down, color: colorScheme.primary),
+                  value: selectedDay,
+                  style: bodyStyle.copyWith(color: colorScheme.onSurface),
+                  decoration: InputDecoration(
+                    prefixIcon:
+                        Icon(Icons.calendar_today, color: colorScheme.primary),
+                    labelText: 'Día',
+                    labelStyle:
+                        bodyStyle.copyWith(color: colorScheme.onBackground),
+                    border: InputBorder.none,
+                  ),
+                  onChanged: (String? newValue) {
+                    if (newValue != null) {
+                      selectedDay = newValue;
+                    }
+                  },
+                  items: diasSemanaCompletos
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Campo de series
+              TextField(
+                controller: seriesController,
+                style: bodyStyle.copyWith(color: colorScheme.onSurface),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: colorScheme.background.withOpacity(0.3),
+                  labelText: 'Series',
+                  labelStyle:
+                      bodyStyle.copyWith(color: colorScheme.onBackground),
+                  prefixIcon: Icon(Icons.repeat, color: colorScheme.primary),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: colorScheme.primary),
+                  ),
+                ),
+                keyboardType: TextInputType.number,
+              ),
+
+              const SizedBox(height: 16),
+
+              // Campo de repeticiones
+              TextField(
+                controller: repeticionesController,
+                style: bodyStyle.copyWith(color: colorScheme.onSurface),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: colorScheme.background.withOpacity(0.3),
+                  labelText: 'Repeticiones (ej: 10-12, 15)',
+                  labelStyle:
+                      bodyStyle.copyWith(color: colorScheme.onBackground),
+                  prefixIcon: Icon(Icons.loop, color: colorScheme.primary),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: colorScheme.primary),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Cancelar',
+              style: bodyStyle.copyWith(color: colorScheme.onBackground),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: colorScheme.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            ),
+            onPressed: () {
+              if (nombreController.text.isNotEmpty &&
+                  seriesController.text.isNotEmpty &&
+                  repeticionesController.text.isNotEmpty) {
+                // Crear nuevo ejercicio
+                final ejercicio = Ejercicio(
+                  id: DateTime.now().millisecondsSinceEpoch.toString(),
+                  nombre: nombreController.text,
+                  dia: selectedDay,
+                  series: int.tryParse(seriesController.text) ?? 0,
+                  repeticiones: repeticionesController.text,
+                );
+                controller.actualizarEjercicio(ejercicio);
+                Navigator.pop(context);
+              }
+            },
+            child: Text(
+              'Actualizar',
+              style: subtitleStyle.copyWith(color: colorScheme.onPrimary),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Confirmar eliminación de un ejercicio
+  void _confirmarEliminarEjercicio(BuildContext context, String ejercicioId) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: colorScheme.secondaryContainer,
+        title:
+            Text('Eliminar Ejercicio', style: TextStyle(color: Colors.white)),
+        content: Text('¿Estás seguro de que deseas eliminar este ejercicio?',
+            style: TextStyle(color: Colors.white)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancelar', style: TextStyle(color: Colors.white70)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red[700]),
+            onPressed: () {
+              controller.eliminarEjercicio(ejercicioId);
+              Navigator.pop(context);
+            },
+            child: Text('Eliminar', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Confirmar eliminación de un entrenamiento
+  void _confirmarEliminarEntrenamiento(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: colorScheme.secondaryContainer,
+        title: Text('Eliminar Entrenamiento',
+            style: TextStyle(color: Colors.white)),
+        content: Text(
+          '¿Estás seguro de que deseas eliminar este entrenamiento y todos sus ejercicios? Esta acción no se puede deshacer.',
+          style: TextStyle(color: Colors.white),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancelar', style: TextStyle(color: Colors.white70)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red[700]),
+            onPressed: () {
+              if (controller.entrenamientoActual != null) {
+                controller
+                    .eliminarEntrenamiento(controller.entrenamientoActual!.id);
+              }
+              Navigator.pop(context);
+            },
+            child: Text('Eliminar', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
   }
 }

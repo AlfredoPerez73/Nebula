@@ -27,7 +27,7 @@ class _HomeScreenPageState extends State<HomeScreen> {
       case 1:
         return const ExercisesPage();
       case 2:
-        return const RoutinesPage();
+        return Routinespage();
       case 3:
         return const ProfileScreen();
       default:

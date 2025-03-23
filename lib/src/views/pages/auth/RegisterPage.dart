@@ -18,7 +18,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   // Values for dropdowns
   String _selectedNivelExperiencia = 'Principiante';
-  String _selectedObjetivo = 'Pérdida de peso';
+  String _selectedObjetivo = 'Perder peso';
 
   // Options for dropdowns
   final List<String> _nivelesExperiencia = [
