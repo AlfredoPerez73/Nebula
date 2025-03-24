@@ -103,19 +103,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             const SizedBox(height: 20),
 
-            // Estadísticas del usuario
-            _buildUserStatsCard(),
-
-            const SizedBox(height: 20),
-
-            // Preferencias del usuario
-            _buildUserPreferencesCard(),
-
-            const SizedBox(height: 20),
-
-            // Progreso del usuario
-            _buildUserProgressCard(),
-
+            // Sección de entrenamientos
+            _buildWorkoutSection(),
             const SizedBox(height: 20),
 
             // Opciones adicionales
@@ -272,297 +261,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildUserStatsCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.1),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Estadísticas",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFFF7ECE1),
-            ),
-          ),
-          const SizedBox(height: 15),
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatCard(
-                  "Sesiones",
-                  "27",
-                  Amicons.iconly_calendar_broken,
-                  Colors.blue.withOpacity(0.4),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _buildStatCard(
-                  "Minutos",
-                  "840",
-                  Amicons.iconly_time_circle_broken,
-                  Colors.green.withOpacity(0.4),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatCard(
-                  "Calorías",
-                  "9,350",
-                  Amicons.remix_fire,
-                  Colors.orange.withOpacity(0.4),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _buildStatCard(
-                  "Logros",
-                  "5",
-                  Amicons.vuesax_archive_minus,
-                  Colors.purple.withOpacity(0.4),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatCard(
-      String title, String value, IconData icon, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Column(
-        children: [
-          Icon(
-            icon,
-            color: Colors.white,
-            size: 30,
-          ),
-          const SizedBox(height: 10),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.white,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildUserPreferencesCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.1),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Preferencias de entrenamiento",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFFF7ECE1),
-            ),
-          ),
-          const SizedBox(height: 15),
-          _buildPreferenceItem("Duración preferida", "30-45 minutos"),
-          const SizedBox(height: 10),
-          _buildPreferenceItem("Días de entrenamiento", "Lun, Mié, Vie"),
-          const SizedBox(height: 10),
-          _buildPreferenceItem("Área favorita", "Tren superior"),
-          const SizedBox(height: 10),
-          _buildPreferenceItem("Equipamiento disponible", "Mancuernas, Bandas"),
-          const SizedBox(height: 15),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                // Implementar navegación a la pantalla de edición de preferencias
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                backgroundColor: const Color(0xFF9067C6),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-              child: const Text("Editar preferencias"),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildUserProgressCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.1),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            "Tu progreso",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFFF7ECE1),
-            ),
-          ),
-
-          const SizedBox(height: 15),
-
-          // Progreso de peso
-          _buildProgressItem(
-            "Peso",
-            "75 kg",
-            "-2.5 kg",
-            0.7,
-            Colors.cyan,
-          ),
-
-          const SizedBox(height: 15),
-
-          // Progreso de fuerza
-          _buildProgressItem(
-            "Fuerza",
-            "Press de banca",
-            "+10 kg",
-            0.6,
-            Colors.amber,
-          ),
-
-          const SizedBox(height: 15),
-
-          // Progreso de resistencia
-          _buildProgressItem(
-            "Resistencia",
-            "30 min. cardio",
-            "+8 min.",
-            0.8,
-            Colors.greenAccent,
-          ),
-
-          const SizedBox(height: 15),
-
-          SizedBox(
-            width: double.infinity,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProgressItem(
-      String title, String value, String change, double progress, Color color) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              value,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFFF7ECE1),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: change.contains('+')
-                    ? Colors.green.withOpacity(0.3)
-                    : Colors.red.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                change,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: change.contains('+')
-                      ? Colors.green[100]
-                      : Colors.red[100],
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Stack(
-          children: [
-            Container(
-              height: 8,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            Container(
-              height: 8,
-              width: MediaQuery.of(context).size.width * progress - 40,
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
   Widget _buildAdditionalOptionsCard() {
     return Container(
       width: double.infinity,
@@ -668,29 +366,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildPreferenceItem(String label, String value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            color: const Color(0xFFCAC4CE).withOpacity(0.8),
-          ),
-        ),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Color(0xFFF7ECE1),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildInfoRow(IconData icon, String label, String value) {
     return Row(
       children: [
@@ -722,6 +397,110 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildWorkoutSection() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.1),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Entrenamientos recomendados",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFFF7ECE1),
+            ),
+          ),
+          const SizedBox(height: 15),
+
+          // Listado de entrenamientos
+          _buildWorkoutCard(
+            "Entrenamiento Completo",
+            "Entrenamiento de cuerpo completo para principiantes",
+            Amicons.flaticon_gym_rounded_fill,
+            Colors.blue.withOpacity(0.4),
+          ),
+          const SizedBox(height: 10),
+
+          _buildWorkoutCard(
+            "Cardio Intenso",
+            "30 minutos de ejercicio cardiovascular",
+            Amicons.remix_walk_fill,
+            Colors.red.withOpacity(0.4),
+          ),
+          const SizedBox(height: 10),
+
+          _buildWorkoutCard(
+            "Estiramiento",
+            "Rutina de estiramiento para mejorar la flexibilidad",
+            Amicons.flaticon_head_side_thinking_rounded,
+            Colors.green.withOpacity(0.4),
+          ),
+
+          const SizedBox(height: 15),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWorkoutCard(
+      String title, String description, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            color: Colors.white,
+            size: 24,
+          ),
+          const SizedBox(width: 15),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  description,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Icon(
+            Icons.arrow_forward_ios,
+            color: Colors.white,
+            size: 16,
+          ),
+        ],
+      ),
     );
   }
 }
