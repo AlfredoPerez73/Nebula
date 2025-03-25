@@ -164,9 +164,9 @@ class FirebaseService {
     try {
       // Referencia al documento del ejercicio dentro del entrenamiento
       final DocumentReference ejercicioRef = FirebaseFirestore.instance
-          .collection('entrenamientos')
+          .collection('training')
           .doc(entrenamientoId)
-          .collection('ejercicios')
+          .collection('exercise')
           .doc(ejercicio.id);
 
       // Convertir el ejercicio a un mapa y actualizar en Firebase

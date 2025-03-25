@@ -27,14 +27,14 @@ class Ejercicio {
     return Ejercicio(
       id: id,
       nombre: data['nombre'] ?? '',
-      dia: data['dia'] ?? 0,
+      dia: data['dia'] ?? '',
       series: data['series'] ?? 0,
-      repeticiones: data['repeticiones'] ?? 0,
+      repeticiones: data['repeticiones'] ?? '',
     );
   }
 
   @override
   String toString() {
-    return 'Ejercicio{id: $id, nombre: $nombre, series: $series , series: $series,  repeticiones: $repeticiones}';
+    return 'Ejercicio{id: $id, nombre: $nombre, dia: $dia, series: $series, repeticiones: $repeticiones}';
   }
 }

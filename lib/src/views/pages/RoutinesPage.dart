@@ -842,6 +842,7 @@ class Routinespage extends StatelessWidget {
     final TextEditingController repeticionesController =
         TextEditingController(text: ejercicio.repeticiones);
     String selectedDay = ejercicio.dia;
+    String id = ejercicio.id;
 
     showDialog(
       context: context,
@@ -990,7 +991,7 @@ class Routinespage extends StatelessWidget {
                   repeticionesController.text.isNotEmpty) {
                 // Crear nuevo ejercicio
                 final ejercicio = Ejercicio(
-                  id: DateTime.now().millisecondsSinceEpoch.toString(),
+                  id: id ?? DateTime.now().millisecondsSinceEpoch.toString(),
                   nombre: nombreController.text,
                   dia: selectedDay,
                   series: int.tryParse(seriesController.text) ?? 0,
