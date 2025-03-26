@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nebula/src/controllers/training.controller.dart';
+import 'package:nebula/src/controllers/historyTraining.controller.dart';
 import 'package:nebula/src/models/exercises.model.dart';
 import 'package:flutter/services.dart';
+import 'package:nebula/src/models/historyExercises.model.dart';
 
 class Routinespage extends StatelessWidget {
   final EntrenamientoController controller = Get.put(EntrenamientoController());
+  final HistoryEntrenamientoController hcontroller =
+      Get.put(HistoryEntrenamientoController());
 
   // Datos constantes
   final List<String> diasSemanaCortos = [
@@ -642,6 +646,7 @@ class Routinespage extends StatelessWidget {
             onPressed: () {
               if (nombreController.text.isNotEmpty) {
                 controller.crearEntrenamiento(nombreController.text);
+                hcontroller.crearEntrenamiento(nombreController.text);
                 Navigator.pop(context);
               }
             },
@@ -657,84 +662,159 @@ class Routinespage extends StatelessWidget {
 
   // Diálogo para agregar ejercicio mejorado
   void _mostrarDialogoAgregarEjercicio(BuildContext context) {
-    final TextEditingController nombreController = TextEditingController();
     final TextEditingController seriesController = TextEditingController();
     final TextEditingController repeticionesController =
         TextEditingController();
     String selectedDay = controller.diaSeleccionado;
+    String? selectedEjercicio;
+
+    // Lista de ejercicios predefinidos con íconos
+    final List<Map<String, dynamic>> ejerciciosPredefinidos = [
+      {'nombre': 'Sentadillas', 'icono': Icons.sports_gymnastics},
+      {'nombre': 'Press de Banca', 'icono': Icons.fitness_center},
+      {'nombre': 'Peso Muerto', 'icono': Icons.settings_accessibility},
+      {'nombre': 'Curl de Bíceps', 'icono': Icons.sports_martial_arts},
+      {'nombre': 'Extensión de Tríceps', 'icono': Icons.accessibility_new},
+      {'nombre': 'Press de Hombros', 'icono': Icons.sports_gymnastics_outlined},
+      {'nombre': 'Dominadas', 'icono': Icons.sports_bar},
+      {'nombre': 'Fondos', 'icono': Icons.fitness_center_outlined},
+      {'nombre': 'Plancha', 'icono': Icons.accessibility},
+      {'nombre': 'Abdominales', 'icono': Icons.sports_gymnastics_sharp},
+      {'nombre': 'Zancadas', 'icono': Icons.sports_martial_arts_outlined},
+      {'nombre': 'Peso de Piernas', 'icono': Icons.sports_gymnastics_rounded},
+      {'nombre': 'Press de Pecho', 'icono': Icons.sports_bar},
+      {'nombre': 'Remo', 'icono': Icons.directions_boat},
+      {'nombre': 'Jumping Jacks', 'icono': Icons.directions_run}
+    ];
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: colorScheme.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(
-          'Agregar Ejercicio',
-          style: titleStyle.copyWith(color: colorScheme.onSurface),
-          textAlign: TextAlign.center,
+        elevation: 12,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+            side: BorderSide(
+                color: colorScheme.primary.withOpacity(0.2), width: 1.5)),
+        title: Column(
+          children: [
+            Icon(
+              Icons.add,
+              color: colorScheme.primary,
+              size: 40,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Agregar Nuevo Ejercicio',
+              style: titleStyle.copyWith(
+                  color: colorScheme.onSurface, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            Divider(
+              color: colorScheme.primary.withOpacity(0.3),
+              thickness: 1.5,
+              height: 20,
+            )
+          ],
         ),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Campo de nombre
-              TextField(
-                controller: nombreController,
-                style: bodyStyle.copyWith(color: colorScheme.onSurface),
+              // Selector de ejercicio
+              DropdownButtonFormField<String>(
+                dropdownColor: colorScheme.background,
+                menuMaxHeight: 300,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: colorScheme.background.withOpacity(0.3),
-                  labelText: 'Nombre del ejercicio',
-                  labelStyle:
-                      bodyStyle.copyWith(color: colorScheme.onBackground),
+                  fillColor: colorScheme.background.withOpacity(0.1),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   prefixIcon:
                       Icon(Icons.fitness_center, color: colorScheme.primary),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
+                  labelText: 'Selecciona un Ejercicio',
+                  labelStyle:
+                      bodyStyle.copyWith(color: colorScheme.onBackground),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(
+                          color: colorScheme.primary.withOpacity(0.3),
+                          width: 1.5)),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: colorScheme.primary),
-                  ),
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide:
+                          BorderSide(color: colorScheme.primary, width: 2)),
                 ),
+                value: selectedEjercicio,
+                style: bodyStyle.copyWith(color: colorScheme.onSurface),
+                hint: Text(
+                  'Elige un ejercicio',
+                  style: bodyStyle.copyWith(
+                      color: colorScheme.onBackground.withOpacity(0.6)),
+                ),
+                icon: Icon(Icons.arrow_drop_down, color: colorScheme.primary),
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    selectedEjercicio = newValue;
+                  }
+                },
+                items: ejerciciosPredefinidos
+                    .map<DropdownMenuItem<String>>((ejercicio) {
+                  return DropdownMenuItem<String>(
+                    value: ejercicio['nombre'],
+                    child: Row(
+                      children: [
+                        Icon(ejercicio['icono'],
+                            color: colorScheme.primary.withOpacity(0.7),
+                            size: 20),
+                        const SizedBox(width: 10),
+                        Text(ejercicio['nombre']),
+                      ],
+                    ),
+                  );
+                }).toList(),
               ),
 
               const SizedBox(height: 16),
 
               // Selector de día
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  color: colorScheme.background.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(12),
+              DropdownButtonFormField<String>(
+                dropdownColor: colorScheme.background,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: colorScheme.background.withOpacity(0.1),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  prefixIcon:
+                      Icon(Icons.calendar_today, color: colorScheme.primary),
+                  labelText: 'Día de Entrenamiento',
+                  labelStyle:
+                      bodyStyle.copyWith(color: colorScheme.onBackground),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(
+                          color: colorScheme.primary.withOpacity(0.3),
+                          width: 1.5)),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide:
+                          BorderSide(color: colorScheme.primary, width: 2)),
                 ),
-                child: DropdownButtonFormField<String>(
-                  dropdownColor: colorScheme.surface,
-                  icon: Icon(Icons.arrow_drop_down, color: colorScheme.primary),
-                  value: selectedDay,
-                  style: bodyStyle.copyWith(color: colorScheme.onSurface),
-                  decoration: InputDecoration(
-                    prefixIcon:
-                        Icon(Icons.calendar_today, color: colorScheme.primary),
-                    labelText: 'Día',
-                    labelStyle:
-                        bodyStyle.copyWith(color: colorScheme.onBackground),
-                    border: InputBorder.none,
-                  ),
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      selectedDay = newValue;
-                    }
-                  },
-                  items: diasSemanaCompletos
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
+                value: selectedDay,
+                style: bodyStyle.copyWith(color: colorScheme.onSurface),
+                icon: Icon(Icons.arrow_drop_down, color: colorScheme.primary),
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    selectedDay = newValue;
+                  }
+                },
+                items: diasSemanaCompletos
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
               ),
 
               const SizedBox(height: 16),
@@ -743,23 +823,29 @@ class Routinespage extends StatelessWidget {
               TextField(
                 controller: seriesController,
                 style: bodyStyle.copyWith(color: colorScheme.onSurface),
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: colorScheme.background.withOpacity(0.3),
-                  labelText: 'Series',
+                  fillColor: colorScheme.background.withOpacity(0.1),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  labelText: 'Número de Series',
                   labelStyle:
                       bodyStyle.copyWith(color: colorScheme.onBackground),
                   prefixIcon: Icon(Icons.repeat, color: colorScheme.primary),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(
+                          color: colorScheme.primary.withOpacity(0.3),
+                          width: 1.5)),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: colorScheme.primary),
-                  ),
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide:
+                          BorderSide(color: colorScheme.primary, width: 2)),
+                  hintText: 'Ej: 3-4',
+                  hintStyle: bodyStyle.copyWith(
+                      color: colorScheme.onBackground.withOpacity(0.5)),
                 ),
-                keyboardType: TextInputType.number,
               ),
 
               const SizedBox(height: 16),
@@ -770,59 +856,93 @@ class Routinespage extends StatelessWidget {
                 style: bodyStyle.copyWith(color: colorScheme.onSurface),
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: colorScheme.background.withOpacity(0.3),
-                  labelText: 'Repeticiones (ej: 10-12, 15)',
+                  fillColor: colorScheme.background.withOpacity(0.1),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  labelText: 'Repeticiones por Serie',
                   labelStyle:
                       bodyStyle.copyWith(color: colorScheme.onBackground),
                   prefixIcon: Icon(Icons.loop, color: colorScheme.primary),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(
+                          color: colorScheme.primary.withOpacity(0.3),
+                          width: 1.5)),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: colorScheme.primary),
-                  ),
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide:
+                          BorderSide(color: colorScheme.primary, width: 2)),
+                  hintText: 'Ej: 10-12, 15',
+                  hintStyle: bodyStyle.copyWith(
+                      color: colorScheme.onBackground.withOpacity(0.5)),
                 ),
               ),
             ],
           ),
         ),
         actions: [
+          // Botón de Cancelar
           TextButton(
             onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(
+              foregroundColor: colorScheme.onBackground.withOpacity(0.7),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            ),
             child: Text(
               'Cancelar',
-              style: bodyStyle.copyWith(color: colorScheme.onBackground),
+              style: bodyStyle.copyWith(
+                  color: colorScheme.onBackground.withOpacity(0.7)),
             ),
           ),
+
+          // Botón de Agregar
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: colorScheme.primary,
+              foregroundColor: colorScheme.onPrimary,
+              elevation: 5,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(15),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
             ),
             onPressed: () {
-              if (nombreController.text.isNotEmpty &&
+              if (selectedEjercicio != null &&
                   seriesController.text.isNotEmpty &&
                   repeticionesController.text.isNotEmpty) {
                 // Crear nuevo ejercicio
                 final ejercicio = Ejercicio(
                   id: DateTime.now().millisecondsSinceEpoch.toString(),
-                  nombre: nombreController.text,
+                  nombre: selectedEjercicio!,
+                  dia: selectedDay,
+                  series: int.tryParse(seriesController.text) ?? 0,
+                  repeticiones: repeticionesController.text,
+                );
+                final hejercicio = HistoryEjercicio(
+                  id: DateTime.now().millisecondsSinceEpoch.toString(),
+                  nombre: selectedEjercicio!,
                   dia: selectedDay,
                   series: int.tryParse(seriesController.text) ?? 0,
                   repeticiones: repeticionesController.text,
                 );
                 controller.agregarEjercicio(ejercicio);
+                hcontroller.agregarEjercicio(hejercicio);
                 Navigator.pop(context);
+              } else {
+                // Mostrar mensaje de error si falta información
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                    'Por favor, completa todos los campos',
+                    style: bodyStyle.copyWith(color: Colors.white),
+                  ),
+                  backgroundColor: colorScheme.error,
+                ));
               }
             },
             child: Text(
-              'Agregar',
-              style: subtitleStyle.copyWith(color: colorScheme.onPrimary),
+              'Agregar Ejercicio',
+              style: subtitleStyle.copyWith(
+                  color: colorScheme.onPrimary, fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -833,89 +953,160 @@ class Routinespage extends StatelessWidget {
   // Diálogo para editar un ejercicio existente
   void _mostrarDialogoEditarEjercicio(
       BuildContext context, Ejercicio ejercicio) {
-    final TextEditingController nombreController =
-        TextEditingController(text: ejercicio.nombre);
-    final TextEditingController diaController =
-        TextEditingController(text: ejercicio.dia);
-    final TextEditingController seriesController =
-        TextEditingController(text: ejercicio.series.toString());
+    final TextEditingController seriesController = TextEditingController();
     final TextEditingController repeticionesController =
-        TextEditingController(text: ejercicio.repeticiones);
-    String selectedDay = ejercicio.dia;
+        TextEditingController();
+    String selectedDay = controller.diaSeleccionado;
+    String? selectedEjercicio;
     String id = ejercicio.id;
+
+    // Lista de ejercicios predefinidos con íconos
+    final List<Map<String, dynamic>> ejerciciosPredefinidos = [
+      {'nombre': 'Sentadillas', 'icono': Icons.sports_gymnastics},
+      {'nombre': 'Press de Banca', 'icono': Icons.fitness_center},
+      {'nombre': 'Peso Muerto', 'icono': Icons.settings_accessibility},
+      {'nombre': 'Curl de Bíceps', 'icono': Icons.sports_martial_arts},
+      {'nombre': 'Extensión de Tríceps', 'icono': Icons.accessibility_new},
+      {'nombre': 'Press de Hombros', 'icono': Icons.sports_gymnastics_outlined},
+      {'nombre': 'Dominadas', 'icono': Icons.sports_bar},
+      {'nombre': 'Fondos', 'icono': Icons.fitness_center_outlined},
+      {'nombre': 'Plancha', 'icono': Icons.accessibility},
+      {'nombre': 'Abdominales', 'icono': Icons.sports_gymnastics_sharp},
+      {'nombre': 'Zancadas', 'icono': Icons.sports_martial_arts_outlined},
+      {'nombre': 'Peso de Piernas', 'icono': Icons.sports_gymnastics_rounded},
+      {'nombre': 'Press de Pecho', 'icono': Icons.sports_bar},
+      {'nombre': 'Remo', 'icono': Icons.directions_boat},
+      {'nombre': 'Jumping Jacks', 'icono': Icons.directions_run}
+    ];
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: colorScheme.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(
-          'Actualizar Ejercicio',
-          style: titleStyle.copyWith(color: colorScheme.onSurface),
-          textAlign: TextAlign.center,
+        elevation: 12,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+            side: BorderSide(
+                color: colorScheme.primary.withOpacity(0.2), width: 1.5)),
+        title: Column(
+          children: [
+            Icon(
+              Icons.update,
+              color: colorScheme.primary,
+              size: 40,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Editar Ejercicio',
+              style: titleStyle.copyWith(
+                  color: colorScheme.onSurface, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            Divider(
+              color: colorScheme.primary.withOpacity(0.3),
+              thickness: 1.5,
+              height: 20,
+            )
+          ],
         ),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Campo de nombre
-              TextField(
-                controller: nombreController,
-                style: bodyStyle.copyWith(color: colorScheme.onSurface),
+              // Selector de ejercicio
+              DropdownButtonFormField<String>(
+                dropdownColor: colorScheme.background,
+                menuMaxHeight: 300,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: colorScheme.background.withOpacity(0.3),
-                  labelText: 'Nombre del ejercicio',
-                  labelStyle:
-                      bodyStyle.copyWith(color: colorScheme.onBackground),
+                  fillColor: colorScheme.background.withOpacity(0.1),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   prefixIcon:
                       Icon(Icons.fitness_center, color: colorScheme.primary),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
+                  labelText: 'Selecciona un Ejercicio',
+                  labelStyle:
+                      bodyStyle.copyWith(color: colorScheme.onBackground),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(
+                          color: colorScheme.primary.withOpacity(0.3),
+                          width: 1.5)),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: colorScheme.primary),
-                  ),
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide:
+                          BorderSide(color: colorScheme.primary, width: 2)),
                 ),
+                value: selectedEjercicio,
+                style: bodyStyle.copyWith(color: colorScheme.onSurface),
+                hint: Text(
+                  'Elige un ejercicio',
+                  style: bodyStyle.copyWith(
+                      color: colorScheme.onBackground.withOpacity(0.6)),
+                ),
+                icon: Icon(Icons.arrow_drop_down, color: colorScheme.primary),
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    selectedEjercicio = newValue;
+                  }
+                },
+                items: ejerciciosPredefinidos
+                    .map<DropdownMenuItem<String>>((ejercicio) {
+                  return DropdownMenuItem<String>(
+                    value: ejercicio['nombre'],
+                    child: Row(
+                      children: [
+                        Icon(ejercicio['icono'],
+                            color: colorScheme.primary.withOpacity(0.7),
+                            size: 20),
+                        const SizedBox(width: 10),
+                        Text(ejercicio['nombre']),
+                      ],
+                    ),
+                  );
+                }).toList(),
               ),
 
               const SizedBox(height: 16),
 
               // Selector de día
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  color: colorScheme.background.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(12),
+              DropdownButtonFormField<String>(
+                dropdownColor: colorScheme.background,
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: colorScheme.background.withOpacity(0.1),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  prefixIcon:
+                      Icon(Icons.calendar_today, color: colorScheme.primary),
+                  labelText: 'Día de Entrenamiento',
+                  labelStyle:
+                      bodyStyle.copyWith(color: colorScheme.onBackground),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(
+                          color: colorScheme.primary.withOpacity(0.3),
+                          width: 1.5)),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide:
+                          BorderSide(color: colorScheme.primary, width: 2)),
                 ),
-                child: DropdownButtonFormField<String>(
-                  dropdownColor: colorScheme.surface,
-                  icon: Icon(Icons.arrow_drop_down, color: colorScheme.primary),
-                  value: selectedDay,
-                  style: bodyStyle.copyWith(color: colorScheme.onSurface),
-                  decoration: InputDecoration(
-                    prefixIcon:
-                        Icon(Icons.calendar_today, color: colorScheme.primary),
-                    labelText: 'Día',
-                    labelStyle:
-                        bodyStyle.copyWith(color: colorScheme.onBackground),
-                    border: InputBorder.none,
-                  ),
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      selectedDay = newValue;
-                    }
-                  },
-                  items: diasSemanaCompletos
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
+                value: selectedDay,
+                style: bodyStyle.copyWith(color: colorScheme.onSurface),
+                icon: Icon(Icons.arrow_drop_down, color: colorScheme.primary),
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    selectedDay = newValue;
+                  }
+                },
+                items: diasSemanaCompletos
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
               ),
 
               const SizedBox(height: 16),
@@ -924,23 +1115,29 @@ class Routinespage extends StatelessWidget {
               TextField(
                 controller: seriesController,
                 style: bodyStyle.copyWith(color: colorScheme.onSurface),
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: colorScheme.background.withOpacity(0.3),
-                  labelText: 'Series',
+                  fillColor: colorScheme.background.withOpacity(0.1),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  labelText: 'Número de Series',
                   labelStyle:
                       bodyStyle.copyWith(color: colorScheme.onBackground),
                   prefixIcon: Icon(Icons.repeat, color: colorScheme.primary),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(
+                          color: colorScheme.primary.withOpacity(0.3),
+                          width: 1.5)),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: colorScheme.primary),
-                  ),
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide:
+                          BorderSide(color: colorScheme.primary, width: 2)),
+                  hintText: 'Ej: 3-4',
+                  hintStyle: bodyStyle.copyWith(
+                      color: colorScheme.onBackground.withOpacity(0.5)),
                 ),
-                keyboardType: TextInputType.number,
               ),
 
               const SizedBox(height: 16),
@@ -951,59 +1148,85 @@ class Routinespage extends StatelessWidget {
                 style: bodyStyle.copyWith(color: colorScheme.onSurface),
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: colorScheme.background.withOpacity(0.3),
-                  labelText: 'Repeticiones (ej: 10-12, 15)',
+                  fillColor: colorScheme.background.withOpacity(0.1),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  labelText: 'Repeticiones por Serie',
                   labelStyle:
                       bodyStyle.copyWith(color: colorScheme.onBackground),
                   prefixIcon: Icon(Icons.loop, color: colorScheme.primary),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(
+                          color: colorScheme.primary.withOpacity(0.3),
+                          width: 1.5)),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: colorScheme.primary),
-                  ),
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide:
+                          BorderSide(color: colorScheme.primary, width: 2)),
+                  hintText: 'Ej: 10-12, 15',
+                  hintStyle: bodyStyle.copyWith(
+                      color: colorScheme.onBackground.withOpacity(0.5)),
                 ),
               ),
             ],
           ),
         ),
         actions: [
+          // Botón de Cancelar
           TextButton(
             onPressed: () => Navigator.pop(context),
+            style: TextButton.styleFrom(
+              foregroundColor: colorScheme.onBackground.withOpacity(0.7),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            ),
             child: Text(
               'Cancelar',
-              style: bodyStyle.copyWith(color: colorScheme.onBackground),
+              style: bodyStyle.copyWith(
+                  color: colorScheme.onBackground.withOpacity(0.7)),
             ),
           ),
+
+          // Botón de Agregar
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: colorScheme.primary,
+              foregroundColor: colorScheme.onPrimary,
+              elevation: 5,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(15),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
             ),
             onPressed: () {
-              if (nombreController.text.isNotEmpty &&
+              if (selectedEjercicio != null &&
                   seriesController.text.isNotEmpty &&
                   repeticionesController.text.isNotEmpty) {
                 // Crear nuevo ejercicio
                 final ejercicio = Ejercicio(
                   id: id ?? DateTime.now().millisecondsSinceEpoch.toString(),
-                  nombre: nombreController.text,
+                  nombre: selectedEjercicio!,
                   dia: selectedDay,
                   series: int.tryParse(seriesController.text) ?? 0,
                   repeticiones: repeticionesController.text,
                 );
                 controller.actualizarEjercicio(ejercicio);
                 Navigator.pop(context);
+              } else {
+                // Mostrar mensaje de error si falta información
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                    'Por favor, completa todos los campos',
+                    style: bodyStyle.copyWith(color: Colors.white),
+                  ),
+                  backgroundColor: colorScheme.error,
+                ));
               }
             },
             child: Text(
-              'Actualizar',
-              style: subtitleStyle.copyWith(color: colorScheme.onPrimary),
+              'Actualizar Ejercicio',
+              style: subtitleStyle.copyWith(
+                  color: colorScheme.onPrimary, fontWeight: FontWeight.bold),
             ),
           ),
         ],
