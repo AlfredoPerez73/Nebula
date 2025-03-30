@@ -303,97 +303,118 @@ class Routinespage extends StatelessWidget {
       ),
     );
   }
+// Selector de días mejorado con fechas reales
+Widget _buildDaySelector() {
+  // Obtener la fecha actual
+  final DateTime now = DateTime.now();
+  
+  // Encontrar el lunes de la semana actual
+  // (si day of week es 1=lunes, 2=martes, etc.)
+  final DateTime startOfWeek = now.subtract(Duration(days: now.weekday - 1));
+  
+  return Container(
+    height: 100,
+    margin: const EdgeInsets.symmetric(vertical: 8),
+    padding: const EdgeInsets.only(top: 8, bottom: 8),
+    child: ListView.builder(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      itemCount: diasSemanaCortos.length,
+      itemBuilder: (context, index) {
+        final String diaCorto = diasSemanaCortos[index];
+        final String diaCompleto = diasSemanaCompletos[index];
+        
+        // Calcular la fecha para este día de la semana
+        final DateTime dateForThisDay = startOfWeek.add(Duration(days: index));
+        final String dayNumber = dateForThisDay.day.toString();
+        
+        // Verificar si este día corresponde a hoy
+        final bool isToday = dateForThisDay.day == now.day && 
+                             dateForThisDay.month == now.month && 
+                             dateForThisDay.year == now.year;
+                             
+        // Usar la selección del controlador o por defecto seleccionar el día actual
+        final bool isSelected = diaCompleto == controller.diaSeleccionado || 
+                               (controller.diaSeleccionado == null && isToday);
 
-  // Selector de días mejorado
-  Widget _buildDaySelector() {
-    return Container(
-      height: 100,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      padding: const EdgeInsets.only(top: 8, bottom: 8),
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        itemCount: diasSemanaCortos.length,
-        itemBuilder: (context, index) {
-          final String diaCorto = diasSemanaCortos[index];
-          final String diaCompleto = diasSemanaCompletos[index];
-          final bool isSelected = diaCompleto == controller.diaSeleccionado;
-
-          return GestureDetector(
-            onTap: () {
-              controller.seleccionarDia(diaCompleto);
-            },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 60,
-              margin: const EdgeInsets.symmetric(horizontal: 6),
-              decoration: BoxDecoration(
-                color: isSelected ? colorScheme.primary : colorScheme.surface,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
+        return GestureDetector(
+          onTap: () {
+            controller.seleccionarDia(diaCompleto);
+          },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: 60,
+            margin: const EdgeInsets.symmetric(horizontal: 6),
+            decoration: BoxDecoration(
+              color: isSelected ? colorScheme.primary : colorScheme.surface,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: isSelected
+                      ? colorScheme.primary.withOpacity(0.4)
+                      : Colors.black.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  diaCorto,
+                  style: TextStyle(
                     color: isSelected
-                        ? colorScheme.primary.withOpacity(0.4)
-                        : Colors.black.withOpacity(0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
+                        ? colorScheme.onPrimary
+                        : colorScheme.onBackground,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
                   ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    diaCorto,
-                    style: TextStyle(
-                      color: isSelected
-                          ? colorScheme.onPrimary
-                          : colorScheme.onBackground,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? colorScheme.primaryContainer
+                        : colorScheme.surface.withOpacity(0.7),
+                    shape: BoxShape.circle,
+                    // Añadir un borde si es hoy
+                    border: isToday && !isSelected ? 
+                      Border.all(color: colorScheme.primary, width: 2) : null,
+                  ),
+                  child: Center(
+                    child: Text(
+                      dayNumber,
+                      style: TextStyle(
+                        color: isSelected
+                            ? colorScheme.onPrimary
+                            : colorScheme.onSurface,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                ),
+                if (isSelected)
                   Container(
-                    width: 36,
-                    height: 36,
+                    margin: const EdgeInsets.only(top: 8),
+                    width: 5,
+                    height: 5,
                     decoration: BoxDecoration(
-                      color: isSelected
-                          ? colorScheme.primaryContainer
-                          : colorScheme.surface.withOpacity(0.7),
+                      color: colorScheme.onPrimary,
                       shape: BoxShape.circle,
                     ),
-                    child: Center(
-                      child: Text(
-                        (10 + index).toString(),
-                        style: TextStyle(
-                          color: isSelected
-                              ? colorScheme.onPrimary
-                              : colorScheme.onSurface,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
                   ),
-                  if (isSelected)
-                    Container(
-                      margin: const EdgeInsets.only(top: 8),
-                      width: 5,
-                      height: 5,
-                      decoration: BoxDecoration(
-                        color: colorScheme.onPrimary,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                ],
-              ),
+              ],
             ),
-          );
-        },
-      ),
-    );
-  }
+          ),
+        );
+      },
+    ),
+  );
+}
 
   // Encabezado de ejercicios
   Widget _buildExerciseHeader() {
