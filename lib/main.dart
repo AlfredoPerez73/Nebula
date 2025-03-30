@@ -5,7 +5,7 @@ import 'package:nebula/src/controllers/training.controller.dart';
 import 'package:nebula/src/controllers/user.controller.dart';
 import 'package:nebula/src/views/pages/auth/loginPage.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:get_storage/get_storage.dart'; 
 
 void main() async {
   await GetStorage.init();

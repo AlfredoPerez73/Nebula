@@ -214,29 +214,42 @@ class EntrenamientoController extends GetxController {
     update();
   }
 
-  void seleccionarEntrenamiento(String id) {
-    try {
-      // Find the training with the matching ID
-      final entrenamientoEncontrado = _entrenamientos.firstWhere(
-        (entrenamiento) => entrenamiento.id == id,
-      );
-
-      // If found, set it as the current training
-      _entrenamientoActual = entrenamientoEncontrado;
-
-      // Save the last selected training ID to persistent storage
-      _firebaseService.guardarUltimoEntrenamientoSeleccionado(id);
-
-      // Notify listeners about the change
-      update();
-    } catch (e) {
-      // If no training with the given ID is found, select the first one if available
-      if (_entrenamientos.isNotEmpty) {
-        _entrenamientoActual = _entrenamientos.first;
-        _firebaseService
-            .guardarUltimoEntrenamientoSeleccionado(_entrenamientos.first.id);
-        update();
-      }
-    }
+  void seleccionarEntrenamiento(String id) async {
+  // Check if it's the same training already selected
+  if (_entrenamientoActual != null && _entrenamientoActual!.id == id) {
+    // Already selected - no need to do anything
+    return;
   }
+
+  try {
+    // Set loading state while we fetch the training details
+    _setEstadoCargando(true);
+    
+    // Find the training with the matching ID
+    final entrenamientoEncontrado = _entrenamientos.firstWhere(
+      (entrenamiento) => entrenamiento.id == id,
+    );
+
+    // If found, set it as the current training
+    _entrenamientoActual = entrenamientoEncontrado;
+
+    // Load the complete training data with exercises
+    await cargarEntrenamiento(id);
+
+    // Save the last selected training ID to persistent storage
+    _firebaseService.guardarUltimoEntrenamientoSeleccionado(id);
+
+  } catch (e) {
+    // If no training with the given ID is found, select the first one if available
+    if (_entrenamientos.isNotEmpty) {
+      _entrenamientoActual = _entrenamientos.first;
+      await cargarEntrenamiento(_entrenamientos.first.id);
+      _firebaseService
+          .guardarUltimoEntrenamientoSeleccionado(_entrenamientos.first.id);
+    }
+  } finally {
+    _setEstadoCargando(false);
+    update(); // Ensure UI is updated
+  }
+}
 }

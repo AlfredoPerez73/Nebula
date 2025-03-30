@@ -417,34 +417,121 @@ Widget _buildDaySelector() {
 }
 
   // Encabezado de ejercicios
-  Widget _buildExerciseHeader() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Ejercicios para ${controller.diaSeleccionado}',
-            style: titleStyle.copyWith(color: colorScheme.onBackground),
+  // Encabezado de ejercicios con funcionalidad "Borrar todos"
+Widget _buildExerciseHeader() {
+  return Padding(
+    padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          'Ejercicios para ${controller.diaSeleccionado}',
+          style: titleStyle.copyWith(color: colorScheme.onBackground),
+        ),
+        TextButton.icon(
+          icon: Icon(Icons.delete_sweep, color: colorScheme.error, size: 20),
+          label: Text(
+            'Borrar todos',
+            style: bodyStyle.copyWith(color: colorScheme.error),
           ),
-          TextButton.icon(
-            icon: Icon(Icons.delete_sweep, color: colorScheme.error, size: 20),
-            label: Text(
-              'Borrar todos',
-              style: bodyStyle.copyWith(color: colorScheme.error),
+          style: TextButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
-            style: TextButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            ),
-            onPressed: () {},
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           ),
-        ],
+          onPressed: () => _confirmarBorrarTodosEjercicios(Get.context!),  // Usa Get.context!
+        ),
+      ],
+    ),
+  );
+}
+
+// Método para confirmar y ejecutar la eliminación de todos los ejercicios del día
+void _confirmarBorrarTodosEjercicios(BuildContext context) {
+  // Verificar si hay ejercicios para eliminar
+  if (controller.ejerciciosPorDia.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        'No hay ejercicios para eliminar en ${controller.diaSeleccionado}',
+        style: bodyStyle.copyWith(color: Colors.white),
       ),
-    );
+      backgroundColor: colorScheme.secondary,
+    ));
+    return;
   }
+
+  // Mostrar diálogo de confirmación
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      backgroundColor: colorScheme.secondaryContainer,
+      title: Text('Eliminar todos los ejercicios', 
+          style: TextStyle(color: Colors.white)),
+      content: Text(
+        '¿Estás seguro de que deseas eliminar todos los ejercicios de ${controller.diaSeleccionado}? Esta acción no se puede deshacer.',
+        style: TextStyle(color: Colors.white),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text('Cancelar', style: TextStyle(color: Colors.white70)),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.red[700]),
+          onPressed: () {
+            _eliminarTodosEjercicios(context);
+            Navigator.pop(context);
+          },
+          child: Text('Eliminar todos', style: TextStyle(color: Colors.white)),
+        ),
+      ],
+    ),
+  );
+}
+
+// Método para eliminar todos los ejercicios del día seleccionado
+void _eliminarTodosEjercicios(BuildContext context) async {
+  try {
+    // Verificar si hay un entrenamiento seleccionado
+    if (controller.entrenamientoActual == null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          'No hay un entrenamiento seleccionado',
+          style: bodyStyle.copyWith(color: Colors.white),
+        ),
+        backgroundColor: colorScheme.error,
+      ));
+      return;
+    }
+
+    // Obtener una copia de la lista de ejercicios del día
+    final List<Ejercicio> ejerciciosParaEliminar = List.from(controller.ejerciciosPorDia);
+    
+    // Eliminar cada ejercicio uno por uno
+    for (var ejercicio in ejerciciosParaEliminar) {
+      await controller.eliminarEjercicio(ejercicio.id);
+    }
+    
+    // Mostrar mensaje de éxito
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        'Se han eliminado todos los ejercicios de ${controller.diaSeleccionado}',
+        style: bodyStyle.copyWith(color: Colors.white),
+      ),
+      backgroundColor: colorScheme.primary,
+    ));
+  } catch (e) {
+    // Mostrar mensaje de error
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        'Error al eliminar ejercicios: ${e.toString()}',
+        style: bodyStyle.copyWith(color: Colors.white),
+      ),
+      backgroundColor: colorScheme.error,
+    ));
+  }
+}
 
   // Lista de ejercicios
   Widget _buildExerciseList() {
@@ -792,48 +879,6 @@ Widget _buildDaySelector() {
                         Text(ejercicio['nombre']),
                       ],
                     ),
-                  );
-                }).toList(),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Selector de día
-              DropdownButtonFormField<String>(
-                dropdownColor: colorScheme.background,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: colorScheme.background.withOpacity(0.1),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  prefixIcon:
-                      Icon(Icons.calendar_today, color: colorScheme.primary),
-                  labelText: 'Día de Entrenamiento',
-                  labelStyle:
-                      bodyStyle.copyWith(color: colorScheme.onBackground),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                      borderSide: BorderSide(
-                          color: colorScheme.primary.withOpacity(0.3),
-                          width: 1.5)),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                      borderSide:
-                          BorderSide(color: colorScheme.primary, width: 2)),
-                ),
-                value: selectedDay,
-                style: bodyStyle.copyWith(color: colorScheme.onSurface),
-                icon: Icon(Icons.arrow_drop_down, color: colorScheme.primary),
-                onChanged: (String? newValue) {
-                  if (newValue != null) {
-                    selectedDay = newValue;
-                  }
-                },
-                items: diasSemanaCompletos
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
                   );
                 }).toList(),
               ),
