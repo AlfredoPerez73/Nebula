@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:amicons/amicons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -1333,6 +1335,13 @@ class _HomeScreenPageState extends State<HomeScreen> {
     final authController = Get.find<AuthController>();
     final entrenamientoController = Get.find<EntrenamientoController>();
 
+    // Paleta de colores premium
+    final Color primaryPurple = const Color(0xFF6A11CB); // Púrpura profundo
+    final Color secondaryPurple = const Color(0xFF8F6ED5); // Púrpura medio
+    final Color accentPurple = const Color(0xFFB39DDB); // Púrpura claro
+    final Color deepViolet = const Color(0xFF4527A0); // Violeta profundo
+    final Color lightPurple = const Color(0xFFD1C4E9); // Púrpura muy claro
+
     return GetBuilder<EntrenamientoController>(builder: (controller) {
       // Variables para calcular progreso
       double progresoExperiencia = 0.0;
@@ -1399,309 +1408,368 @@ class _HomeScreenPageState extends State<HomeScreen> {
       // Calcular progreso de series
       double progresoSeries = (maxSeries / metaSeries).clamp(0.0, 1.0);
 
-      // Colores para cada tipo de progreso
-      final Color colorExperiencia = const Color(0xFF8E44AD); // Morado
-      final Color colorRepeticiones = const Color(0xFFE67E22); // Naranja
-      final Color colorFavorito = const Color(0xFF2ECC71); // Verde
-
       return Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          color: _primaryColor.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(28),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white.withOpacity(0.05),
+              Colors.white.withOpacity(0.02),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(32),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
+              color: Colors.black.withOpacity(0.07),
+              blurRadius: 20,
               spreadRadius: 0,
-              offset: const Offset(0, 5),
+              offset: const Offset(0, 10),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(28),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header con fondo de degradado
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(25, 25, 25, 30),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      colorExperiencia,
-                      colorExperiencia.withOpacity(0.7),
-                    ],
+          borderRadius: BorderRadius.circular(32),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header con fondo de degradado
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.fromLTRB(30, 30, 30, 35),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        primaryPurple,
+                        deepViolet,
+                      ],
+                      stops: const [0.2, 1.0],
+                    ),
                   ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          "Tu Progreso",
-                          style: TextStyle(
-                            fontSize: 26,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                            letterSpacing: 0.5,
-                            shadows: [
-                              Shadow(
-                                offset: Offset(0, 1),
-                                blurRadius: 3,
-                                color: Colors.black26,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.15),
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                child: const Icon(
+                                  Amicons.remix_line_chart,
+                                  color: Colors.white,
+                                  size: 22,
+                                ),
+                              ),
+                              const SizedBox(width: 15),
+                              const Text(
+                                "PROGRESO",
+                                style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white,
+                                  letterSpacing: 1.2,
+                                  shadows: [
+                                    Shadow(
+                                      offset: Offset(0, 1),
+                                      blurRadius: 3,
+                                      color: Colors.black26,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(50),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 7),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(30),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.3),
+                                width: 1,
+                              ),
+                            ),
+                            child: Text(
+                              nivelActual.capitalizeFirst ?? "Principiante",
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                                letterSpacing: 0.4,
+                              ),
+                            ),
                           ),
-                          padding: const EdgeInsets.all(10),
-                          child: const Icon(
-                            Amicons.remix_line_chart,
-                            color: Colors.white,
-                            size: 24,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(20),
+                        ],
                       ),
-                      child: Text(
-                        "Nivel: ${nivelActual.capitalizeFirst}",
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+                      const SizedBox(height: 22),
+                      const Text(
+                        "Monitorea tus avances en cada área de entrenamiento",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
                           color: Colors.white,
-                          letterSpacing: 0.5,
+                          height: 1.4,
+                          letterSpacing: 0.3,
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
 
-              // Contenido - Trackers de progreso
-              Padding(
-                padding: const EdgeInsets.all(25),
-                child: Column(
-                  children: [
-                    _buildEnhancedProgressTracker(
-                      title: "Nivel de experiencia",
-                      current: nivelActual.capitalizeFirst ?? "Principiante",
-                      change: _getMensajeMotivacional(nivelActual),
-                      progress: progresoExperiencia,
-                      color: colorExperiencia,
-                      icon: Amicons.lucide_dumbbell,
-                    ),
-                    const SizedBox(height: 20),
-                    _buildEnhancedProgressTracker(
-                      title: "Repeticiones totales",
-                      current: "$totalRepeticiones reps",
-                      change: "Meta: $metaRepeticiones",
-                      progress: progresoRepeticiones,
-                      color: colorRepeticiones,
-                      icon: Amicons.remix_repeat,
-                    ),
-                    const SizedBox(height: 20),
-                    _buildEnhancedProgressTracker(
-                      title: "Ejercicio favorito",
-                      current: ejercicioFavorito,
-                      change: "$maxSeries de $metaSeries series",
-                      progress: progresoSeries,
-                      color: colorFavorito,
-                      icon: Amicons.remix_heart_pulse,
-                    ),
-                  ],
+                // Card Section
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      _buildPremiumProgressCard(
+                        title: "Experiencia",
+                        value: nivelActual.capitalizeFirst ?? "Principiante",
+                        detail: _getMensajeMotivacional(nivelActual),
+                        progress: progresoExperiencia,
+                        color: primaryPurple,
+                        baseColor: secondaryPurple,
+                        icon: Amicons.lucide_dumbbell,
+                      ),
+                      const SizedBox(height: 20),
+                      _buildPremiumProgressCard(
+                        title: "Total de Reps",
+                        value: "$totalRepeticiones reps",
+                        detail: "Meta: $metaRepeticiones",
+                        progress: progresoRepeticiones,
+                        color: secondaryPurple,
+                        baseColor: primaryPurple,
+                        icon: Amicons.remix_repeat,
+                      ),
+                      const SizedBox(height: 20),
+                      _buildPremiumProgressCard(
+                        title: "Ejercicio favorito",
+                        value: ejercicioFavorito,
+                        detail: "$maxSeries de $metaSeries series",
+                        progress: progresoSeries,
+                        color: accentPurple,
+                        baseColor: deepViolet,
+                        icon: Amicons.remix_heart_pulse,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
     });
   }
 
-  Widget _buildEnhancedProgressTracker({
+  Widget _buildPremiumProgressCard({
     required String title,
-    required String current,
-    required String change,
+    required String value,
+    required String detail,
     required double progress,
     required Color color,
+    required Color baseColor,
     required IconData icon,
   }) {
-    // Determinar si el cambio es positivo o una meta
-    bool isPositiveChange = change.contains('+');
-    bool isGoal = change.contains('Meta:') || change.contains('de');
+    // Color del texto basado en si es una meta o un mensaje motivacional
+    bool isGoal = detail.contains('Meta:') || detail.contains('de');
 
-    Color changeColor =
-        isPositiveChange ? Colors.green : (isGoal ? Colors.amber : Colors.red);
+    Color textColor = Colors.white;
+    Color accentTextColor =
+        isGoal ? const Color(0xFFF1C40F) : const Color(0xFF2ECC71);
 
     return Container(
-      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.white,
-            Colors.grey[50]!,
+            baseColor.withOpacity(0.95),
+            color.withOpacity(0.85),
           ],
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.15),
-            blurRadius: 10,
-            spreadRadius: 0,
-            offset: const Offset(0, 3),
+            color: baseColor.withOpacity(0.25),
+            blurRadius: 15,
+            spreadRadius: 1,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 24,
-                ),
+          // Parte superior con fondo de cristal
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(24),
+                topRight: Radius.circular(24),
               ),
-              const SizedBox(width: 15),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+            child: Row(
+              children: [
+                // Círculo de progreso
+                Stack(
+                  alignment: Alignment.center,
                   children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black.withOpacity(0.8),
-                        fontWeight: FontWeight.w600,
+                    SizedBox(
+                      width: 70,
+                      height: 70,
+                      child: CircularProgressIndicator(
+                        value: progress,
+                        strokeWidth: 6,
+                        backgroundColor: Colors.white.withOpacity(0.2),
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      current,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: color,
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.15),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 5,
+                            spreadRadius: 0,
+                            offset: const Offset(0, 1),
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        icon,
+                        color: Colors.white,
+                        size: 25,
                       ),
                     ),
                   ],
                 ),
-              ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: changeColor.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: changeColor.withOpacity(0.3),
-                    width: 1,
-                  ),
-                ),
-                child: Text(
-                  change,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: changeColor,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 18),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Progreso",
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black.withOpacity(0.6),
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  '${(progress * 100).toStringAsFixed(0)}%',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: color,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Stack(
-            children: [
-              // Fondo de la barra de progreso
-              Container(
-                height: 10,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              // Barra de progreso
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 500),
-                height: 10,
-                width: progress * 100.0,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [
-                      color,
-                      Color.lerp(color, Colors.white, 0.3) ?? color,
+                const SizedBox(width: 20),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            title,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.2,
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              "${(progress * 100).toStringAsFixed(0)}%",
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        value,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Container(
+                            width: 6,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              color: accentTextColor,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            detail,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: accentTextColor,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: color.withOpacity(0.3),
-                      blurRadius: 3,
-                      offset: const Offset(0, 1),
-                    ),
-                  ],
                 ),
+              ],
+            ),
+          ),
+
+          // Barra de progreso
+          Container(
+            height: 10,
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(24),
+                bottomRight: Radius.circular(24),
               ),
-            ],
+            ),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(24),
+                bottomRight: Radius.circular(24),
+              ),
+              child: Stack(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    color: Colors.white.withOpacity(0.15),
+                  ),
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 800),
+                    curve: Curves.easeOutQuart,
+                    width: progress * double.infinity,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          Colors.white.withOpacity(0.8),
+                          Colors.white,
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),

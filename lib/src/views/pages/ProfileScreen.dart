@@ -6,8 +6,6 @@ import 'package:nebula/src/views/pages/iMCCalculatorPage.dart';
 import 'package:nebula/src/widgets/charts.dart';
 import '../../controllers/user.controller.dart';
 import 'package:amicons/amicons.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:intl/intl.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
