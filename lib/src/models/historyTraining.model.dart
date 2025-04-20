@@ -1,19 +1,19 @@
-import 'package:nebula/src/models/exercises.model.dart';
+import 'package:nebula/src/models/historyExercises.model.dart';
 
-class Entrenamiento {
+class HistoryEntrenamiento {
   final String id;
   final String usuarioId;
   final String nombre;
-  final List<Ejercicio> _ejercicios;
+  final List<HistoryEjercicio> _ejercicios;
 
   // Getter para acceder a una copia inmutable de la lista de ejercicios
-  List<Ejercicio> get ejercicios => List.unmodifiable(_ejercicios);
+  List<HistoryEjercicio> get ejercicios => List.unmodifiable(_ejercicios);
 
-  Entrenamiento({
+  HistoryEntrenamiento({
     required this.id,
     required this.usuarioId,
     required this.nombre,
-    List<Ejercicio>? ejercicios,
+    List<HistoryEjercicio>? ejercicios,
   }) : _ejercicios = ejercicios ?? [];
 
   Map<String, dynamic> toMap() {
@@ -34,9 +34,10 @@ class Entrenamiento {
     };
   }
 
-  static Entrenamiento fromFirestore(Map<String, dynamic> data, String id,
-      {List<Ejercicio>? ejercicios}) {
-    return Entrenamiento(
+  static HistoryEntrenamiento fromFirestore(
+      Map<String, dynamic> data, String id,
+      {List<HistoryEjercicio>? ejercicios}) {
+    return HistoryEntrenamiento(
       id: id,
       usuarioId: data['usuarioId'] ?? '',
       nombre: data['nombre'] ?? '',

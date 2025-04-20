@@ -320,7 +320,7 @@ class _WorkoutHistoryPageState extends State<WorkoutHistoryPage> {
       {
         "date": DateTime.now().subtract(const Duration(days: 1)),
         "name": "Entrenamiento de fuerza",
-        "duration": "45 min",
+        "duration": "18 series",
         "exercises": 8,
         "type": "Fuerza",
         "icon": Icons.fitness_center,
@@ -329,7 +329,7 @@ class _WorkoutHistoryPageState extends State<WorkoutHistoryPage> {
       {
         "date": DateTime.now().subtract(const Duration(days: 3)),
         "name": "Cardio HIIT",
-        "duration": "30 min",
+        "duration": "18 series",
         "exercises": 6,
         "type": "Cardio",
         "icon": Icons.directions_run,
@@ -338,7 +338,7 @@ class _WorkoutHistoryPageState extends State<WorkoutHistoryPage> {
       {
         "date": DateTime.now().subtract(const Duration(days: 5)),
         "name": "Yoga matutino",
-        "duration": "50 min",
+        "duration": "18 series",
         "exercises": 10,
         "type": "Flexibilidad",
         "icon": Icons.self_improvement,
@@ -347,7 +347,7 @@ class _WorkoutHistoryPageState extends State<WorkoutHistoryPage> {
       {
         "date": DateTime.now().subtract(const Duration(days: 7)),
         "name": "Entrenamiento completo",
-        "duration": "60 min",
+        "duration": "18 series",
         "exercises": 12,
         "type": "Personalizado",
         "icon": Amicons.iconly_add_user_curved_fill,
@@ -544,28 +544,28 @@ class _WorkoutHistoryPageState extends State<WorkoutHistoryPage> {
         "name": "Sentadillas",
         "series": 4,
         "reps": "12",
-        "weight": "50kg",
+        "Dia": "Miercoles",
         "completed": true,
       },
       {
         "name": "Peso muerto",
         "series": 3,
         "reps": "10",
-        "weight": "60kg",
+        "Dia": "Miercoles",
         "completed": true,
       },
       {
         "name": "Press de banca",
         "series": 4,
         "reps": "8",
-        "weight": "45kg",
+        "Dia": "Lunes",
         "completed": true,
       },
       {
         "name": "Elevaciones laterales",
         "series": 3,
         "reps": "15",
-        "weight": "8kg",
+        "Dia": "Lunes",
         "completed": true,
       },
     ];
@@ -675,11 +675,6 @@ class _WorkoutHistoryPageState extends State<WorkoutHistoryPage> {
                         Icons.fitness_center,
                         "$exercises",
                         "Ejercicios",
-                      ),
-                      _buildWorkoutDetailStat(
-                        Icons.local_fire_department,
-                        "320",
-                        "Calorías",
                       ),
                     ],
                   ),
@@ -853,8 +848,7 @@ class _WorkoutHistoryPageState extends State<WorkoutHistoryPage> {
                     _buildExerciseDetail(
                         "${exercise["reps"]} reps", Icons.format_list_numbered),
                     const SizedBox(width: 15),
-                    _buildExerciseDetail(
-                        exercise["weight"], Icons.fitness_center),
+                    _buildExerciseDetail(exercise["Dia"], Icons.view_day),
                   ],
                 ),
               ],

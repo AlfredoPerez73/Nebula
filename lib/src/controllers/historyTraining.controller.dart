@@ -1,21 +1,22 @@
 import 'package:get/get.dart';
-import 'package:nebula/src/models/exercises.model.dart';
-import 'package:nebula/src/models/training.model.dart';
-import 'package:nebula/src/services/training.services.dart';
+import 'package:nebula/src/models/historyExercises.model.dart';
+import 'package:nebula/src/models/historyTraining.model.dart';
+import 'package:nebula/src/services/historyTraining.services.dart';
 
-class EntrenamientoController extends GetxController {
+class HistoryEntrenamientoController extends GetxController {
   final FirebaseService _firebaseService = FirebaseService();
 
   // Estado
-  List<Entrenamiento> _entrenamientos = [];
-  Entrenamiento? _entrenamientoActual;
+  List<HistoryEntrenamiento> _entrenamientos = [];
+  HistoryEntrenamiento? _entrenamientoActual;
   bool _cargando = false;
   String? _error;
 
   // Getters
-  List<Entrenamiento> get entrenamientos => _entrenamientos;
-  Entrenamiento? get entrenamientoActual => _entrenamientoActual;
-  List<Ejercicio> get ejercicios => _entrenamientoActual?.ejercicios ?? [];
+  List<HistoryEntrenamiento> get entrenamientos => _entrenamientos;
+  HistoryEntrenamiento? get entrenamientoActual => _entrenamientoActual;
+  List<HistoryEjercicio> get ejercicios =>
+      _entrenamientoActual?.ejercicios ?? [];
   bool get cargando => _cargando;
   String? get error => _error;
   bool get tieneError => _error != null;
@@ -37,7 +38,7 @@ class EntrenamientoController extends GetxController {
   }
 
   // Método para obtener ejercicios por el día seleccionado
-  List<Ejercicio> get ejerciciosPorDia {
+  List<HistoryEjercicio> get ejerciciosPorDia {
     return ejercicios
         .where((e) => e.dia.toLowerCase() == diaSeleccionado.toLowerCase())
         .toList();
@@ -92,7 +93,7 @@ class EntrenamientoController extends GetxController {
   }
 
   // Agregar un ejercicio al entrenamiento actual
-  Future<void> agregarEjercicio(Ejercicio ejercicio) async {
+  Future<void> agregarEjercicio(HistoryEjercicio ejercicio) async {
     if (_entrenamientoActual == null) {
       _error = "No hay un entrenamiento seleccionado";
       update();
@@ -116,69 +117,8 @@ class EntrenamientoController extends GetxController {
     }
   }
 
-  // Eliminar un ejercicio del entrenamiento actual
-  Future<void> eliminarEjercicio(String ejercicioId) async {
-    if (_entrenamientoActual == null) {
-      _error = "No hay un entrenamiento seleccionado";
-      update();
-      return;
-    }
-
-    _setEstadoCargando(true);
-    try {
-      await _firebaseService.eliminarEjercicioDeEntrenamiento(
-          _entrenamientoActual!.id, ejercicioId);
-
-      // Recargar el entrenamiento para reflejar los cambios
-      await cargarEntrenamiento(_entrenamientoActual!.id);
-      _error = null;
-      update();
-    } catch (e) {
-      _error = "Error al eliminar ejercicio: ${e.toString()}";
-      update();
-    } finally {
-      _setEstadoCargando(false);
-    }
-  }
-
-  // Eliminar un entrenamiento completo
-  Future<void> eliminarEntrenamiento(String entrenamientoId) async {
-    _setEstadoCargando(true);
-    try {
-      // Primero obtener todos los ejercicios del entrenamiento
-      Entrenamiento? entrenamiento =
-          await _firebaseService.obtenerEntrenamiento(entrenamientoId);
-
-      if (entrenamiento != null) {
-        // Eliminar cada ejercicio
-        for (var ejercicio in entrenamiento.ejercicios) {
-          await _firebaseService.eliminarEjercicioDeEntrenamiento(
-              entrenamientoId, ejercicio.id);
-        }
-
-        // Ahora eliminar el documento del entrenamiento
-        await _firebaseService.eliminarEntrenamiento(entrenamientoId);
-
-        // Si el entrenamiento eliminado era el actual, limpiarlo
-        if (_entrenamientoActual?.id == entrenamientoId) {
-          _entrenamientoActual = null;
-        }
-
-        // Recargar la lista de entrenamientos
-        await cargarEntrenamientos();
-        _error = null;
-        update();
-      }
-    } catch (e) {
-      _error = "Error al eliminar entrenamiento: ${e.toString()}";
-      update();
-    } finally {
-      _setEstadoCargando(false);
-    }
-  }
-
   // Actualizar un ejercicio existente
-  Future<void> actualizarEjercicio(Ejercicio ejercicio) async {
+  Future<void> actualizarEjercicio(HistoryEjercicio ejercicio) async {
     if (_entrenamientoActual == null) {
       _error = "No hay un entrenamiento seleccionado";
       update();
@@ -214,17 +154,8 @@ class EntrenamientoController extends GetxController {
     update();
   }
 
-  void seleccionarEntrenamiento(String id) async {
-    // Check if it's the same training already selected
-    if (_entrenamientoActual != null && _entrenamientoActual!.id == id) {
-      // Already selected - no need to do anything
-      return;
-    }
-
+  void seleccionarEntrenamiento(String id) {
     try {
-      // Set loading state while we fetch the training details
-      _setEstadoCargando(true);
-
       // Find the training with the matching ID
       final entrenamientoEncontrado = _entrenamientos.firstWhere(
         (entrenamiento) => entrenamiento.id == id,
@@ -233,22 +164,19 @@ class EntrenamientoController extends GetxController {
       // If found, set it as the current training
       _entrenamientoActual = entrenamientoEncontrado;
 
-      // Load the complete training data with exercises
-      await cargarEntrenamiento(id);
-
       // Save the last selected training ID to persistent storage
       _firebaseService.guardarUltimoEntrenamientoSeleccionado(id);
+
+      // Notify listeners about the change
+      update();
     } catch (e) {
       // If no training with the given ID is found, select the first one if available
       if (_entrenamientos.isNotEmpty) {
         _entrenamientoActual = _entrenamientos.first;
-        await cargarEntrenamiento(_entrenamientos.first.id);
         _firebaseService
             .guardarUltimoEntrenamientoSeleccionado(_entrenamientos.first.id);
+        update();
       }
-    } finally {
-      _setEstadoCargando(false);
-      update(); // Ensure UI is updated
     }
   }
 }
