@@ -4,11 +4,12 @@ import 'package:amicons/amicons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nebula/src/controllers/training.controller.dart';
+import 'package:nebula/src/views/pages/ProfileScreen.dart';
 import 'package:nebula/src/views/pages/editProfilePageSkills.dart';
 import 'package:nebula/src/views/pages/iMCCalculatorPage.dart';
+import 'package:nebula/src/views/pages/exercisesPage.dart';
 import 'package:nebula/src/views/pages/routinesPage.dart';
 import '../controllers/user.controller.dart';
-import 'pages/profileScreen.dart';
 import 'pages/exercisesPage.dart';
 import '../utils/navigate_bar.dart';
 
@@ -1554,7 +1555,7 @@ class _HomeScreenPageState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 20),
                       _buildPremiumProgressCard(
-                        title: "Ejercicio favorito",
+                        title: "Ejercicio fav",
                         value: ejercicioFavorito,
                         detail: "$maxSeries de $metaSeries series",
                         progress: progresoSeries,

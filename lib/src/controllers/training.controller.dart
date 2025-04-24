@@ -1,8 +1,9 @@
 import 'package:get/get.dart';
 import 'package:nebula/src/models/exercises.model.dart';
+import 'package:nebula/src/models/historyExercises.model.dart';
 import 'package:nebula/src/models/training.model.dart';
 import 'package:nebula/src/services/training.services.dart';
-
+import 'package:nebula/src/controllers/historyTraining.controller.dart';
 class EntrenamientoController extends GetxController {
   final FirebaseService _firebaseService = FirebaseService();
 
@@ -58,22 +59,36 @@ class EntrenamientoController extends GetxController {
   }
 
   // Crear un nuevo entrenamiento
-  Future<String?> crearEntrenamiento(String nombre) async {
-    _setEstadoCargando(true);
+Future<String?> crearEntrenamiento(String nombre) async {
+  _setEstadoCargando(true);
+  try {
+    String id = await _firebaseService.crearEntrenamiento(nombre);
+    
+    // Ahora intentamos sincronizar con el historial
     try {
-      String id = await _firebaseService.crearEntrenamiento(nombre);
-      await cargarEntrenamientos(); // Recargar la lista
-      _error = null;
-      update();
-      return id;
+      if (Get.isRegistered<HistoryEntrenamientoController>()) {
+        final historyController = Get.find<HistoryEntrenamientoController>();
+        
+        // Usamos cargarEntrenamientos en lugar de llamar a crearEntrenamientoExplicito
+        await historyController.cargarEntrenamientos();
+      }
     } catch (e) {
-      _error = "Error al crear entrenamiento: ${e.toString()}";
-      update();
-      return null;
-    } finally {
-      _setEstadoCargando(false);
+      print("Error sincronizando con historial: $e");
     }
+    
+    await cargarEntrenamientos();
+    _error = null;
+    update();
+    
+    return id;
+  } catch (e) {
+    _error = "Error al crear entrenamiento: ${e.toString()}";
+    update();
+    return null;
+  } finally {
+    _setEstadoCargando(false);
   }
+}
 
   // Cargar un entrenamiento específico con sus ejercicios
   Future<void> cargarEntrenamiento(String entrenamientoId) async {
@@ -92,29 +107,52 @@ class EntrenamientoController extends GetxController {
   }
 
   // Agregar un ejercicio al entrenamiento actual
-  Future<void> agregarEjercicio(Ejercicio ejercicio) async {
-    if (_entrenamientoActual == null) {
-      _error = "No hay un entrenamiento seleccionado";
-      update();
-      return;
-    }
-
-    _setEstadoCargando(true);
-    try {
-      await _firebaseService.agregarEjercicioAEntrenamiento(
-          _entrenamientoActual!.id, ejercicio);
-
-      // Recargar el entrenamiento para obtener los cambios
-      await cargarEntrenamiento(_entrenamientoActual!.id);
-      _error = null;
-      update();
-    } catch (e) {
-      _error = "Error al agregar ejercicio: ${e.toString()}";
-      update();
-    } finally {
-      _setEstadoCargando(false);
-    }
+// Agregar un ejercicio al entrenamiento actual
+Future<void> agregarEjercicio(Ejercicio ejercicio) async {
+  if (_entrenamientoActual == null) {
+    _error = "No hay un entrenamiento seleccionado";
+    update();
+    return;
   }
+
+  _setEstadoCargando(true);
+  try {
+    // Primero, agregar el ejercicio al entrenamiento actual
+    await _firebaseService.agregarEjercicioAEntrenamiento(
+        _entrenamientoActual!.id, ejercicio);
+
+    // Luego, intentar sincronizar con el historial
+    try {
+      if (Get.isRegistered<HistoryEntrenamientoController>()) {
+        final historyController = Get.find<HistoryEntrenamientoController>();
+        
+        // Convertir el ejercicio normal a ejercicio de historial
+        final historyEjercicio = HistoryEjercicio(
+          id: ejercicio.id,
+          nombre: ejercicio.nombre,
+          dia: ejercicio.dia,
+          series: ejercicio.series,
+          repeticiones: ejercicio.repeticiones,
+        );
+        
+        // Solo actualizar el historial, sin tratar de usar métodos específicos
+        await historyController.cargarEntrenamientos();
+      }
+    } catch (e) {
+      print("Error sincronizando con historial: $e");
+    }
+
+    // Recargar el entrenamiento para obtener los cambios
+    await cargarEntrenamiento(_entrenamientoActual!.id);
+    _error = null;
+    update();
+  } catch (e) {
+    _error = "Error al agregar ejercicio: ${e.toString()}";
+    update();
+  } finally {
+    _setEstadoCargando(false);
+  }
+}
 
   // Eliminar un ejercicio del entrenamiento actual
   Future<void> eliminarEjercicio(String ejercicioId) async {

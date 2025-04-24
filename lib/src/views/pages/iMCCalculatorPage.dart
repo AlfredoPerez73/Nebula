@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:amicons/amicons.dart';
-import 'package:nebula/src/views/pages/profileScreen.dart';
+import 'package:nebula/src/views/pages/ProfileScreen.dart';
 import '../../controllers/user.controller.dart';
 
 class BMICalculatorPage extends StatefulWidget {
@@ -24,7 +24,7 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
   @override
   void initState() {
     super.initState();
-    // Cargar datos del usuario automáticamente
+    // Cargar datos del usuario automáticamentea
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadUserDataAndCalculate();
     });

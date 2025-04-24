@@ -71,99 +71,104 @@ class Routinespage extends StatelessWidget {
   Routinespage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    // Configuración del sistema para UI inmersiva
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: colorScheme.background,
-      systemNavigationBarIconBrightness: Brightness.light,
-    ));
+@override
+Widget build(BuildContext context) {
+  // Configuración del sistema para UI inmersiva
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    statusBarIconBrightness: Brightness.light,
+    systemNavigationBarColor: colorScheme.background,
+    systemNavigationBarIconBrightness: Brightness.light,
+  ));
 
-    return Scaffold(
-      backgroundColor: colorScheme.background,
-      body: Container(
-        height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              colorScheme.background,
-              colorScheme.background.withOpacity(0.85),
-              colorScheme.primaryContainer.withOpacity(0.3),
-            ],
-            stops: const [0.1, 0.5, 1.0],
-          ),
-        ),
-        child: Stack(
-          children: [
-            // Elementos decorativos en el fondo
-            Positioned(
-              top: -120,
-              right: -100,
-              child: Container(
-                height: 250,
-                width: 250,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: colorScheme.primary.withOpacity(0.04),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: -80,
-              left: -60,
-              child: Container(
-                height: 200,
-                width: 200,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: colorScheme.primary.withOpacity(0.05),
-                ),
-              ),
-            ),
-
-            SafeArea(
-              child: Column(
-                children: [
-                  _buildEnhancedAppBar(context),
-                  Expanded(
-                    child: GetBuilder<EntrenamientoController>(
-                      init: controller,
-                      builder: (controller) {
-                        // Si está en proceso de carga, mostrar indicador
-                        if (controller.cargando) {
-                          return _buildEnhancedLoadingState();
-                        }
-
-                        // Si hay error, limpiar y reintentar
-                        if (controller.tieneError) {
-                          controller.limpiarError();
-                          controller.cargarEntrenamientos();
-                          return _buildEnhancedLoadingState(); // Mostrar carga mientras reintenta
-                        }
-
-                        // Si los datos ya se inicializaron pero están vacíos, mostrar estado vacío
-                        if (controller.entrenamientos.isEmpty) {
-                          return _buildEnhancedEmptyState(context);
-                        }
-
-                        // Si hay datos, mostrar el contenido
-                        return _buildEnhancedContent();
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
+  return Scaffold(
+    backgroundColor: colorScheme.background,
+    resizeToAvoidBottomInset: false, // Soluciona el problema de la navbar
+    body: Container(
+      height: double.infinity,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            colorScheme.background,
+            colorScheme.background.withOpacity(0.85),
+            colorScheme.primaryContainer.withOpacity(0.3),
           ],
+          stops: const [0.1, 0.5, 1.0],
         ),
       ),
-      floatingActionButton: _buildEnhancedFloatingButton(context),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-    );
-  }
+      child: Stack(
+        children: [
+          // Elementos decorativos en el fondo
+          Positioned(
+            top: -120,
+            right: -100,
+            child: Container(
+              height: 250,
+              width: 250,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: colorScheme.primary.withOpacity(0.04),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: -80,
+            left: -60,
+            child: Container(
+              height: 200,
+              width: 200,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: colorScheme.primary.withOpacity(0.05),
+              ),
+            ),
+          ),
+
+          SafeArea(
+            child: Column(
+              children: [
+                _buildEnhancedAppBar(context),
+                Expanded(
+                  child: GetBuilder<EntrenamientoController>(
+                    init: controller,
+                    builder: (controller) {
+                      // Si está en proceso de carga, mostrar indicador
+                      if (controller.cargando) {
+                        return _buildEnhancedLoadingState();
+                      }
+
+                      // Si hay error, limpiar y reintentar
+                      if (controller.tieneError) {
+                        controller.limpiarError();
+                        controller.cargarEntrenamientos();
+                        return _buildEnhancedLoadingState(); // Mostrar carga mientras reintenta
+                      }
+
+                      // Si los datos ya se inicializaron pero están vacíos, mostrar estado vacío
+                      if (controller.entrenamientos.isEmpty) {
+                        return _buildEnhancedEmptyState(context);
+                      }
+
+                      // Si hay datos, mostrar el contenido
+                      return _buildEnhancedContent();
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+    // Modificado: Muestra el botón cuando hay entrenamientos disponibles
+    floatingActionButton: controller.entrenamientos.isNotEmpty 
+        ? _buildEnhancedFloatingButton(context) 
+        : null,
+    floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+  );
+}
 
   // FAB Mejorado
   Widget _buildEnhancedFloatingButton(BuildContext context) {
@@ -264,7 +269,7 @@ class Routinespage extends StatelessWidget {
               ),
               const SizedBox(width: 15),
               Text(
-                'Programación de Rutina',
+                'Programa tu Rutina',
                 style: titleStyle.copyWith(
                   color: colorScheme.onSurface,
                   fontWeight: FontWeight.w800,
@@ -762,7 +767,7 @@ class Routinespage extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Text(
-                'Ejers. para ${controller.diaSeleccionado}',
+                '${controller.diaSeleccionado}',
                 style: subtitleStyle.copyWith(
                   color: colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
@@ -793,7 +798,7 @@ class Routinespage extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        'Borrar todos',
+                        'Borrar Todos',
                         style: bodyStyle.copyWith(
                           color: colorScheme.error,
                           fontWeight: FontWeight.w600,
@@ -862,120 +867,117 @@ class Routinespage extends StatelessWidget {
   }
 
   // Tarjeta de ejercicio rediseñada
-  Widget _buildEnhancedEjercicioCard(
-      BuildContext context, Ejercicio ejercicio) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            colorScheme.surface.withOpacity(0.95),
-            colorScheme.surface.withOpacity(0.85),
-          ],
+Widget _buildEnhancedEjercicioCard(
+    BuildContext context, Ejercicio ejercicio) {
+  return Container(
+    margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: colorScheme.surface.withOpacity(0.7),
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.1),
+          blurRadius: 6,
+          offset: const Offset(0, 3),
         ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.15),
-            blurRadius: 8,
-            spreadRadius: 0,
-            offset: const Offset(0, 3),
+      ],
+    ),
+    child: Row(
+      children: [
+        // Ícono de ejercicio
+        Container(
+          width: 46,
+          height: 46,
+          decoration: BoxDecoration(
+            color: colorScheme.primary.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(12),
           ),
-        ],
-        border: Border.all(
-          color: colorScheme.primary.withOpacity(0.15),
-          width: 1.5,
+          child: Center(
+            child: Icon(
+              Amicons.flaticon_gym_rounded_fill,
+              color: colorScheme.primary,
+              size: 24,
+            ),
+          ),
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
+
+        const SizedBox(width: 12),
+
+        // Información del ejercicio
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                ejercicio.nombre,
+                style: subtitleStyle.copyWith(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.onSurface,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '${ejercicio.series} series × ${ejercicio.repeticiones} repeticiones',
+                
+                style: bodyStyle.copyWith(
+                  fontSize: 12,
+                  color: colorScheme.onSurface.withOpacity(0.7),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // Botones de acción
+        Row(
           children: [
-            // Icono del ejercicio
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    colorScheme.primary.withOpacity(0.3),
-                    colorScheme.primary.withOpacity(0.1),
-                  ],
-                ),
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: Icon(
-                  Amicons.flaticon_gym_rounded_fill,
-                  color: colorScheme.primary,
-                  size: 28,
-                ),
-              ),
+            _buildCompactActionButton(
+              icon: Amicons.iconly_edit_curved_fill,
+              color: colorScheme.secondary,
+              onTap: () => _mostrarDialogoEditarEjercicio(context, ejercicio),
             ),
-
-            const SizedBox(width: 16),
-
-            // Detalles del ejercicio
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    ejercicio.nombre,
-                    style: subtitleStyle.copyWith(
-                      color: colorScheme.onSurface,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: colorScheme.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      '${ejercicio.series} series × ${ejercicio.repeticiones} repeticiones',
-                      style: bodyStyle.copyWith(
-                        color: colorScheme.onBackground.withOpacity(0.9),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Botones de acción
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildActionButton(
-                  Amicons.iconly_edit_curved_fill,
-                  colorScheme.secondary,
-                  () => _mostrarDialogoEditarEjercicio(context, ejercicio),
-                  'Editar',
-                ),
-                const SizedBox(width: 8),
-                _buildActionButton(
-                  Amicons.iconly_delete_curved_fill,
-                  colorScheme.error,
-                  () => _confirmarEliminarEjercicio(context, ejercicio.id),
-                  'Eliminar',
-                ),
-              ],
+            const SizedBox(width: 8),
+            _buildCompactActionButton(
+              icon: Amicons.iconly_delete_curved_fill,
+              color: colorScheme.error,
+              onTap: () => _confirmarEliminarEjercicio(context, ejercicio.id),
             ),
           ],
         ),
+      ],
+    ),
+  );
+}
+
+// Nuevo método para botones de acción compactos
+Widget _buildCompactActionButton({
+  required IconData icon,
+  required Color color,
+  required VoidCallback onTap,
+}) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      width: 36,
+      height: 36,
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(10),
       ),
-    );
-  }
+      child: Center(
+        child: Icon(
+          icon,
+          color: color,
+          size: 20,
+        ),
+      ),
+    ),
+  );
+}
 
   // Botón de acción para tarjetas de ejercicio
   Widget _buildActionButton(
@@ -1253,8 +1255,7 @@ class Routinespage extends StatelessWidget {
                             if (nombreController.text.isNotEmpty) {
                               controller
                                   .crearEntrenamiento(nombreController.text);
-                              hcontroller
-                                  .crearEntrenamiento(nombreController.text);
+
                               Navigator.pop(context);
                             }
                           },
@@ -1284,42 +1285,340 @@ class Routinespage extends StatelessWidget {
     );
   }
 
-  // Diálogo para agregar ejercicio mejorado
-  void _mostrarDialogoAgregarEjercicio(BuildContext context) {
+  // NUEVO: Modificación del método para implementar la selección de ejercicios en dos pasos
+  // Diálogo de agregar ejercicio con filtro funcional
+void _mostrarDialogoAgregarEjercicio(BuildContext context) {
+  // Lista completa de ejercicios predefinidos
+  final List<Map<String, dynamic>> ejerciciosPredefinidos = [
+    // Piernas
+    {'nombre': 'Sentadilla', 'icono': Amicons.lucide_activity},
+    {'nombre': 'Sentadilla Hack', 'icono': Amicons.lucide_activity},
+    {'nombre': 'Sentadilla Búlgara', 'icono': Amicons.lucide_activity},
+    {'nombre': 'Lunge Estático', 'icono': Amicons.lucide_activity},
+    {'nombre': 'Sentadilla Frontal', 'icono': Amicons.lucide_activity},
+    {'nombre': 'Sentadilla Platz', 'icono': Amicons.lucide_activity},
+    {'nombre': 'Sentadilla Zercher', 'icono': Amicons.lucide_activity},
+    {'nombre': 'Curl de Piernas', 'icono': Amicons.lucide_activity},
+    {'nombre': 'Extensión de Piernas', 'icono': Amicons.lucide_activity},
+    {'nombre': 'Prensa de Piernas', 'icono': Amicons.lucide_activity},
+    {'nombre': 'Zancadas', 'icono': Amicons.lucide_activity},
+    {'nombre': 'Elevación de Talones', 'icono': Amicons.lucide_activity},
+    {'nombre': 'Elevación de Piernas', 'icono': Amicons.lucide_activity},
+    
+    // Peso muerto
+    {'nombre': 'Peso Muerto Convencional', 'icono': Amicons.flaticon_gym_rounded_fill},
+    {'nombre': 'Peso Muerto Sumo', 'icono': Amicons.flaticon_gym_rounded_fill},
+    {'nombre': 'Peso Muerto Rumano', 'icono': Amicons.flaticon_gym_rounded_fill},
+    {'nombre': 'Peso Muerto a una Pierna', 'icono': Amicons.flaticon_gym_rounded_fill},
+    {'nombre': 'Peso Muerto Piernas Rectas', 'icono': Amicons.flaticon_gym_rounded_fill},
+    
+    // Glúteos y cadera
+    {'nombre': 'Hip Thrust', 'icono': Amicons.lucide_activity},
+    {'nombre': 'Elevación Glúteo-Femoral', 'icono': Amicons.lucide_activity},
+    {'nombre': 'Buenos Días', 'icono': Amicons.lucide_activity},
+    
+    // Máquinas
+    {'nombre': 'Máquina de Abductor', 'icono': Amicons.vuesax_archive_minus},
+    
+    // Pecho
+    {'nombre': 'Press Banca', 'icono': Amicons.lucide_dumbbell},
+    {'nombre': 'Press Banca Inclinado', 'icono': Amicons.lucide_dumbbell},
+    {'nombre': 'Press Banca Declinado', 'icono': Amicons.lucide_dumbbell},
+    {'nombre': 'Press en Máquina', 'icono': Amicons.lucide_dumbbell},
+    {'nombre': 'Press de Suelo', 'icono': Amicons.lucide_dumbbell},
+    {'nombre': 'Press JM', 'icono': Amicons.lucide_dumbbell},
+    {'nombre': 'Press Landmine', 'icono': Amicons.lucide_dumbbell},
+    {'nombre': 'Press Pallof', 'icono': Amicons.lucide_dumbbell},
+    {'nombre': 'Press Militar', 'icono': Amicons.lucide_dumbbell},
+    {'nombre': 'Fondos', 'icono': Amicons.vuesax_archive_minus},
+    
+    // Espalda
+    {'nombre': 'Remo con Polea', 'icono': Amicons.remix_body_scan},
+    {'nombre': 'Remo en T', 'icono': Amicons.remix_body_scan},
+    {'nombre': 'Remo en Banco Inclinado', 'icono': Amicons.remix_body_scan},
+    {'nombre': 'Remo Pendlay', 'icono': Amicons.remix_body_scan},
+    {'nombre': 'Remo Inclinado', 'icono': Amicons.remix_body_scan},
+    {'nombre': 'Remo a una Mano', 'icono': Amicons.remix_body_scan},
+    {'nombre': 'Remo', 'icono': Amicons.remix_body_scan},
+    {'nombre': 'Remo Vertical', 'icono': Amicons.remix_body_scan},
+    {'nombre': 'Remo Invertido con Peso Corporal', 'icono': Amicons.remix_body_scan},
+    {'nombre': 'Face Pull', 'icono': Amicons.remix_body_scan},
+    {'nombre': 'Pájaros', 'icono': Amicons.remix_body_scan},
+    {'nombre': 'Dominadas', 'icono': Amicons.remix_walk_fill},
+    {'nombre': 'Jalón al pecho', 'icono': Amicons.remix_body_scan},
+    {'nombre': 'Pullover', 'icono': Amicons.remix_body_scan},
+    {'nombre': 'Clean Pull', 'icono': Amicons.flaticon_gym_rounded_fill},
+    
+    // Flexiones
+    {'nombre': 'Flexiones', 'icono': Amicons.remix_body_scan},
+    {'nombre': 'Flexiones en Banco Inclinado', 'icono': Amicons.vuesax_archive_minus},
+    {'nombre': 'Flexiones en Pino', 'icono': Amicons.vuesax_archive_minus},
+    
+    // Hombros
+    {'nombre': 'Elevación Lateral', 'icono': Amicons.lucide_dumbbell},
+    {'nombre': 'Elevación Frontal', 'icono': Amicons.lucide_dumbbell},
+    
+    // Brazos
+    {'nombre': 'Curl de Bíceps', 'icono': Amicons.lucide_dumbbell},
+    {'nombre': 'Curl de Bíceps Inclinado', 'icono': Amicons.lucide_dumbbell},
+    {'nombre': 'Curl de Bíceps Martillo', 'icono': Amicons.lucide_dumbbell},
+    {'nombre': 'Extensiones de Tríceps', 'icono': Amicons.lucide_user_round_cog},
+    {'nombre': 'Empuje de Tríceps', 'icono': Amicons.lucide_user_round_cog},
+    
+    // Abdominales
+    {'nombre': 'Rueda Abdominal', 'icono': Amicons.remix_walk_fill},
+    {'nombre': 'Plancha Copenhagen', 'icono': Amicons.flaticon_rings_wedding_rounded_fill},
+    {'nombre': 'Plancha Lateral', 'icono': Amicons.flaticon_rings_wedding_rounded_fill},
+    {'nombre': 'Rotación con Barra en el Suelo', 'icono': Amicons.remix_walk_fill},
+    {'nombre': 'Aperturas', 'icono': Amicons.lucide_dumbbell},
+    {'nombre': 'Skull Crushers', 'icono': Amicons.lucide_user_round_cog},
+  ];
+
+  // Lista filtrada de ejercicios (inicialmente todos)
+  List<Map<String, dynamic>> ejerciciosFiltrados = List.from(ejerciciosPredefinidos);
+  
+  // Estado de búsqueda usando StatefulBuilder
+  showDialog(
+    context: context,
+    builder: (context) => StatefulBuilder(
+      builder: (context, setState) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Container(
+            padding: const EdgeInsets.all(25),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  colorScheme.surface,
+                  colorScheme.surface.withOpacity(0.9),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(25),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 15,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+              border: Border.all(
+                color: colorScheme.primary.withOpacity(0.2),
+                width: 1.5,
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Ícono y título
+                Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        colorScheme.primary.withOpacity(0.2),
+                        colorScheme.primary.withOpacity(0.1),
+                      ],
+                    ),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Amicons.lucide_dumbbell,
+                    color: colorScheme.primary,
+                    size: 40,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Selecciona un Ejercicio',
+                  style: titleStyle.copyWith(
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 15),
+                
+                // Campo de búsqueda
+                Container(
+                  margin: const EdgeInsets.only(bottom: 20),
+                  decoration: BoxDecoration(
+                    color: colorScheme.background.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: colorScheme.primary.withOpacity(0.2),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: TextField(
+                    style: bodyStyle.copyWith(
+                      color: colorScheme.onSurface,
+                      fontSize: 16,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: 'Buscar ejercicio',
+                      hintStyle: bodyStyle.copyWith(
+                        color: colorScheme.onBackground.withOpacity(0.5),
+                      ),
+                      prefixIcon: Icon(
+                        Amicons.iconly_search_curved_fill,
+                        color: colorScheme.primary.withOpacity(0.7),
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          Amicons.iconly_close_square_curved_fill,
+                          color: colorScheme.onBackground.withOpacity(0.4),
+                          size: 20,
+                        ),
+                        onPressed: () {
+                          // Limpiar el campo y restaurar la lista completa
+                          FocusScope.of(context).unfocus();
+                          setState(() {
+                            ejerciciosFiltrados = List.from(ejerciciosPredefinidos);
+                          });
+                        },
+                      ),
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    ),
+                    onChanged: (value) {
+                      // Filtrar la lista según el texto de búsqueda
+                      setState(() {
+                        if (value.isEmpty) {
+                          ejerciciosFiltrados = List.from(ejerciciosPredefinidos);
+                        } else {
+                          ejerciciosFiltrados = ejerciciosPredefinidos
+                              .where((ejercicio) => ejercicio['nombre']
+                                  .toString()
+                                  .toLowerCase()
+                                  .contains(value.toLowerCase()))
+                              .toList();
+                        }
+                      });
+                    },
+                  ),
+                ),
+                
+                // Lista de ejercicios filtrada
+                ejerciciosFiltrados.isEmpty
+                    ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 30.0),
+                          child: Column(
+                            children: [
+                              Icon(
+                                Amicons.iconly_search_curved_fill,
+                                color: colorScheme.onBackground.withOpacity(0.3),
+                                size: 50,
+                              ),
+                              const SizedBox(height: 15),
+                              Text(
+                                'No se encontraron ejercicios',
+                                style: subtitleStyle.copyWith(
+                                  color: colorScheme.onBackground.withOpacity(0.5),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    : Container(
+                        constraints: BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height * 0.5,
+                        ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: ejerciciosFiltrados.map((ejercicio) {
+                              return InkWell(
+                                onTap: () {
+                                  // Al seleccionar un ejercicio, cierra este diálogo y abre el siguiente
+                                  Navigator.pop(context);
+                                  _mostrarDetallesEjercicio(context, ejercicio['nombre']);
+                                },
+                                borderRadius: BorderRadius.circular(8),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          color: colorScheme.primary.withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        child: Icon(
+                                          ejercicio['icono'],
+                                          color: colorScheme.primary,
+                                          size: 24,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: Text(
+                                          ejercicio['nombre'],
+                                          style: subtitleStyle.copyWith(
+                                            color: colorScheme.onSurface,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+                                      Icon(
+                                        Amicons.iconly_info_circle_fill,
+                                        color: colorScheme.onBackground.withOpacity(0.5),
+                                        size: 22,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                
+                const SizedBox(height: 20),
+                
+                // Botón Cancelar
+                OutlinedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                    side: BorderSide(
+                      color: colorScheme.onBackground.withOpacity(0.3),
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: Text(
+                    'Cancelar',
+                    style: bodyStyle.copyWith(
+                      color: colorScheme.onBackground,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    ),
+  );
+}
+
+  // NUEVO: Método para el segundo paso (detalles del ejercicio)
+  void _mostrarDetallesEjercicio(BuildContext context, String nombreEjercicio) {
     final TextEditingController seriesController = TextEditingController();
-    final TextEditingController repeticionesController =
-        TextEditingController();
+    final TextEditingController repeticionesController = TextEditingController();
     String selectedDay = controller.diaSeleccionado;
-    String? selectedEjercicio;
-
-    // Lista de ejercicios predefinidos con íconos
-    final List<Map<String, dynamic>> ejerciciosPredefinidos = [
-      {'nombre': 'Sentadillas', 'icono': Amicons.lucide_activity},
-      {'nombre': 'Press de Banca', 'icono': Amicons.lucide_dumbbell},
-      {'nombre': 'Peso Muerto', 'icono': Amicons.flaticon_gym_rounded_fill},
-      {'nombre': 'Curl de Bíceps', 'icono': Amicons.lucide_dumbbell},
-      {
-        'nombre': 'Extensión de Tríceps',
-        'icono': Amicons.lucide_user_round_cog
-      },
-      {'nombre': 'Press de Hombros', 'icono': Amicons.lucide_dumbbell},
-      {'nombre': 'Dominadas', 'icono': Amicons.lucide_activity},
-      {'nombre': 'Fondos', 'icono': Amicons.vuesax_archive_minus},
-      {
-        'nombre': 'Plancha',
-        'icono': Amicons.flaticon_rings_wedding_rounded_fill
-      },
-      {'nombre': 'Abdominales', 'icono': Amicons.remix_walk_fill},
-      {
-        'nombre': 'Zancadas',
-        'icono': Amicons.flaticon_head_side_thinking_rounded
-      },
-      {'nombre': 'Peso de Piernas', 'icono': Amicons.lucide_brain},
-      {'nombre': 'Press de Pecho', 'icono': Amicons.flaticon_gym_rounded_fill},
-      {'nombre': 'Remo', 'icono': Amicons.remix_body_scan},
-      {'nombre': 'Jumping Jacks', 'icono': Amicons.remix_walk_fill}
-    ];
-
+    
     showDialog(
       context: context,
       builder: (context) => Dialog(
@@ -1370,101 +1669,31 @@ class Routinespage extends StatelessWidget {
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    Amicons.iconly_plus_curved_fill,
+                    Amicons.lucide_clucidepboard,
                     color: colorScheme.primary,
                     size: 40,
                   ),
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Agregar Nuevo Ejercicio',
+                  nombreEjercicio,
                   style: titleStyle.copyWith(
                     color: colorScheme.onSurface,
                     fontWeight: FontWeight.w700,
                   ),
                   textAlign: TextAlign.center,
                 ),
-
-                const SizedBox(height: 30),
-
-                // Selector de ejercicio
-                Container(
-                  decoration: BoxDecoration(
-                    color: colorScheme.background.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: colorScheme.primary.withOpacity(0.2),
-                      width: 1.5,
-                    ),
+                const SizedBox(height: 10),
+                Text(
+                  'Configura los detalles',
+                  style: bodyStyle.copyWith(
+                    color: colorScheme.onBackground.withOpacity(0.7),
+                    fontSize: 16,
                   ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButtonFormField<String>(
-                      dropdownColor: colorScheme.surface,
-                      menuMaxHeight: 300,
-                      isExpanded: true,
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 18),
-                        prefixIcon: Container(
-                          margin: const EdgeInsets.only(left: 15, right: 10),
-                          child: Icon(
-                            Amicons.lucide_dumbbell,
-                            color: colorScheme.primary,
-                            size: 20,
-                          ),
-                        ),
-                        border: InputBorder.none,
-                        labelText: 'Selecciona un Ejercicio',
-                        labelStyle: bodyStyle.copyWith(
-                          color: colorScheme.onBackground,
-                          fontSize: 16,
-                        ),
-                      ),
-                      value: selectedEjercicio,
-                      style: bodyStyle.copyWith(
-                        color: colorScheme.onSurface,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      hint: Text(
-                        'Elige un ejercicio',
-                        style: bodyStyle.copyWith(
-                          color: colorScheme.onBackground.withOpacity(0.6),
-                          fontSize: 16,
-                        ),
-                      ),
-                      icon: Icon(
-                        Amicons.iconly_arrow_down_curved_fill,
-                        color: colorScheme.primary,
-                        size: 20,
-                      ),
-                      onChanged: (String? newValue) {
-                        if (newValue != null) {
-                          selectedEjercicio = newValue;
-                        }
-                      },
-                      items: ejerciciosPredefinidos
-                          .map<DropdownMenuItem<String>>((ejercicio) {
-                        return DropdownMenuItem<String>(
-                          value: ejercicio['nombre'],
-                          child: Row(
-                            children: [
-                              Icon(
-                                ejercicio['icono'],
-                                color: colorScheme.primary.withOpacity(0.8),
-                                size: 20,
-                              ),
-                              const SizedBox(width: 12),
-                              Text(ejercicio['nombre']),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
+                  textAlign: TextAlign.center,
                 ),
 
-                const SizedBox(height: 25),
+                const SizedBox(height: 30),
 
                 // Campo de series
                 _buildEnhancedTextField(
@@ -1492,10 +1721,13 @@ class Routinespage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Botón Cancelar
+                    // Botón Volver
                     Expanded(
                       child: OutlinedButton(
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _mostrarDialogoAgregarEjercicio(context); // Volver a la selección
+                        },
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           side: BorderSide(
@@ -1503,12 +1735,23 @@ class Routinespage extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16)),
                         ),
-                        child: Text(
-                          'Cancelar',
-                          style: bodyStyle.copyWith(
-                            color: colorScheme.onBackground,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Amicons.iconly_arrow_left_curved_fill,
+                              color: colorScheme.onBackground,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Volver',
+                              style: bodyStyle.copyWith(
+                                color: colorScheme.onBackground,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -1518,7 +1761,7 @@ class Routinespage extends StatelessWidget {
                     // Botón Agregar
                     Expanded(
                       child: Container(
-                        decoration: BoxDecoration(
+                            decoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,
@@ -1541,41 +1784,28 @@ class Routinespage extends StatelessWidget {
                           color: Colors.transparent,
                           child: InkWell(
                             onTap: () {
-                              if (selectedEjercicio != null &&
-                                  seriesController.text.isNotEmpty &&
+                              if (seriesController.text.isNotEmpty &&
                                   repeticionesController.text.isNotEmpty) {
                                 // Crear nuevo ejercicio
                                 final ejercicio = Ejercicio(
                                   id: DateTime.now()
                                       .millisecondsSinceEpoch
                                       .toString(),
-                                  nombre: selectedEjercicio!,
+                                  nombre: nombreEjercicio,
                                   dia: selectedDay,
-                                  series:
-                                      int.tryParse(seriesController.text) ?? 0,
+                                  series: int.tryParse(seriesController.text) ?? 0,
                                   repeticiones: repeticionesController.text,
                                 );
-                                final hejercicio = HistoryEjercicio(
-                                  id: DateTime.now()
-                                      .millisecondsSinceEpoch
-                                      .toString(),
-                                  nombre: selectedEjercicio!,
-                                  dia: selectedDay,
-                                  series:
-                                      int.tryParse(seriesController.text) ?? 0,
-                                  repeticiones: repeticionesController.text,
-                                );
+
+                                // Llamar al controlador principal
                                 controller.agregarEjercicio(ejercicio);
-                                hcontroller.agregarEjercicio(hejercicio);
                                 Navigator.pop(context);
                               } else {
                                 // Mostrar mensaje de error si falta información
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(SnackBar(
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                   content: Text(
                                     'Por favor, completa todos los campos',
-                                    style:
-                                        bodyStyle.copyWith(color: Colors.white),
+                                    style: bodyStyle.copyWith(color: Colors.white),
                                   ),
                                   backgroundColor: colorScheme.error,
                                 ));
@@ -2387,6 +2617,7 @@ class Routinespage extends StatelessWidget {
               width: 40,
               height: 5,
               margin: const EdgeInsets.only(top: 16, bottom: 20),
+              
               decoration: BoxDecoration(
                 color: colorScheme.onBackground.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(10),
