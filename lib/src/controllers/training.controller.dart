@@ -4,6 +4,7 @@ import 'package:nebula/src/models/historyExercises.model.dart';
 import 'package:nebula/src/models/training.model.dart';
 import 'package:nebula/src/services/training.services.dart';
 import 'package:nebula/src/controllers/historyTraining.controller.dart';
+
 class EntrenamientoController extends GetxController {
   final FirebaseService _firebaseService = FirebaseService();
 
@@ -26,6 +27,12 @@ class EntrenamientoController extends GetxController {
   void onInit() {
     super.onInit();
     cargarEntrenamientos();
+  }
+
+  @override
+  void onClose() {
+    // Limpiar recursos y estados cuando se navega fuera de la página
+    super.onClose();
   }
 
   String diaSeleccionado = 'Lunes';
@@ -59,36 +66,36 @@ class EntrenamientoController extends GetxController {
   }
 
   // Crear un nuevo entrenamiento
-Future<String?> crearEntrenamiento(String nombre) async {
-  _setEstadoCargando(true);
-  try {
-    String id = await _firebaseService.crearEntrenamiento(nombre);
-    
-    // Ahora intentamos sincronizar con el historial
+  Future<String?> crearEntrenamiento(String nombre) async {
+    _setEstadoCargando(true);
     try {
-      if (Get.isRegistered<HistoryEntrenamientoController>()) {
-        final historyController = Get.find<HistoryEntrenamientoController>();
-        
-        // Usamos cargarEntrenamientos en lugar de llamar a crearEntrenamientoExplicito
-        await historyController.cargarEntrenamientos();
+      String id = await _firebaseService.crearEntrenamiento(nombre);
+
+      // Ahora intentamos sincronizar con el historial
+      try {
+        if (Get.isRegistered<HistoryEntrenamientoController>()) {
+          final historyController = Get.find<HistoryEntrenamientoController>();
+
+          // Usamos cargarEntrenamientos en lugar de llamar a crearEntrenamientoExplicito
+          await historyController.cargarEntrenamientos();
+        }
+      } catch (e) {
+        print("Error sincronizando con historial: $e");
       }
+
+      await cargarEntrenamientos();
+      _error = null;
+      update();
+
+      return id;
     } catch (e) {
-      print("Error sincronizando con historial: $e");
+      _error = "Error al crear entrenamiento: ${e.toString()}";
+      update();
+      return null;
+    } finally {
+      _setEstadoCargando(false);
     }
-    
-    await cargarEntrenamientos();
-    _error = null;
-    update();
-    
-    return id;
-  } catch (e) {
-    _error = "Error al crear entrenamiento: ${e.toString()}";
-    update();
-    return null;
-  } finally {
-    _setEstadoCargando(false);
   }
-}
 
   // Cargar un entrenamiento específico con sus ejercicios
   Future<void> cargarEntrenamiento(String entrenamientoId) async {
@@ -108,51 +115,51 @@ Future<String?> crearEntrenamiento(String nombre) async {
 
   // Agregar un ejercicio al entrenamiento actual
 // Agregar un ejercicio al entrenamiento actual
-Future<void> agregarEjercicio(Ejercicio ejercicio) async {
-  if (_entrenamientoActual == null) {
-    _error = "No hay un entrenamiento seleccionado";
-    update();
-    return;
-  }
-
-  _setEstadoCargando(true);
-  try {
-    // Primero, agregar el ejercicio al entrenamiento actual
-    await _firebaseService.agregarEjercicioAEntrenamiento(
-        _entrenamientoActual!.id, ejercicio);
-
-    // Luego, intentar sincronizar con el historial
-    try {
-      if (Get.isRegistered<HistoryEntrenamientoController>()) {
-        final historyController = Get.find<HistoryEntrenamientoController>();
-        
-        // Convertir el ejercicio normal a ejercicio de historial
-        final historyEjercicio = HistoryEjercicio(
-          id: ejercicio.id,
-          nombre: ejercicio.nombre,
-          dia: ejercicio.dia,
-          series: ejercicio.series,
-          repeticiones: ejercicio.repeticiones,
-        );
-        
-        // Solo actualizar el historial, sin tratar de usar métodos específicos
-        await historyController.cargarEntrenamientos();
-      }
-    } catch (e) {
-      print("Error sincronizando con historial: $e");
+  Future<void> agregarEjercicio(Ejercicio ejercicio) async {
+    if (_entrenamientoActual == null) {
+      _error = "No hay un entrenamiento seleccionado";
+      update();
+      return;
     }
 
-    // Recargar el entrenamiento para obtener los cambios
-    await cargarEntrenamiento(_entrenamientoActual!.id);
-    _error = null;
-    update();
-  } catch (e) {
-    _error = "Error al agregar ejercicio: ${e.toString()}";
-    update();
-  } finally {
-    _setEstadoCargando(false);
+    _setEstadoCargando(true);
+    try {
+      // Primero, agregar el ejercicio al entrenamiento actual
+      await _firebaseService.agregarEjercicioAEntrenamiento(
+          _entrenamientoActual!.id, ejercicio);
+
+      // Luego, intentar sincronizar con el historial
+      try {
+        if (Get.isRegistered<HistoryEntrenamientoController>()) {
+          final historyController = Get.find<HistoryEntrenamientoController>();
+
+          // Convertir el ejercicio normal a ejercicio de historial
+          final historyEjercicio = HistoryEjercicio(
+            id: ejercicio.id,
+            nombre: ejercicio.nombre,
+            dia: ejercicio.dia,
+            series: ejercicio.series,
+            repeticiones: ejercicio.repeticiones,
+          );
+
+          // Solo actualizar el historial, sin tratar de usar métodos específicos
+          await historyController.cargarEntrenamientos();
+        }
+      } catch (e) {
+        print("Error sincronizando con historial: $e");
+      }
+
+      // Recargar el entrenamiento para obtener los cambios
+      await cargarEntrenamiento(_entrenamientoActual!.id);
+      _error = null;
+      update();
+    } catch (e) {
+      _error = "Error al agregar ejercicio: ${e.toString()}";
+      update();
+    } finally {
+      _setEstadoCargando(false);
+    }
   }
-}
 
   // Eliminar un ejercicio del entrenamiento actual
   Future<void> eliminarEjercicio(String ejercicioId) async {

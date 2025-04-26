@@ -4,12 +4,11 @@ import 'package:amicons/amicons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nebula/src/controllers/training.controller.dart';
-import 'package:nebula/src/views/pages/ProfileScreen.dart';
 import 'package:nebula/src/views/pages/editProfilePageSkills.dart';
 import 'package:nebula/src/views/pages/iMCCalculatorPage.dart';
-import 'package:nebula/src/views/pages/exercisesPage.dart';
 import 'package:nebula/src/views/pages/routinesPage.dart';
 import '../controllers/user.controller.dart';
+import 'pages/profileScreen.dart';
 import 'pages/exercisesPage.dart';
 import '../utils/navigate_bar.dart';
 
@@ -555,6 +554,11 @@ class _HomeScreenPageState extends State<HomeScreen> {
 
             const SizedBox(height: 25),
 
+// Tarjeta de recomendación IA
+            _buildAIRecommendationCard(),
+
+            const SizedBox(height: 25),
+
             // Estadísticas del usuario
             _buildUserStatsCard(),
 
@@ -562,11 +566,6 @@ class _HomeScreenPageState extends State<HomeScreen> {
 
             // IMC Card
             _buildBMICard(),
-
-            const SizedBox(height: 25),
-
-            // Progreso del usuario
-            _buildUserProgressCard(),
 
             const SizedBox(height: 30),
           ],
@@ -699,7 +698,7 @@ class _HomeScreenPageState extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
-                        "Índice de Masa Corporal",
+                        "IMC",
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w800,
@@ -1332,396 +1331,93 @@ class _HomeScreenPageState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildUserProgressCard() {
-    final authController = Get.find<AuthController>();
-    final entrenamientoController = Get.find<EntrenamientoController>();
-
-    // Paleta de colores premium
-    final Color primaryPurple = const Color(0xFF6A11CB); // Púrpura profundo
-    final Color secondaryPurple = const Color(0xFF8F6ED5); // Púrpura medio
-    final Color accentPurple = const Color(0xFFB39DDB); // Púrpura claro
-    final Color deepViolet = const Color(0xFF4527A0); // Violeta profundo
-    final Color lightPurple = const Color(0xFFD1C4E9); // Púrpura muy claro
-
-    return GetBuilder<EntrenamientoController>(builder: (controller) {
-      // Variables para calcular progreso
-      double progresoExperiencia = 0.0;
-      String nivelActual =
-          authController.userModel.value?.nivelExperiencia?.toLowerCase() ??
-              "principiante";
-      int totalRepeticiones = 0;
-      int maxSeries = 0;
-      String ejercicioFavorito = "Sin datos";
-
-      // Determinar metas según nivel de experiencia
-      int metaRepeticiones = _getMetaRepeticiones(nivelActual);
-      int metaSeries = _getMetaSeries(nivelActual);
-
-      // Calcular total de repeticiones y máximo de series
-      Map<String, int> contadorEjercicios = {};
-
-      for (var entrenamiento in controller.entrenamientos) {
-        for (var ejercicio in entrenamiento.ejercicios) {
-          totalRepeticiones +=
-              ejercicio.series * int.parse(ejercicio.repeticiones);
-
-          if (ejercicio.series > maxSeries) {
-            maxSeries = ejercicio.series;
-          }
-
-          // Contar ejercicios para encontrar el favorito
-          contadorEjercicios.update(ejercicio.nombre, (value) => value + 1,
-              ifAbsent: () => 1);
-        }
-      }
-
-      // Determinar ejercicio favorito
-      int maxCount = 0;
-      contadorEjercicios.forEach((nombre, count) {
-        if (count > maxCount) {
-          maxCount = count;
-          ejercicioFavorito = nombre;
-        }
-      });
-
-      // Calcular progreso de experiencia basado en nivel
-      switch (nivelActual) {
-        case "principiante":
-          progresoExperiencia = 0.25;
-          break;
-        case "intermedio":
-          progresoExperiencia = 0.5;
-          break;
-        case "avanzado":
-          progresoExperiencia = 0.75;
-          break;
-        case "experto":
-          progresoExperiencia = 1.0;
-          break;
-        default:
-          progresoExperiencia = 0.1;
-      }
-
-      // Calcular progreso de repeticiones
-      double progresoRepeticiones =
-          (totalRepeticiones / metaRepeticiones).clamp(0.0, 1.0);
-
-      // Calcular progreso de series
-      double progresoSeries = (maxSeries / metaSeries).clamp(0.0, 1.0);
-
-      return Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.white.withOpacity(0.05),
-              Colors.white.withOpacity(0.02),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(32),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.07),
-              blurRadius: 20,
-              spreadRadius: 0,
-              offset: const Offset(0, 10),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(32),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header con fondo de degradado
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.fromLTRB(30, 30, 30, 35),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        primaryPurple,
-                        deepViolet,
-                      ],
-                      stops: const [0.2, 1.0],
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.15),
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                                child: const Icon(
-                                  Amicons.remix_line_chart,
-                                  color: Colors.white,
-                                  size: 22,
-                                ),
-                              ),
-                              const SizedBox(width: 15),
-                              const Text(
-                                "PROGRESO",
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w800,
-                                  color: Colors.white,
-                                  letterSpacing: 1.2,
-                                  shadows: [
-                                    Shadow(
-                                      offset: Offset(0, 1),
-                                      blurRadius: 3,
-                                      color: Colors.black26,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 14, vertical: 7),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.15),
-                              borderRadius: BorderRadius.circular(30),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.3),
-                                width: 1,
-                              ),
-                            ),
-                            child: Text(
-                              nivelActual.capitalizeFirst ?? "Principiante",
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                                letterSpacing: 0.4,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 22),
-                      const Text(
-                        "Monitorea tus avances en cada área de entrenamiento",
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.white,
-                          height: 1.4,
-                          letterSpacing: 0.3,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Card Section
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    children: [
-                      _buildPremiumProgressCard(
-                        title: "Experiencia",
-                        value: nivelActual.capitalizeFirst ?? "Principiante",
-                        detail: _getMensajeMotivacional(nivelActual),
-                        progress: progresoExperiencia,
-                        color: primaryPurple,
-                        baseColor: secondaryPurple,
-                        icon: Amicons.lucide_dumbbell,
-                      ),
-                      const SizedBox(height: 20),
-                      _buildPremiumProgressCard(
-                        title: "Total de Reps",
-                        value: "$totalRepeticiones reps",
-                        detail: "Meta: $metaRepeticiones",
-                        progress: progresoRepeticiones,
-                        color: secondaryPurple,
-                        baseColor: primaryPurple,
-                        icon: Amicons.remix_repeat,
-                      ),
-                      const SizedBox(height: 20),
-                      _buildPremiumProgressCard(
-                        title: "Ejercicio fav",
-                        value: ejercicioFavorito,
-                        detail: "$maxSeries de $metaSeries series",
-                        progress: progresoSeries,
-                        color: accentPurple,
-                        baseColor: deepViolet,
-                        icon: Amicons.remix_heart_pulse,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    });
-  }
-
-  Widget _buildPremiumProgressCard({
-    required String title,
-    required String value,
-    required String detail,
-    required double progress,
-    required Color color,
-    required Color baseColor,
-    required IconData icon,
-  }) {
-    // Color del texto basado en si es una meta o un mensaje motivacional
-    bool isGoal = detail.contains('Meta:') || detail.contains('de');
-
-    Color textColor = Colors.white;
-    Color accentTextColor =
-        isGoal ? const Color(0xFFF1C40F) : const Color(0xFF2ECC71);
-
+  Widget _buildAIRecommendationCard() {
     return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 25),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            baseColor.withOpacity(0.95),
-            color.withOpacity(0.85),
+            const Color(0xFF5D4777), // Púrpura más conservador
+            const Color(0xFF6E5287), // Púrpura secundario más suave
           ],
         ),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: baseColor.withOpacity(0.25),
+            color: const Color(0xFF5D4777).withOpacity(0.25),
             blurRadius: 15,
             spreadRadius: 1,
-            offset: const Offset(0, 5),
+            offset: const Offset(0, 8),
           ),
         ],
       ),
-      child: Column(
-        children: [
-          // Parte superior con fondo de cristal
-          Container(
-            padding: const EdgeInsets.all(20),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: Container(
             decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(24),
-                topRight: Radius.circular(24),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white.withOpacity(0.05),
+                  Colors.white.withOpacity(0.02),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.1),
+                width: 1,
               ),
             ),
-            child: Row(
+            child: Column(
               children: [
-                // Círculo de progreso
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SizedBox(
-                      width: 70,
-                      height: 70,
-                      child: CircularProgressIndicator(
-                        value: progress,
-                        strokeWidth: 6,
-                        backgroundColor: Colors.white.withOpacity(0.2),
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    ),
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.15),
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 5,
-                            spreadRadius: 0,
-                            offset: const Offset(0, 1),
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        icon,
-                        color: Colors.white,
-                        size: 25,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                // Encabezado de la tarjeta
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            title,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.2,
-                            ),
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.15),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.2),
+                            width: 1,
                           ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              "${(progress * 100).toStringAsFixed(0)}%",
-                              style: const TextStyle(
-                                fontSize: 13,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        value,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                        ),
+                        child: const Icon(
+                          Amicons.lucide_brain,
                           color: Colors.white,
+                          size: 24,
                         ),
                       ),
-                      const SizedBox(height: 6),
-                      Row(
+                      const SizedBox(width: 15),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            width: 6,
-                            height: 6,
-                            decoration: BoxDecoration(
-                              color: accentTextColor,
-                              shape: BoxShape.circle,
+                          const Text(
+                            "Recomendación IA",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
                             ),
                           ),
-                          const SizedBox(width: 6),
+                          const SizedBox(height: 4),
                           Text(
-                            detail,
+                            "Basado en tu perfil y objetivos",
                             style: TextStyle(
+                              color: Colors.white.withOpacity(0.8),
                               fontSize: 14,
-                              color: accentTextColor,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                         ],
@@ -1729,46 +1425,662 @@ class _HomeScreenPageState extends State<HomeScreen> {
                     ],
                   ),
                 ),
+
+                // Línea divisoria con efecto de cristal
+                Container(
+                  height: 1,
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: [
+                        Colors.white.withOpacity(0.01),
+                        Colors.white.withOpacity(0.2),
+                        Colors.white.withOpacity(0.2),
+                        Colors.white.withOpacity(0.01),
+                      ],
+                      stops: const [0.0, 0.3, 0.7, 1.0],
+                    ),
+                  ),
+                ),
+
+                // Contenido de la tarjeta
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Obx(() {
+                        String nivelExperiencia = authController
+                                .userModel.value?.nivelExperiencia
+                                ?.toLowerCase() ??
+                            "principiante";
+                        String objetivo = authController
+                                .userModel.value?.objetivo
+                                ?.toLowerCase() ??
+                            "mantenimiento";
+
+                        // Personalizar mensaje según nivel y objetivo
+                        String mensaje = _getPersonalizedRecommendation(
+                            nivelExperiencia, objetivo);
+
+                        return Text(
+                          mensaje,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            height: 1.4,
+                          ),
+                        );
+                      }),
+
+                      const SizedBox(height: 20),
+
+                      // Botón de recomendación personalizada
+                      Material(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(50),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(50),
+                          onTap: () {
+                            // Implementar acción para generar recomendación personalizada
+                            _showAIRecommendationDialog();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 15),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(50),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 10,
+                                  spreadRadius: 0,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Amicons.lucide_brain_cog,
+                                  color: Color(0xFF6A11CB),
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 10),
+                                const Text(
+                                  "Generar recomendación personalizada",
+                                  style: TextStyle(
+                                    color: Color(0xFF6A11CB),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+// Método auxiliar para determinar la recomendación personalizada
+  String _getPersonalizedRecommendation(String nivel, String objetivo) {
+    if (nivel == "avanzado" && objetivo == "ganar masa muscular") {
+      return "Para tu nivel Avanzado y tu objetivo de Ganar masa muscular, te recomendamos:\n\n• 5 sesiones semanales de alta intensidad\n• Enfoque en series compuestas y dropsets\n• Distribución push/pull/legs con 2 días de descanso";
+    } else if (nivel == "intermedio" && objetivo == "definición") {
+      return "Para tu nivel Intermedio y tu objetivo de Definición muscular, te recomendamos:\n\n• 4 sesiones semanales con cardio HIIT\n• Supersets y circuitos de alta repetición\n• Control de macronutrientes con déficit calórico moderado";
+    } else if (nivel == "principiante" && objetivo == "perder peso") {
+      return "Para tu nivel Principiante y tu objetivo de Perder peso, te recomendamos:\n\n• 3 sesiones de entrenamiento full-body\n• Combinación de cardio suave y musculación básica\n• Enfoque en técnica y progresión gradual";
+    } else {
+      return "Para tu nivel ${nivel.capitalizeFirst} y tu objetivo de ${objetivo.capitalizeFirst}, te recomendamos un plan personalizado. Presiona el botón para recibir recomendaciones adaptadas a tu perfil específico.";
+    }
+  }
+
+// Método para mostrar el diálogo con la recomendación IA detallada
+  // Método para mostrar el diálogo con la recomendación IA detallada incluyendo tarjetas de rutina
+// Método modificado para mostrar un diálogo con entrada tipo chat y respuestas en tarjetas
+  // Método modificado para mostrar un diálogo con entrada tipo chat y respuestas en tarjetas
+  void _showAIRecommendationDialog() {
+    // Controlador para el campo de texto
+    final TextEditingController inputController = TextEditingController();
+
+    // Variable para controlar estados de carga
+    final RxBool isLoading = false.obs;
+
+    // Variable para controlar si se debe mostrar la respuesta
+    final RxBool showResponse = false.obs;
+
+    // Variables para la consulta del usuario
+    final RxString userQuery = "".obs;
+
+    String nivelExperiencia =
+        authController.userModel.value?.nivelExperiencia?.toLowerCase() ??
+            "principiante";
+    String objetivo = authController.userModel.value?.objetivo?.toLowerCase() ??
+        "mantenimiento";
+
+    Get.dialog(
+      Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Container(
+          width: double.infinity,
+          // Aumentamos el maxHeight para dar más espacio
+          constraints: BoxConstraints(
+            maxHeight: Get.height * 1.0, // Usar 80% de la altura de la pantalla
+          ),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFF242038),
+                Color(0xFF35305B),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.1),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.3),
+                blurRadius: 20,
+                spreadRadius: 5,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Encabezado del diálogo
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      const Color(0xFF5D4777),
+                      const Color(0xFF5D4777).withOpacity(0.8),
+                    ],
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(24),
+                    topRight: Radius.circular(24),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.15),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Amicons.lucide_brain_circuit,
+                            color: Colors.white,
+                            size: 22,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "NEBULA IA",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              "Asistente de entrenamiento",
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.white.withOpacity(0.8),
+                                letterSpacing: 0.3,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    InkWell(
+                      onTap: () => Get.back(),
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Cuerpo con tarjetas
+              Expanded(
+                child: Obx(() {
+                  if (showResponse.value) {
+                    // Mostrar la respuesta en formato de tarjetas de rutina
+                    return _buildAIResponseContent(userQuery.value);
+                  } else {
+                    // Mostrar mensaje de bienvenida y explicación
+                    return Container(
+                      padding: const EdgeInsets.all(25),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Imagen o icono destacado
+                          Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF9067C6).withOpacity(0.2),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Amicons.lucide_brain,
+                              color: Color(0xFF9067C6),
+                              size: 40,
+                            ),
+                          ),
+                          const SizedBox(height: 25),
+
+                          // Mensaje de bienvenida
+                          Text(
+                            "Hola ${authController.userModel.value?.nombre ?? 'Usuario'}, ¿cómo estás?",
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              letterSpacing: 0.5,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 15),
+
+                          // Mensaje explicativo
+                          Text(
+                            "Soy tu asistente de entrenamiento personalizado. Puedo ayudarte con rutinas, nutrición, consejos y más.\n\nEscribe tu pregunta en el campo de abajo.",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white.withOpacity(0.8),
+                              height: 1.5,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+
+                          // Sugerencias de preguntas
+                          const SizedBox(height: 30),
+                          Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            alignment: WrapAlignment.center,
+                            children: [
+                              _buildSuggestionChip(
+                                  "Rutina para ${objetivo.capitalizeFirst}"),
+                              _buildSuggestionChip("Ejercicios para pecho"),
+                              _buildSuggestionChip("Consejos de nutrición"),
+                              _buildSuggestionChip("Rutina de 3 días"),
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                }),
+              ),
+
+              // Indicador de carga
+              Obx(
+                () => isLoading.value
+                    ? Container(
+                        padding: const EdgeInsets.all(20),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF9067C6).withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: const CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    Color(0xFF9067C6)),
+                              ),
+                            ),
+                            const SizedBox(width: 15),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "NEBULA IA está preparando tu rutina",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white.withOpacity(0.9),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "Personalizando según tu nivel ${nivelExperiencia.capitalizeFirst}...",
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.white.withOpacity(0.7),
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+              ),
+
+              // Campo de entrada
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.2),
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(24),
+                    bottomRight: Radius.circular(24),
+                  ),
+                  border: Border(
+                    top: BorderSide(
+                      color: Colors.white.withOpacity(0.1),
+                      width: 1,
+                    ),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.2),
+                            width: 1,
+                          ),
+                        ),
+                        child: TextField(
+                          controller: inputController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            hintText: "Escribe tu pregunta aquí...",
+                            hintStyle:
+                                TextStyle(color: Colors.white.withOpacity(0.5)),
+                            border: InputBorder.none,
+                            contentPadding:
+                                const EdgeInsets.symmetric(vertical: 15),
+                          ),
+                          maxLines: 1,
+                          textInputAction: TextInputAction.send,
+                          onSubmitted: (_) => _processAIQuery(inputController,
+                              isLoading, showResponse, userQuery),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(30),
+                        onTap: () => _processAIQuery(inputController, isLoading,
+                            showResponse, userQuery),
+                        child: Container(
+                          padding: const EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Color(0xFF9067C6),
+                                Color(0xFF8D86C9),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(30),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF9067C6).withOpacity(0.3),
+                                blurRadius: 10,
+                                spreadRadius: 0,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Amicons.iconly_send_curved_fill,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: true,
+    );
+  }
+
+// Chip de sugerencia para preguntas frecuentes
+  Widget _buildSuggestionChip(String text) {
+    return InkWell(
+      onTap: () {
+        // Al hacer clic en una sugerencia, se establece como consulta
+        final TextEditingController tempController =
+            TextEditingController(text: text);
+        // Usamos valores Rx existentes en lugar de crear nuevos
+        final RxBool isLoading = false.obs;
+        final RxBool showResponse = true.obs;
+        final RxString userQuery = text.obs;
+        _processAIQuery(tempController, isLoading, showResponse, userQuery);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.2),
+            width: 1,
+          ),
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.white.withOpacity(0.9),
+          ),
+        ),
+      ),
+    );
+  }
+
+// Método para procesar la consulta del usuario y mostrar la respuesta
+  void _processAIQuery(TextEditingController controller, RxBool isLoading,
+      RxBool showResponse, RxString userQuery) {
+    // Validar que la consulta no esté vacía
+    if (controller.text.trim().isEmpty) return;
+
+    // Guardar la consulta del usuario
+    userQuery.value = controller.text.trim();
+
+    // Mostrar indicador de carga
+    isLoading.value = true;
+
+    // Simular tiempo de procesamiento (aquí se podría hacer una llamada real a una API)
+    Future.delayed(const Duration(seconds: 2), () {
+      // Ocultar indicador de carga
+      isLoading.value = false;
+
+      // Mostrar la respuesta
+      showResponse.value = true;
+
+      // Limpiar el campo de texto
+      controller.clear();
+    });
+  }
+
+// Método para construir el contenido de la respuesta (tarjetas de rutina)
+  Widget _buildAIResponseContent(String query) {
+    final String nivelExperiencia =
+        authController.userModel.value?.nivelExperiencia?.toLowerCase() ??
+            "principiante";
+    final String objetivo =
+        authController.userModel.value?.objetivo?.toLowerCase() ??
+            "mantenimiento";
+
+    // Aquí puedes personalizar las respuestas según la consulta del usuario
+    // Este es un ejemplo simplificado
+    List<Map<String, dynamic>> rutinas =
+        _generateRutinasBasedOnQuery(query, nivelExperiencia, objetivo);
+
+    final RxBool showResponse = false.obs;
+
+    return Container(
+      padding: const EdgeInsets.all(15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Encabezado de la respuesta
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF9067C6).withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Icon(
+                        Amicons.lucide_brain_circuit,
+                        color: Color(0xFF9067C6),
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 15),
+                    Expanded(
+                      child: Text(
+                        "Basado en tu consulta: \"$query\"",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  "He preparado estas rutinas para ti:",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white.withOpacity(0.9),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ],
             ),
           ),
 
-          // Barra de progreso
-          Container(
-            height: 10,
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(24),
-                bottomRight: Radius.circular(24),
+          const SizedBox(height: 10),
+
+          // Lista de tarjetas de rutina
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: rutinas.map((rutina) {
+                  return _buildRutinaCard(rutina);
+                }).toList(),
               ),
             ),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(24),
-                bottomRight: Radius.circular(24),
-              ),
-              child: Stack(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    color: Colors.white.withOpacity(0.15),
-                  ),
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 800),
-                    curve: Curves.easeOutQuart,
-                    width: progress * double.infinity,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                        colors: [
-                          Colors.white.withOpacity(0.8),
-                          Colors.white,
-                        ],
-                      ),
+          ),
+
+          // Botón para volver a preguntar
+          const SizedBox(height: 15),
+          Center(
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  // Volver al estado inicial
+                  showResponse.value = false;
+                },
+                borderRadius: BorderRadius.circular(30),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.3),
+                      width: 1,
                     ),
                   ),
-                ],
+                  child: Text(
+                    "Realizar otra consulta",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white.withOpacity(0.9),
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
@@ -1777,6 +2089,1256 @@ class _HomeScreenPageState extends State<HomeScreen> {
     );
   }
 
+// Método para generar rutinas basadas en la consulta
+  List<Map<String, dynamic>> _generateRutinasBasedOnQuery(
+      String query, String nivel, String objetivo) {
+    // Aquí implementarías la lógica real para generar rutinas basadas en la consulta
+    // Este es un ejemplo simplificado
+
+    final List<Map<String, dynamic>> rutinas = [];
+
+    // Análisis simple de la consulta para determinar qué tipo de rutina generar
+    final bool isRutinaPecho = query.toLowerCase().contains("pecho");
+    final bool isRutinaCompleta = query.toLowerCase().contains("completa") ||
+        query.toLowerCase().contains("full");
+    final bool isRutina3Dias = query.toLowerCase().contains("3 días") ||
+        query.toLowerCase().contains("tres días");
+    final bool isNutricion = query.toLowerCase().contains("nutrición") ||
+        query.toLowerCase().contains("dieta");
+
+    if (isRutinaPecho) {
+      // Rutina de pecho
+      rutinas.add({
+        "titulo": "Rutina de Pecho",
+        "descripcion":
+            "Entrenamiento completo para desarrollo del pecho adaptado a tu nivel $nivel",
+        "color": const Color(0xFF8D86C9),
+        "icono": Amicons.lucide_dumbbell,
+        "duracion": "45-60 min",
+        "nivel": nivel.capitalizeFirst,
+        "ejercicios": [
+          {"nombre": "Press de banca", "series": 4, "repeticiones": "10-12"},
+          {
+            "nombre": "Aperturas con mancuernas",
+            "series": 3,
+            "repeticiones": "12-15"
+          },
+          {
+            "nombre": "Fondos en paralelas",
+            "series": 3,
+            "repeticiones": "8-10"
+          },
+          {"nombre": "Press inclinado", "series": 3, "repeticiones": "10-12"},
+          {"nombre": "Pullover", "series": 3, "repeticiones": "12-15"},
+        ]
+      });
+    } else if (isRutina3Dias) {
+      // Rutina de 3 días
+      rutinas.add({
+        "titulo": "Día 1: Pecho y Tríceps",
+        "descripcion":
+            "Enfocado en el desarrollo de la parte superior del cuerpo",
+        "color": const Color(0xFF9067C6),
+        "icono": Amicons.lucide_dumbbell,
+        "duracion": "50-60 min",
+        "nivel": nivel.capitalizeFirst,
+        "ejercicios": [
+          {"nombre": "Press de banca", "series": 4, "repeticiones": "10-12"},
+          {
+            "nombre": "Press inclinado con mancuernas",
+            "series": 3,
+            "repeticiones": "10-12"
+          },
+          {
+            "nombre": "Aperturas en polea",
+            "series": 3,
+            "repeticiones": "12-15"
+          },
+          {
+            "nombre": "Extensiones de tríceps en polea",
+            "series": 3,
+            "repeticiones": "12-15"
+          },
+          {"nombre": "Fondos en banco", "series": 3, "repeticiones": "12-15"},
+        ]
+      });
+
+      rutinas.add({
+        "titulo": "Día 2: Espalda y Bíceps",
+        "descripcion": "Rutina para fortalecer la espalda y los brazos",
+        "color": const Color(0xFF8D86C9),
+        "icono": Amicons.lucide_dumbbell,
+        "duracion": "50-60 min",
+        "nivel": nivel.capitalizeFirst,
+        "ejercicios": [
+          {"nombre": "Dominadas", "series": 4, "repeticiones": "8-10"},
+          {"nombre": "Remo con barra", "series": 3, "repeticiones": "10-12"},
+          {"nombre": "Pulldown al pecho", "series": 3, "repeticiones": "12-15"},
+          {"nombre": "Curl con barra", "series": 3, "repeticiones": "10-12"},
+          {"nombre": "Curl martillo", "series": 3, "repeticiones": "12-15"},
+        ]
+      });
+
+      rutinas.add({
+        "titulo": "Día 3: Piernas y Hombros",
+        "descripcion": "Entrenamiento para piernas y hombros",
+        "color": const Color(0xFF5D4777),
+        "icono": Amicons.lucide_dumbbell,
+        "duracion": "50-60 min",
+        "nivel": nivel.capitalizeFirst,
+        "ejercicios": [
+          {"nombre": "Sentadillas", "series": 4, "repeticiones": "10-12"},
+          {"nombre": "Prensa de piernas", "series": 3, "repeticiones": "12-15"},
+          {
+            "nombre": "Extensiones de cuádriceps",
+            "series": 3,
+            "repeticiones": "12-15"
+          },
+          {"nombre": "Press militar", "series": 3, "repeticiones": "10-12"},
+          {
+            "nombre": "Elevaciones laterales",
+            "series": 3,
+            "repeticiones": "12-15"
+          },
+        ]
+      });
+    } else if (isNutricion) {
+      // Recomendaciones de nutrición
+      rutinas.add({
+        "titulo": "Plan Nutricional",
+        "descripcion":
+            "Recomendaciones nutricionales para tu objetivo de $objetivo",
+        "color": const Color(0xFF9067C6),
+        "icono": Amicons.lucide_ice_cream_bowl,
+        "duracion": "Plan diario",
+        "nivel": nivel.capitalizeFirst,
+        "ejercicios": [
+          {
+            "nombre": "Desayuno",
+            "series": 0,
+            "repeticiones": "Avena con frutas y proteína"
+          },
+          {
+            "nombre": "Media mañana",
+            "series": 0,
+            "repeticiones": "Yogur con frutos secos"
+          },
+          {
+            "nombre": "Almuerzo",
+            "series": 0,
+            "repeticiones":
+                "Proteína magra con verduras y carbohidratos complejos"
+          },
+          {
+            "nombre": "Merienda",
+            "series": 0,
+            "repeticiones": "Batido de proteínas con plátano"
+          },
+          {
+            "nombre": "Cena",
+            "series": 0,
+            "repeticiones": "Pescado o pollo con ensalada"
+          },
+        ]
+      });
+
+      rutinas.add({
+        "titulo": "Suplementación",
+        "descripcion": "Suplementos recomendados para complementar tu dieta",
+        "color": const Color(0xFF8D86C9),
+        "icono": Amicons.lucide_pill,
+        "duracion": "Diario",
+        "nivel": nivel.capitalizeFirst,
+        "ejercicios": [
+          {
+            "nombre": "Proteína Whey",
+            "series": 0,
+            "repeticiones": "20-30g post-entrenamiento"
+          },
+          {"nombre": "Creatina", "series": 0, "repeticiones": "5g diarios"},
+          {
+            "nombre": "Vitamina D",
+            "series": 0,
+            "repeticiones": "2000-4000 UI diarias"
+          },
+          {"nombre": "Omega-3", "series": 0, "repeticiones": "1-2g diarios"},
+          {
+            "nombre": "Magnesio",
+            "series": 0,
+            "repeticiones": "300-400mg antes de dormir"
+          },
+        ]
+      });
+    } else {
+      // Rutina general o personalizada según objetivo
+      String tituloRutina = "Rutina para $objetivo";
+
+      if (objetivo == "volumen" || objetivo == "hipertrofia") {
+        rutinas.add({
+          "titulo": tituloRutina,
+          "descripcion": "Rutina enfocada en ganar masa muscular",
+          "color": const Color(0xFF9067C6),
+          "icono": Amicons.lucide_dumbbell,
+          "duracion": "60-75 min",
+          "nivel": nivel.capitalizeFirst,
+          "ejercicios": [
+            {"nombre": "Press de banca", "series": 4, "repeticiones": "8-10"},
+            {"nombre": "Dominadas", "series": 4, "repeticiones": "8-10"},
+            {"nombre": "Sentadillas", "series": 4, "repeticiones": "8-10"},
+            {"nombre": "Press militar", "series": 3, "repeticiones": "8-10"},
+            {"nombre": "Peso muerto", "series": 3, "repeticiones": "6-8"},
+          ]
+        });
+      } else if (objetivo == "definicion" || objetivo == "definición") {
+        rutinas.add({
+          "titulo": tituloRutina,
+          "descripcion": "Rutina enfocada en quemar grasa y definir músculos",
+          "color": const Color(0xFF8D86C9),
+          "icono": Amicons.lucide_dumbbell,
+          "duracion": "45-60 min",
+          "nivel": nivel.capitalizeFirst,
+          "ejercicios": [
+            {
+              "nombre": "Circuito de press",
+              "series": 3,
+              "repeticiones": "12-15"
+            },
+            {
+              "nombre": "Superseries de remo",
+              "series": 3,
+              "repeticiones": "12-15"
+            },
+            {
+              "nombre": "HIIT de sentadillas",
+              "series": 4,
+              "repeticiones": "15-20"
+            },
+            {
+              "nombre": "Superseries de hombro",
+              "series": 3,
+              "repeticiones": "15-20"
+            },
+            {
+              "nombre": "Circuito de core",
+              "series": 3,
+              "repeticiones": "20-25"
+            },
+          ]
+        });
+      } else {
+        // Rutina de mantenimiento o general
+        rutinas.add({
+          "titulo": "Rutina Full Body",
+          "descripcion": "Entrenamiento completo para todo el cuerpo",
+          "color": const Color(0xFF9067C6),
+          "icono": Amicons.lucide_dumbbell,
+          "duracion": "50-60 min",
+          "nivel": nivel.capitalizeFirst,
+          "ejercicios": [
+            {"nombre": "Press de banca", "series": 3, "repeticiones": "10-12"},
+            {"nombre": "Remo con barra", "series": 3, "repeticiones": "10-12"},
+            {"nombre": "Sentadillas", "series": 3, "repeticiones": "10-12"},
+            {"nombre": "Press militar", "series": 3, "repeticiones": "10-12"},
+            {"nombre": "Curl con barra", "series": 2, "repeticiones": "12-15"},
+          ]
+        });
+      }
+    }
+
+    // Si no hay rutinas generadas (consulta no reconocida), crear una rutina genérica
+    if (rutinas.isEmpty) {
+      rutinas.add({
+        "titulo": "Rutina Personalizada",
+        "descripcion": "Basada en tu nivel $nivel y objetivo de $objetivo",
+        "color": const Color(0xFF9067C6),
+        "icono": Amicons.lucide_dumbbell,
+        "duracion": "45-60 min",
+        "nivel": nivel.capitalizeFirst,
+        "ejercicios": [
+          {"nombre": "Press de banca", "series": 3, "repeticiones": "10-12"},
+          {"nombre": "Sentadillas", "series": 3, "repeticiones": "10-12"},
+          {"nombre": "Remo con barra", "series": 3, "repeticiones": "10-12"},
+          {"nombre": "Press militar", "series": 3, "repeticiones": "10-12"},
+          {"nombre": "Peso muerto", "series": 3, "repeticiones": "8-10"},
+        ]
+      });
+    }
+
+    return rutinas;
+  }
+
+// Método para construir la tarjeta de rutina
+  Widget _buildRutinaCard(Map<String, dynamic> rutina) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            rutina["color"],
+            rutina["color"].withOpacity(0.8),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: rutina["color"].withOpacity(0.3),
+            blurRadius: 15,
+            spreadRadius: 1,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Encabezado de la tarjeta
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Icon(
+                    rutina["icono"],
+                    color: Colors.white,
+                    size: 28,
+                  ),
+                ),
+                const SizedBox(width: 15),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        rutina["titulo"],
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        rutina["descripcion"],
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.white.withOpacity(0.8),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Amicons.lucide_clock,
+                                  color: Colors.white,
+                                  size: 12,
+                                ),
+                                const SizedBox(width: 5),
+                                Text(
+                                  rutina["duracion"],
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Amicons.lucide_zap,
+                                  color: Colors.white,
+                                  size: 12,
+                                ),
+                                const SizedBox(width: 5),
+                                Text(
+                                  rutina["nivel"],
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: Colors.white,
+                      size: 14,
+                    ),
+                    onPressed: () {
+                      // Aquí puedes implementar la navegación a la vista detallada de la rutina
+                      // Get.to(() => RutinaDetailView(rutina: rutina));
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Lista de ejercicios
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  spreadRadius: 1,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Ejercicio",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "Series",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                        const SizedBox(width: 25),
+                        Text(
+                          "Reps",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                const Divider(height: 1, color: Color(0xFFEEEEEE)),
+                const SizedBox(height: 12),
+                ...rutina["ejercicios"].map<Widget>((ejercicio) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            ejercicio["nombre"],
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[800],
+                            ),
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Container(
+                              width: 30,
+                              alignment: Alignment.center,
+                              child: Text(
+                                ejercicio["series"].toString(),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey[800],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 20),
+                            Container(
+                              width: 45,
+                              alignment: Alignment.center,
+                              child: Text(
+                                ejercicio["repeticiones"].toString(),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey[800],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                const SizedBox(height: 10),
+                InkWell(
+                  onTap: () {
+                    // Acción para guardar o iniciar la rutina
+                    Get.back(); // Cerrar el diálogo
+                    // Get.to(() => RutinaDetailView(rutina: rutina)); // Navegar a la vista detallada
+                  },
+                  borderRadius: BorderRadius.circular(30),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          rutina["color"],
+                          rutina["color"].withOpacity(0.8),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(30),
+                      boxShadow: [
+                        BoxShadow(
+                          color: rutina["color"].withOpacity(0.3),
+                          blurRadius: 8,
+                          spreadRadius: 0,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Iniciar Rutina",
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Detalles del ejercicio (series, repeticiones, descanso)
+  Widget _buildExerciseDetail(String text, IconData icon) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          color: Colors.white.withOpacity(0.7),
+          size: 12,
+        ),
+        const SizedBox(width: 4),
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.white.withOpacity(0.7),
+          ),
+        ),
+      ],
+    );
+  }
+
+// Método para obtener el color según el día de la semana
+  Color _getDayColor(String dia) {
+    switch (dia) {
+      case 'Lunes':
+        return const Color(0xFF4A90E2); // Azul
+      case 'Martes':
+        return const Color(0xFF50C878); // Esmeralda
+      case 'Miércoles':
+        return const Color(0xFF9D65C9); // Púrpura
+      case 'Jueves':
+        return const Color(0xFFFF6B6B); // Coral
+      case 'Viernes':
+        return const Color(0xFFFFD166); // Ámbar
+      case 'Sábado':
+        return const Color(
+            0xFF5D4777); // Púrpura oscuro (como el tema principal)
+      case 'Domingo':
+        return const Color(0xFF2E4057); // Azul oscuro
+      default:
+        return const Color(0xFF6E5287); // Color predeterminado (púrpura tema)
+    }
+  }
+
+// Método para obtener el enfoque del entrenamiento según el nivel y objetivo
+  String _getTrainingFocus(String nivel, String objetivo) {
+    if (nivel == "avanzado" && objetivo == "ganar masa muscular") {
+      return "Hipertrofia con énfasis en peso y volumen progresivo";
+    } else if (nivel == "intermedio" && objetivo == "definición") {
+      return "Alta repetición con descansos cortos y supersets";
+    } else if (nivel == "principiante" && objetivo == "perder peso") {
+      return "Circuitos full-body y cardio suave integrado";
+    } else if (objetivo == "ganar masa muscular") {
+      return "Entrenamiento de hipertrofia con enfoque en compuestos";
+    } else if (objetivo == "definición") {
+      return "Combinación de resistencia y cardio estratégico";
+    } else if (objetivo == "perder peso") {
+      return "Entrenamiento mixto con déficit calórico";
+    } else {
+      return "Entrenamiento general para acondicionamiento físico";
+    }
+  }
+
+// Método para obtener la intensidad del entrenamiento según el nivel y objetivo
+  String _getTrainingIntensity(String nivel, String objetivo) {
+    if (nivel == "avanzado") {
+      return "Alta (75-85% de 1RM)";
+    } else if (nivel == "intermedio") {
+      return "Media-alta (65-75% de 1RM)";
+    } else {
+      return "Media-baja (50-65% de 1RM)";
+    }
+  }
+
+  // Método para construir el widget de día de descanso
+  Widget _buildRestDayContent(List<Map<String, dynamic>> ejerciciosDia) {
+    bool esCardio = ejerciciosDia.isNotEmpty &&
+        ejerciciosDia[0]['grupo'].toString().toLowerCase().contains('cardio');
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            esCardio
+                ? Amicons.iconly_activity_broken
+                : Icons.night_shelter_sharp,
+            color: Colors.white.withOpacity(0.7),
+            size: 50,
+          ),
+          const SizedBox(height: 20),
+          Text(
+            esCardio ? "Cardio Ligero" : "Día de Recuperación",
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 15),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Text(
+              esCardio
+                  ? "Realiza actividad cardiovascular."
+                  : "El descanso es parte esencial del progreso.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.white.withOpacity(0.7),
+                height: 1.5,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildExerciseItem(Map<String, dynamic> ejercicio, int index) {
+    // Extraer valores con seguridad para evitar errores de tipo nulo
+    final nombre = ejercicio['nombre'] as String? ?? "Ejercicio sin nombre";
+    final series = ejercicio['series'] ?? 0;
+    final repeticiones = ejercicio['repeticiones'] ?? "0";
+
+    return Container(
+      margin: EdgeInsets.only(bottom: index < 3 ? 15 : 0),
+      child: Row(
+        children: [
+          // Número de ejercicio
+          Container(
+            width: 28,
+            height: 28,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.15),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Text(
+                "${index + 1}",
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 15),
+          // Detalles del ejercicio
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  nombre,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "$series series × $repeticiones",
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.white.withOpacity(0.7),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+// Método para mostrar snackbar informativo
+  void _showSnackbar(String title, String message) {
+    Get.snackbar(
+      title,
+      message,
+      backgroundColor: const Color(0xFF5D4777),
+      colorText: Colors.white,
+      snackPosition: SnackPosition.BOTTOM,
+      margin: const EdgeInsets.all(20),
+      borderRadius: 10,
+      icon: const Icon(
+        Amicons.iconly_tick_square_broken,
+        color: Colors.white,
+      ),
+      duration: const Duration(seconds: 3),
+    );
+  }
+
+// Métodos auxiliares para generar recomendaciones personalizadas
+  List<String> _getDiasRecomendados(String nivel) {
+    switch (nivel) {
+      case "principiante":
+        return ["Lunes", "Miércoles", "Viernes"];
+      case "intermedio":
+        return ["Lunes", "Martes", "Jueves", "Viernes"];
+      case "avanzado":
+        return ["Lunes", "Martes", "Miércoles", "Viernes", "Sábado"];
+      case "experto":
+        return ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+      default:
+        return ["Lunes", "Miércoles", "Viernes"];
+    }
+  }
+
+  // Método para obtener ejercicios recomendados según nivel y objetivo
+  List<Map<String, dynamic>> _getEjerciciosRecomendados(
+      String nivel, String objetivo) {
+    // Lista de ejercicios recomendados según el nivel y objetivo
+    List<Map<String, dynamic>> rutina = [];
+
+    // Implementación para diferentes niveles y objetivos
+    if (nivel == "avanzado" && objetivo == "ganar masa muscular") {
+      rutina = [
+        {
+          'dia': 'Lunes',
+          'grupo': 'Pecho y Tríceps',
+          'ejercicios': [
+            {
+              'nombre': 'Press de banca inclinado',
+              'series': 4,
+              'repeticiones': '8-10'
+            },
+            {
+              'nombre': 'Press con mancuernas',
+              'series': 4,
+              'repeticiones': '8-10'
+            },
+            {
+              'nombre': 'Fondos en paralelas',
+              'series': 3,
+              'repeticiones': '10-12'
+            },
+            {
+              'nombre': 'Extensión de tríceps',
+              'series': 3,
+              'repeticiones': '10-12'
+            },
+          ]
+        },
+        {
+          'dia': 'Martes',
+          'grupo': 'Espalda y Bíceps',
+          'ejercicios': [
+            {
+              'nombre': 'Dominadas con peso',
+              'series': 4,
+              'repeticiones': '6-8'
+            },
+            {'nombre': 'Remo con barra', 'series': 4, 'repeticiones': '8-10'},
+            {
+              'nombre': 'Curl de bíceps con barra',
+              'series': 3,
+              'repeticiones': '8-10'
+            },
+            {'nombre': 'Curl martillo', 'series': 3, 'repeticiones': '10-12'},
+          ]
+        },
+        {
+          'dia': 'Miércoles',
+          'grupo': 'Descanso Activo',
+          'ejercicios': [
+            {
+              'nombre': 'Estiramiento completo',
+              'series': 1,
+              'repeticiones': '15-20 min'
+            },
+            {
+              'nombre': 'Cardio suave',
+              'series': 1,
+              'repeticiones': '20-30 min'
+            },
+          ]
+        },
+        {
+          'dia': 'Jueves',
+          'grupo': 'Piernas',
+          'ejercicios': [
+            {
+              'nombre': 'Sentadillas con barra',
+              'series': 5,
+              'repeticiones': '6-8'
+            },
+            {'nombre': 'Peso muerto', 'series': 4, 'repeticiones': '6-8'},
+            {
+              'nombre': 'Extensión de cuádriceps',
+              'series': 3,
+              'repeticiones': '10-12'
+            },
+            {
+              'nombre': 'Curl de isquiotibiales',
+              'series': 3,
+              'repeticiones': '10-12'
+            },
+          ]
+        },
+        {
+          'dia': 'Viernes',
+          'grupo': 'Hombros y Trapecios',
+          'ejercicios': [
+            {'nombre': 'Press militar', 'series': 4, 'repeticiones': '8-10'},
+            {
+              'nombre': 'Elevaciones laterales',
+              'series': 4,
+              'repeticiones': '10-12'
+            },
+            {'nombre': 'Encogimientos', 'series': 4, 'repeticiones': '10-12'},
+            {'nombre': 'Remo al mentón', 'series': 3, 'repeticiones': '10-12'},
+          ]
+        },
+        {
+          'dia': 'Sábado',
+          'grupo': 'Brazos (enfoque)',
+          'ejercicios': [
+            {
+              'nombre': 'Extensión de tríceps con polea',
+              'series': 4,
+              'repeticiones': '10-12'
+            },
+            {
+              'nombre': 'Curl de bíceps con polea',
+              'series': 4,
+              'repeticiones': '10-12'
+            },
+            {'nombre': 'Press francés', 'series': 3, 'repeticiones': '8-10'},
+            {'nombre': 'Curl concentrado', 'series': 3, 'repeticiones': '8-10'},
+          ]
+        },
+        {
+          'dia': 'Domingo',
+          'grupo': 'Descanso Completo',
+          'ejercicios': [
+            {'nombre': 'Descanso total', 'series': 0, 'repeticiones': '0'},
+          ]
+        },
+      ];
+    } else if (nivel == "intermedio" && objetivo == "definición") {
+      rutina = [
+        {
+          'dia': 'Lunes',
+          'grupo': 'Pecho y Core',
+          'ejercicios': [
+            {'nombre': 'Press de banca', 'series': 4, 'repeticiones': '12-15'},
+            {
+              'nombre': 'Aperturas con mancuernas',
+              'series': 3,
+              'repeticiones': '12-15'
+            },
+            {
+              'nombre': 'Plancha frontal',
+              'series': 3,
+              'repeticiones': '30-45 seg'
+            },
+            {
+              'nombre': 'Crunch abdominal',
+              'series': 3,
+              'repeticiones': '15-20'
+            },
+          ]
+        },
+        {
+          'dia': 'Martes',
+          'grupo': 'Espalda y HIIT',
+          'ejercicios': [
+            {'nombre': 'Dominadas', 'series': 3, 'repeticiones': '8-10'},
+            {
+              'nombre': 'Remo con mancuerna',
+              'series': 3,
+              'repeticiones': '12-15'
+            },
+            {
+              'nombre': 'HIIT (intervalos alta intensidad)',
+              'series': 10,
+              'repeticiones': '30seg/30seg'
+            },
+          ]
+        },
+        {
+          'dia': 'Miércoles',
+          'grupo': 'Descanso Activo',
+          'ejercicios': [
+            {
+              'nombre': 'Yoga o Movilidad',
+              'series': 1,
+              'repeticiones': '30 min'
+            },
+          ]
+        },
+        {
+          'dia': 'Jueves',
+          'grupo': 'Piernas y Glúteos',
+          'ejercicios': [
+            {'nombre': 'Sentadillas', 'series': 4, 'repeticiones': '12-15'},
+            {
+              'nombre': 'Estocadas',
+              'series': 3,
+              'repeticiones': '10-12 por pierna'
+            },
+            {'nombre': 'Hip thrust', 'series': 4, 'repeticiones': '12-15'},
+            {
+              'nombre': 'Elevación de talones',
+              'series': 3,
+              'repeticiones': '15-20'
+            },
+          ]
+        },
+        {
+          'dia': 'Viernes',
+          'grupo': 'Hombros y Brazos',
+          'ejercicios': [
+            {
+              'nombre': 'Press hombro con mancuernas',
+              'series': 3,
+              'repeticiones': '12-15'
+            },
+            {
+              'nombre': 'Elevaciones laterales',
+              'series': 3,
+              'repeticiones': '12-15'
+            },
+            {'nombre': 'Curl de bíceps', 'series': 3, 'repeticiones': '12-15'},
+            {
+              'nombre': 'Extensión de tríceps',
+              'series': 3,
+              'repeticiones': '12-15'
+            },
+          ]
+        },
+        {
+          'dia': 'Sábado',
+          'grupo': 'Cardio y Core',
+          'ejercicios': [
+            {
+              'nombre': 'Cardio estable (running/ciclismo)',
+              'series': 1,
+              'repeticiones': '30-40 min'
+            },
+            {
+              'nombre': 'Circuito de abdominales',
+              'series': 3,
+              'repeticiones': '15 reps x 4 ejerc'
+            },
+          ]
+        },
+        {
+          'dia': 'Domingo',
+          'grupo': 'Descanso Completo',
+          'ejercicios': [
+            {'nombre': 'Descanso total', 'series': 0, 'repeticiones': '0'},
+          ]
+        },
+      ];
+    } else if (nivel == "principiante" && objetivo == "perder peso") {
+      rutina = [
+        {
+          'dia': 'Lunes',
+          'grupo': 'Full Body',
+          'ejercicios': [
+            {
+              'nombre': 'Sentadillas con peso corporal',
+              'series': 3,
+              'repeticiones': '12-15'
+            },
+            {
+              'nombre': 'Flexiones modificadas',
+              'series': 3,
+              'repeticiones': '8-12'
+            },
+            {
+              'nombre': 'Peso muerto con mancuernas',
+              'series': 3,
+              'repeticiones': '10-12'
+            },
+            {
+              'nombre': 'Plancha frontal',
+              'series': 3,
+              'repeticiones': '20-30 seg'
+            },
+          ]
+        },
+        {
+          'dia': 'Martes',
+          'grupo': 'Cardio Ligero',
+          'ejercicios': [
+            {
+              'nombre': 'Caminata rápida o trote suave',
+              'series': 1,
+              'repeticiones': '30-40 min'
+            },
+            {
+              'nombre': 'Estiramientos completos',
+              'series': 1,
+              'repeticiones': '10-15 min'
+            },
+          ]
+        },
+        {
+          'dia': 'Miércoles',
+          'grupo': 'Full Body',
+          'ejercicios': [
+            {
+              'nombre': 'Estocadas',
+              'series': 3,
+              'repeticiones': '10 por pierna'
+            },
+            {
+              'nombre': 'Remo con mancuernas',
+              'series': 3,
+              'repeticiones': '12-15'
+            },
+            {
+              'nombre': 'Press de hombros',
+              'series': 3,
+              'repeticiones': '10-12'
+            },
+            {
+              'nombre': 'Elevación de cadera',
+              'series': 3,
+              'repeticiones': '15-20'
+            },
+          ]
+        },
+        {
+          'dia': 'Jueves',
+          'grupo': 'Descanso Activo',
+          'ejercicios': [
+            {
+              'nombre': 'Yoga o Estiramientos',
+              'series': 1,
+              'repeticiones': '20-30 min'
+            },
+          ]
+        },
+        {
+          'dia': 'Viernes',
+          'grupo': 'Full Body',
+          'ejercicios': [
+            {
+              'nombre': 'Sentadillas sumo',
+              'series': 3,
+              'repeticiones': '12-15'
+            },
+            {'nombre': 'Fondos en banco', 'series': 3, 'repeticiones': '10-12'},
+            {
+              'nombre': 'Curl de bíceps con mancuernas',
+              'series': 3,
+              'repeticiones': '12-15'
+            },
+            {
+              'nombre': 'Plancha lateral',
+              'series': 3,
+              'repeticiones': '20-30 seg por lado'
+            },
+          ]
+        },
+        {
+          'dia': 'Sábado',
+          'grupo': 'Cardio Moderado',
+          'ejercicios': [
+            {
+              'nombre': 'Cardio intervalado suave',
+              'series': 1,
+              'repeticiones': '20-30 min'
+            },
+            {
+              'nombre': 'Abdominales básicos',
+              'series': 3,
+              'repeticiones': '12-15'
+            },
+          ]
+        },
+        {
+          'dia': 'Domingo',
+          'grupo': 'Descanso Completo',
+          'ejercicios': [
+            {'nombre': 'Descanso total', 'series': 0, 'repeticiones': '0'},
+          ]
+        },
+      ];
+    } else {
+      // Rutina por defecto para cualquier otra combinación
+      rutina = [
+        {
+          'dia': 'Lunes',
+          'grupo': 'Full Body',
+          'ejercicios': [
+            {'nombre': 'Sentadillas', 'series': 3, 'repeticiones': '10-12'},
+            {'nombre': 'Press de banca', 'series': 3, 'repeticiones': '10-12'},
+            {'nombre': 'Remo con barra', 'series': 3, 'repeticiones': '10-12'},
+            {'nombre': 'Plancha', 'series': 3, 'repeticiones': '30 seg'},
+          ]
+        },
+        {
+          'dia': 'Miércoles',
+          'grupo': 'Full Body',
+          'ejercicios': [
+            {'nombre': 'Peso muerto', 'series': 3, 'repeticiones': '10-12'},
+            {
+              'nombre': 'Press de hombros',
+              'series': 3,
+              'repeticiones': '10-12'
+            },
+            {
+              'nombre': 'Dominadas asistidas',
+              'series': 3,
+              'repeticiones': '8-10'
+            },
+            {
+              'nombre': 'Crunch abdominal',
+              'series': 3,
+              'repeticiones': '15-20'
+            },
+          ]
+        },
+        {
+          'dia': 'Viernes',
+          'grupo': 'Full Body',
+          'ejercicios': [
+            {
+              'nombre': 'Estocadas',
+              'series': 3,
+              'repeticiones': '10 por pierna'
+            },
+            {
+              'nombre': 'Fondos en paralelas',
+              'series': 3,
+              'repeticiones': '8-10'
+            },
+            {'nombre': 'Curl de bíceps', 'series': 3, 'repeticiones': '10-12'},
+            {
+              'nombre': 'Plancha lateral',
+              'series': 3,
+              'repeticiones': '20 seg por lado'
+            },
+          ]
+        },
+        {
+          'dia': 'Martes',
+          'grupo': 'Cardio Suave',
+          'ejercicios': [
+            {
+              'nombre': 'Cardio de baja intensidad',
+              'series': 1,
+              'repeticiones': '20-30 min'
+            },
+          ]
+        },
+        {
+          'dia': 'Sábado',
+          'grupo': 'Cardio Suave',
+          'ejercicios': [
+            {
+              'nombre': 'Cardio de baja intensidad',
+              'series': 1,
+              'repeticiones': '20-30 min'
+            },
+          ]
+        },
+      ];
+    }
+
+    return rutina;
+  }
 // Métodos auxiliares para calcular metas basadas en nivel de experiencia
 
 // Metas de sesiones semanales

@@ -703,59 +703,65 @@ class _RegisterPageState extends State<RegisterPage> {
           width: 1,
         ),
       ),
-      child: TextField(
-        controller: controller,
-        obscureText: isPassword && !_isPasswordVisible,
-        style: const TextStyle(
-          color: Color(0xFFF7ECE1),
-          fontSize: 16,
-        ),
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: TextStyle(
-            color: const Color(0xFFCAC4CE).withOpacity(0.8),
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-          prefixIcon: Container(
-            margin: const EdgeInsets.only(left: 12, right: 8),
+      child: Row(
+        children: [
+          // Icono prefijo
+          Container(
+            margin: const EdgeInsets.only(left: 16, right: 8),
             child: Icon(
               icon,
               color: const Color(0xFF9067C6),
               size: 22,
             ),
           ),
-          suffixIcon: isPassword
-              ? IconButton(
-                  icon: Icon(
-                    _isPasswordVisible
-                        ? Amicons.remix_eye_off // Ícono de amicons para ocultar
-                        : Amicons.remix_eye, // Ícono de amicons para mostrar
-                    color: const Color(0xFF8D86C9),
-                    size: 22,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _isPasswordVisible = !_isPasswordVisible;
-                    });
-                  },
-                )
-              : null,
-          border: InputBorder.none,
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-            borderSide: BorderSide.none,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-            borderSide: BorderSide(
-              color: const Color(0xFF9067C6).withOpacity(0.5),
-              width: 1.5,
+
+          // Campo de texto sin decoración
+          Expanded(
+            child: TextField(
+              controller: controller,
+              obscureText: isPassword && !_isPasswordVisible,
+              style: const TextStyle(
+                color: Color(0xFFF7ECE1),
+                fontSize: 16,
+              ),
+              decoration: InputDecoration(
+                // Sin label, usamos solo placeholder
+                hintText: label,
+                hintStyle: TextStyle(
+                  color: const Color(0xFFCAC4CE).withOpacity(0.8),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+                // Quitar completamente todos los bordes
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                // Sin padding horizontal para evitar desplazamientos
+                contentPadding: const EdgeInsets.symmetric(vertical: 15),
+                // Sin color de relleno
+                filled: false,
+              ),
             ),
           ),
-        ),
+
+          // Icono de sufijo (solo para contraseñas)
+          if (isPassword)
+            IconButton(
+              icon: Icon(
+                _isPasswordVisible ? Amicons.remix_eye_off : Amicons.remix_eye,
+                color: const Color(0xFF8D86C9),
+                size: 22,
+              ),
+              onPressed: () {
+                setState(() {
+                  _isPasswordVisible = !_isPasswordVisible;
+                });
+              },
+            )
+          else
+            // Espacio equivalente para mantener el padding consistente
+            const SizedBox(width: 16),
+        ],
       ),
     );
   }
@@ -778,61 +784,63 @@ class _RegisterPageState extends State<RegisterPage> {
           width: 1,
         ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.only(left: 12, right: 12),
-        child: Row(
-          children: [
-            Container(
-              margin: const EdgeInsets.only(right: 8),
-              child: Icon(icon, color: const Color(0xFF9067C6), size: 22),
-            ),
-            Expanded(
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: value,
-                  dropdownColor: const Color(0xFF242038).withOpacity(0.95),
-                  icon: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF8D86C9).withOpacity(0.2),
-                      shape: BoxShape.circle,
+      child: Theme(
+        data: Theme.of(context).copyWith(
+          // This customizes dropdown menu style
+          popupMenuTheme: PopupMenuThemeData(
+            color: const Color(0xFF242038).withOpacity(0.95),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              Icon(icon, color: const Color(0xFF9067C6), size: 22),
+              const SizedBox(width: 12),
+              Expanded(
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: value,
+                    dropdownColor: const Color(0xFF242038).withOpacity(0.95),
+                    icon: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF8D86C9).withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Amicons.iconly_arrow_down_2_curved,
+                        color: Color(0xFF9067C6),
+                        size: 18,
+                      ),
                     ),
-                    child: const Icon(
-                      Amicons
-                          .iconly_arrow_down_2_curved, // Ícono de amicons para dropdown
-                      color: Color(0xFF9067C6),
-                    ),
-                  ),
-                  isExpanded: true,
-                  hint: Text(
-                    label,
-                    style: TextStyle(
-                      color: const Color(0xFFCAC4CE).withOpacity(0.8),
-                      fontSize: 14,
+                    isExpanded: true,
+                    style: const TextStyle(
+                      color: Color(0xFFF7ECE1),
+                      fontSize: 16,
                       fontWeight: FontWeight.w500,
                     ),
-                  ),
-                  style: const TextStyle(
-                    color: Color(0xFFF7ECE1),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  onChanged: onChanged,
-                  items: items.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(
-                        value,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w400,
+                    onChanged: onChanged,
+                    items: items.map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
-                      ),
-                    );
-                  }).toList(),
+                      );
+                    }).toList(),
+                    // Add alignment to ensure dropdown text is properly positioned
+                    alignment: Alignment.centerLeft,
+                    // Remove hint to prevent overlapping with the selected value
+                    hint: null,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

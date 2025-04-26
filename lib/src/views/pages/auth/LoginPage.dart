@@ -347,17 +347,13 @@ class _LoginPageState extends State<LoginPage> {
     required IconData icon,
     bool isPassword = false,
   }) {
-    return Container(
-      height: 60,
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(
-          color: const Color(0xFF8D86C9).withOpacity(0.3),
-          width: 1,
+    return Theme(
+      data: Theme.of(context).copyWith(
+        colorScheme: ColorScheme.dark(
+          primary: const Color(0xFF9067C6),
         ),
       ),
-      child: TextField(
+      child: TextFormField(
         controller: controller,
         obscureText: isPassword && !_isPasswordVisible,
         style: const TextStyle(
@@ -371,13 +367,11 @@ class _LoginPageState extends State<LoginPage> {
             fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
-          prefixIcon: Container(
-            margin: const EdgeInsets.only(left: 12, right: 8),
-            child: Icon(
-              icon,
-              color: const Color(0xFF9067C6),
-              size: 22,
-            ),
+          floatingLabelBehavior: FloatingLabelBehavior.auto,
+          prefixIcon: Icon(
+            icon,
+            color: const Color(0xFF9067C6),
+            size: 22,
           ),
           suffixIcon: isPassword
               ? IconButton(
@@ -395,12 +389,16 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 )
               : null,
-          border: InputBorder.none,
+          filled: true,
+          fillColor: Colors.black.withOpacity(0.15),
           contentPadding:
               const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(
+              color: const Color(0xFF8D86C9).withOpacity(0.3),
+              width: 1,
+            ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),

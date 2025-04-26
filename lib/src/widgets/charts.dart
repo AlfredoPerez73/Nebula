@@ -224,13 +224,10 @@ class _WorkoutStatsWidgetState extends State<WorkoutStatsWidget>
 
                 const SizedBox(height: 40),
 
-                // Segundo gráfico: Series totales por día
+                // Segundo gráfico: Series totales por día (con diseño adaptativo)
                 _sectionHeader("Series Totales por Día", Icons.pie_chart),
                 const SizedBox(height: 20),
-                SizedBox(
-                  height: 280,
-                  child: _buildSetsPieChart(),
-                ),
+                _buildAdaptiveSetsPieChart(),
               ],
             ),
     );
@@ -414,138 +411,245 @@ class _WorkoutStatsWidgetState extends State<WorkoutStatsWidget>
     });
   }
 
-  Widget _buildSetsPieChart() {
-    return Obx(() {
-      final setsData = statsController.setsPerDay;
+  // Nuevo método que adapta el diseño según el tamaño de pantalla
+  Widget _buildAdaptiveSetsPieChart() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Determinar si estamos en una pantalla pequeña
+        final isSmallScreen = constraints.maxWidth < 360;
 
-      if (setsData.isEmpty || !setsData.any((element) => element.value > 0)) {
-        return const Center(
-          child: Text(
-            "No hay datos de series disponibles",
-            style: TextStyle(
-              color: Color(0xFFF7ECE1),
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        );
-      }
+        // Altura adaptable según el tamaño de la pantalla
+        final chartHeight = isSmallScreen ? 230.0 : 280.0;
 
-      // Colores para cada sección del pie chart
-      final List<Color> pieColors = [
-        const Color(0xFF725AC1),
-        const Color(0xFF8D86C9),
-        const Color(0xFF9067C6),
-        const Color(0xFFAA8FD8),
-        const Color(0xFFBA9FE6),
-        const Color(0xFFC9B6E4),
-        const Color(0xFFD7C1F0),
-      ];
+        return SizedBox(
+          height: chartHeight,
+          child: Obx(() {
+            final setsData = statsController.setsPerDay;
 
-      // Calcular el total para porcentajes
-      final int totalSets =
-          setsData.map((e) => e.value).reduce((a, b) => a + b);
+            if (setsData.isEmpty ||
+                !setsData.any((element) => element.value > 0)) {
+              return const Center(
+                child: Text(
+                  "No hay datos de series disponibles",
+                  style: TextStyle(
+                    color: Color(0xFFF7ECE1),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              );
+            }
 
-      // Encontrar el día con más series para el badge
-      final maxIndex = setsData
-          .indexOf(setsData.reduce((a, b) => a.value > b.value ? a : b));
+            // Colores para cada sección del pie chart
+            final List<Color> pieColors = [
+              const Color(0xFF725AC1),
+              const Color(0xFF8D86C9),
+              const Color(0xFF9067C6),
+              const Color(0xFFAA8FD8),
+              const Color(0xFFBA9FE6),
+              const Color(0xFFC9B6E4),
+              const Color(0xFFD7C1F0),
+            ];
 
-      return Row(
-        children: [
-          // Pie chart
-          Expanded(
-            flex: 3,
-            child: PieChart(
-              PieChartData(
-                sectionsSpace: 2,
-                centerSpaceRadius: 40,
-                startDegreeOffset: -90,
-                sections: setsData.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final stat = entry.value;
-                  final percentage =
-                      totalSets > 0 ? (stat.value / totalSets) * 100 : 0;
+            // Calcular el total para porcentajes
+            final int totalSets =
+                setsData.map((e) => e.value).reduce((a, b) => a + b);
 
-                  return PieChartSectionData(
-                    color: pieColors[index % pieColors.length],
-                    value: stat.value.toDouble(),
-                    title: '${percentage.toStringAsFixed(1)}%',
-                    radius: 100,
-                    titleStyle: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      shadows: [
-                        Shadow(
-                          blurRadius: 2,
-                          color: Colors.black38,
-                          offset: Offset(0, 1),
-                        )
-                      ],
-                    ),
-                    borderSide: const BorderSide(
-                      color: Color(0xFF2A2D3E),
-                      width: 1,
-                    ),
-                    badgeWidget: index == maxIndex ? const _Badge() : null,
-                    badgePositionPercentageOffset: 1.2,
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
+            // Encontrar el día con más series para el badge
+            final maxIndex = setsData
+                .indexOf(setsData.reduce((a, b) => a.value > b.value ? a : b));
 
-          // Leyenda
-          Expanded(
-            flex: 2,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 20.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: setsData.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final stat = entry.value;
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 6.0),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 14,
-                          height: 14,
-                          decoration: BoxDecoration(
+            if (isSmallScreen) {
+              // Diseño vertical para pantallas pequeñas
+              return Column(
+                children: [
+                  // Gráfico de tarta más pequeño
+                  SizedBox(
+                    height: 140, // Altura reducida
+                    child: PieChart(
+                      PieChartData(
+                        sectionsSpace: 2,
+                        centerSpaceRadius: 25, // Reducir espacio central
+                        startDegreeOffset: -90,
+                        sections: setsData.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final stat = entry.value;
+                          final percentage = totalSets > 0
+                              ? (stat.value / totalSets) * 100
+                              : 0;
+
+                          return PieChartSectionData(
                             color: pieColors[index % pieColors.length],
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            DateFormat('E, d MMM').format(stat.date),
-                            style: const TextStyle(
-                              color: Color(0xFFCAC4CE),
-                              fontSize: 13,
+                            value: stat.value.toDouble(),
+                            title: '', // Eliminar títulos para ahorrar espacio
+                            radius: 55, // Radio reducido
+                            titleStyle: const TextStyle(fontSize: 0),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF2A2D3E),
+                              width: 1,
                             ),
-                          ),
-                        ),
-                        Text(
-                          '${stat.value}',
-                          style: const TextStyle(
-                            color: Color(0xFFF7ECE1),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
+                            badgeWidget:
+                                index == maxIndex ? const _SmallBadge() : null,
+                            badgePositionPercentageOffset: 1.1,
+                          );
+                        }).toList(),
+                      ),
                     ),
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
-        ],
-      );
-    });
+                  ),
+
+                  // Leyenda compacta
+                  Expanded(
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: setsData.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final stat = entry.value;
+                        final percentage =
+                            totalSets > 0 ? (stat.value / totalSets) * 100 : 0;
+
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4.0),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 10,
+                                height: 10,
+                                decoration: BoxDecoration(
+                                  color: pieColors[index % pieColors.length],
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  DateFormat('E, d').format(stat.date),
+                                  style: const TextStyle(
+                                    color: Color(0xFFCAC4CE),
+                                    fontSize: 11,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Text(
+                                '${stat.value} (${percentage.toStringAsFixed(1)}%)',
+                                style: const TextStyle(
+                                  color: Color(0xFFF7ECE1),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              );
+            } else {
+              // Diseño horizontal para pantallas normales (original)
+              return Row(
+                children: [
+                  // Pie chart
+                  Expanded(
+                    flex: 3,
+                    child: PieChart(
+                      PieChartData(
+                        sectionsSpace: 2,
+                        centerSpaceRadius: 40,
+                        startDegreeOffset: -90,
+                        sections: setsData.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final stat = entry.value;
+                          final percentage = totalSets > 0
+                              ? (stat.value / totalSets) * 100
+                              : 0;
+
+                          return PieChartSectionData(
+                            color: pieColors[index % pieColors.length],
+                            value: stat.value.toDouble(),
+                            title: '${percentage.toStringAsFixed(1)}%',
+                            radius: 100,
+                            titleStyle: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              shadows: [
+                                Shadow(
+                                  blurRadius: 2,
+                                  color: Colors.black38,
+                                  offset: Offset(0, 1),
+                                )
+                              ],
+                            ),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF2A2D3E),
+                              width: 1,
+                            ),
+                            badgeWidget:
+                                index == maxIndex ? const _Badge() : null,
+                            badgePositionPercentageOffset: 1.2,
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+
+                  // Leyenda
+                  Expanded(
+                    flex: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: setsData.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final stat = entry.value;
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 6.0),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 14,
+                                  height: 14,
+                                  decoration: BoxDecoration(
+                                    color: pieColors[index % pieColors.length],
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    DateFormat('E, d MMM').format(stat.date),
+                                    style: const TextStyle(
+                                      color: Color(0xFFCAC4CE),
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  '${stat.value}',
+                                  style: const TextStyle(
+                                    color: Color(0xFFF7ECE1),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+          }),
+        );
+      },
+    );
   }
 }
 
@@ -574,6 +678,36 @@ class _Badge extends StatelessWidget {
         Icons.star,
         color: Color(0xFFFFD700),
         size: 16,
+      ),
+    );
+  }
+}
+
+// Badge más pequeño para pantallas pequeñas
+class _SmallBadge extends StatelessWidget {
+  const _SmallBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2A2D3E),
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 3,
+            spreadRadius: 0,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: const Icon(
+        Icons.star,
+        color: Color(0xFFFFD700),
+        size: 10,
       ),
     );
   }

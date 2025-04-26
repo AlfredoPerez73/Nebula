@@ -74,10 +74,18 @@ class AuthController extends GetxController {
 
   // Cerrar sesión
   Future<void> signOut() async {
-    await _firebaseService.signOut();
-    await _clearCredentials();
-    userModel.value = null;
-    Get.offAll(() => LoginPage());
+    try {
+      // Primero navega a la página de login
+      Get.off(() => LoginPage());
+
+      // Luego, después de que la navegación se ha completado, realiza la limpieza
+      await Future.delayed(Duration(milliseconds: 100));
+      await _firebaseService.signOut();
+      await _clearCredentials();
+      userModel.value = null;
+    } catch (e) {
+      Get.snackbar("Error", "Error al cerrar sesión: ${e.toString()}");
+    }
   }
 
   // Guardar credenciales
