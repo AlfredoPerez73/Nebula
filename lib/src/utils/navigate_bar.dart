@@ -41,7 +41,7 @@ class CustomBottomNavigation extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _buildNavItem(0, Amicons.iconly_home_curved_fill, 'Home'),
-            _buildNavItem(1, Amicons.lucide_dumbbell, 'Ejercicios'),
+            _buildNavItem(1, Amicons.lucide_cpu, 'IA'),
             _buildNavItem(2, Amicons.iconly_calendar_curved_fill, 'Rutinas'),
             _buildNavItem(3, Amicons.iconly_profile_curved_fill, 'Perfil'),
           ],

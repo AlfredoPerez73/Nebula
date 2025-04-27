@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:amicons/amicons.dart';
+import 'package:nebula/src/controllers/ai_exercise.controller.dart';
 import '../../controllers/user.controller.dart';
+import '../../controllers/historyTraining.controller.dart';
+import '../../services/ai_recommendation_service.dart';
+
+import '../../widgets/workout_display_widget.dart';
+import '../../widgets/workout_loading_dialog.dart';
+import '../../widgets/workout_selector_dialog.dart';
 
 class ExercisesPage extends StatefulWidget {
   const ExercisesPage({Key? key}) : super(key: key);
@@ -12,6 +19,7 @@ class ExercisesPage extends StatefulWidget {
 
 class _ExercisesPageState extends State<ExercisesPage> {
   final AuthController authController = Get.find<AuthController>();
+  final WorkoutRoutineController workoutController = Get.put(WorkoutRoutineController());
   final TextEditingController searchController = TextEditingController();
   String selectedCategory = "Todos";
   String selectedMuscleGroup = "Todos";
@@ -227,12 +235,19 @@ class _ExercisesPageState extends State<ExercisesPage> {
         children: [
           Row(
             children: [
-              const Icon(
-                Amicons.iconly_add_user_curved_fill,
-                color: Color(0xFFF7ECE1),
-                size: 24,
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: const Icon(
+                  Amicons.lucide_brain,
+                  color: Colors.white,
+                  size: 24,
+                ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 15),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -268,7 +283,8 @@ class _ExercisesPageState extends State<ExercisesPage> {
           const SizedBox(height: 15),
           ElevatedButton(
             onPressed: () {
-              // Implementar generación de recomendación personalizada
+              // Mostrar el diálogo de selección de rutina
+              _showWorkoutSelectorDialog();
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
@@ -281,9 +297,9 @@ class _ExercisesPageState extends State<ExercisesPage> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: const [
-                Icon(Amicons.iconly_add_user_curved_fill, size: 18),
+                Icon(Amicons.lucide_brain, size: 18),
                 SizedBox(width: 8),
-                Text("Generar recomendación personalizada"),
+                Text("Generar rutina personalizada"),
               ],
             ),
           ),
@@ -500,6 +516,58 @@ class _ExercisesPageState extends State<ExercisesPage> {
           ),
         ],
       ),
+    );
+  }
+  
+  // Métodos para la integración de IA
+  void _showWorkoutSelectorDialog() {
+    Get.dialog(
+      WorkoutSelectorDialog(
+        onGeneratePressed: (String level, String goal, int daysPerWeek, String? focusMuscleGroup, String? additionalDetails) {
+          // Mostrar el diálogo de carga
+          Get.dialog(
+            const WorkoutLoadingDialog(),
+            barrierDismissible: false,
+          );
+          
+          // Llamar al controlador para generar la rutina
+          workoutController.generateWorkout(
+            level: level,
+            goal: goal,
+            daysPerWeek: daysPerWeek,
+            muscleGroup: focusMuscleGroup,
+            details: additionalDetails,
+          ).then((_) {
+            // Cerrar el diálogo de carga
+            Get.back();
+            
+            // Verificar si se generó correctamente la rutina
+            if (workoutController.hasWorkout.value) {
+              // Mostrar la rutina generada
+              _showWorkoutDisplay();
+            }
+          });
+        },
+      ),
+    );
+  }
+
+  void _showWorkoutDisplay() {
+    // Utilizar Get.to para navegar a la pantalla de rutina
+    Get.to(
+      () => Scaffold(
+        body: Obx(() => WorkoutDisplayWidget(
+          workoutData: workoutController.workoutData.value,
+          onClose: () {
+            // Limpiar la rutina al cerrar
+            workoutController.clearWorkout();
+            Get.back();
+          },
+        )),
+      ),
+      fullscreenDialog: true,
+      transition: Transition.rightToLeft,
+      duration: const Duration(milliseconds: 300),
     );
   }
 }

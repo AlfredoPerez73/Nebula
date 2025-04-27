@@ -297,3 +297,4 @@ class EntrenamientoController extends GetxController {
     }
   }
 }
+
