@@ -1285,7 +1285,7 @@ class Routinespage extends StatelessWidget {
   // NUEVO: Modificación del método para implementar la selección de ejercicios en dos pasos
   // Diálogo de agregar ejercicio con filtro funcional
   void _mostrarDialogoAgregarEjercicio(BuildContext context) {
-    // Lista completa de ejercicios predefinidos
+    // List of predefined exercises (keep your existing list)
     final List<Map<String, dynamic>> ejerciciosPredefinidos = [
       // Piernas
       {'nombre': 'Sentadilla', 'icono': Amicons.lucide_activity},
@@ -1404,240 +1404,267 @@ class Routinespage extends StatelessWidget {
       {'nombre': 'Skull Crushers', 'icono': Amicons.lucide_user_round_cog},
     ];
 
-    // Lista filtrada de ejercicios (inicialmente todos)
+    // Filtered list of exercises (initially all)
     List<Map<String, dynamic>> ejerciciosFiltrados =
         List.from(ejerciciosPredefinidos);
 
-    // Estado de búsqueda usando StatefulBuilder
+    // Use a StatefulBuilder to handle search state
     showDialog(
       context: context,
+      // Important: set this to false so the dialog doesn't move with keyboard
+      useSafeArea: false,
+      barrierDismissible: true,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
-          return Dialog(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            insetPadding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Padding(
-              // Añade padding para evitar el desbordamiento con el teclado
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-              ),
-              child: SingleChildScrollView(
-                // Envuelve todo el contenido en un SingleChildScrollView
-                child: Container(
-                  padding: const EdgeInsets.all(25),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        colorScheme.surface,
-                        colorScheme.surface.withOpacity(0.9),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(25),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        blurRadius: 15,
-                        spreadRadius: 0,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
-                    border: Border.all(
-                      color: colorScheme.primary.withOpacity(0.2),
-                      width: 1.5,
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Ícono y título
-                      Container(
-                        padding: const EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              colorScheme.primary.withOpacity(0.2),
-                              colorScheme.primary.withOpacity(0.1),
-                            ],
-                          ),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Amicons.lucide_dumbbell,
-                          color: colorScheme.primary,
-                          size: 40,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        'Selecciona un Ejercicio',
-                        style: titleStyle.copyWith(
-                          color: colorScheme.onSurface,
-                          fontWeight: FontWeight.w700,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 15),
+          // Calculate screen dimensions
+          final Size screenSize = MediaQuery.of(context).size;
+          final double keyboardHeight =
+              MediaQuery.of(context).viewInsets.bottom;
+          final bool isKeyboardOpen = keyboardHeight > 0;
 
-                      // Campo de búsqueda
-                      Container(
-                        margin: const EdgeInsets.only(bottom: 20),
-                        decoration: BoxDecoration(
-                          color: colorScheme.background.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: colorScheme.primary.withOpacity(0.2),
-                            width: 1.5,
-                          ),
-                        ),
-                        child: TextField(
-                          style: bodyStyle.copyWith(
-                            color: colorScheme.onSurface,
-                            fontSize: 16,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: 'Buscar ejercicio',
-                            hintStyle: bodyStyle.copyWith(
-                              color: colorScheme.onBackground.withOpacity(0.5),
-                            ),
-                            prefixIcon: Icon(
-                              Amicons.iconly_search_curved_fill,
-                              color: colorScheme.primary.withOpacity(0.7),
-                            ),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                Amicons.iconly_close_square_curved_fill,
-                                color:
-                                    colorScheme.onBackground.withOpacity(0.4),
-                                size: 20,
+          // Calculate how much space the dialog content should take
+          // If keyboard is open, we'll make the dialog shorter
+          final double dialogHeight = isKeyboardOpen
+              ? screenSize.height * 0.5 // 50% of screen when keyboard is open
+              : screenSize.height * 0.7; // 70% when closed
+
+          return Align(
+            // Keep dialog at the top part of the screen
+            alignment: Alignment.topCenter,
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                width: screenSize.width * 0.9, // 90% of screen width
+                height: dialogHeight,
+                margin: EdgeInsets.only(
+                  top: screenSize.height * 0.05, // 5% from top
+                ),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      colorScheme.surface,
+                      colorScheme.surface.withOpacity(0.9),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(25),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 15,
+                      spreadRadius: 0,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                  border: Border.all(
+                    color: colorScheme.primary.withOpacity(0.2),
+                    width: 1.5,
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    // Static header section
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          // Ícono y título
+                          Container(
+                            padding: const EdgeInsets.all(15),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  colorScheme.primary.withOpacity(0.2),
+                                  colorScheme.primary.withOpacity(0.1),
+                                ],
                               ),
-                              onPressed: () {
-                                // Limpiar el campo y restaurar la lista completa
-                                FocusScope.of(context).unfocus();
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Amicons.lucide_dumbbell,
+                              color: colorScheme.primary,
+                              size: 40,
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          Text(
+                            'Selecciona un Ejercicio',
+                            style: titleStyle.copyWith(
+                              color: colorScheme.onSurface,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 15),
+
+                          // Campo de búsqueda
+                          Container(
+                            decoration: BoxDecoration(
+                              color: colorScheme.background.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: colorScheme.primary.withOpacity(0.2),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: TextField(
+                              style: bodyStyle.copyWith(
+                                color: colorScheme.onSurface,
+                                fontSize: 16,
+                              ),
+                              decoration: InputDecoration(
+                                hintText: 'Buscar ejercicio',
+                                hintStyle: bodyStyle.copyWith(
+                                  color:
+                                      colorScheme.onBackground.withOpacity(0.5),
+                                ),
+                                prefixIcon: Icon(
+                                  Amicons.iconly_search_curved_fill,
+                                  color: colorScheme.primary.withOpacity(0.7),
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    Amicons.iconly_close_square_curved_fill,
+                                    color: colorScheme.onBackground
+                                        .withOpacity(0.4),
+                                    size: 20,
+                                  ),
+                                  onPressed: () {
+                                    // Limpiar el campo y restaurar la lista completa
+                                    FocusScope.of(context).unfocus();
+                                    setState(() {
+                                      ejerciciosFiltrados =
+                                          List.from(ejerciciosPredefinidos);
+                                    });
+                                  },
+                                ),
+                                border: InputBorder.none,
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 12),
+                              ),
+                              onChanged: (value) {
+                                // Filtrar la lista según el texto de búsqueda
                                 setState(() {
-                                  ejerciciosFiltrados =
-                                      List.from(ejerciciosPredefinidos);
+                                  if (value.isEmpty) {
+                                    ejerciciosFiltrados =
+                                        List.from(ejerciciosPredefinidos);
+                                  } else {
+                                    ejerciciosFiltrados = ejerciciosPredefinidos
+                                        .where((ejercicio) =>
+                                            ejercicio['nombre']
+                                                .toString()
+                                                .toLowerCase()
+                                                .contains(value.toLowerCase()))
+                                        .toList();
+                                  }
                                 });
                               },
                             ),
-                            border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
                           ),
-                          onChanged: (value) {
-                            // Filtrar la lista según el texto de búsqueda
-                            setState(() {
-                              if (value.isEmpty) {
-                                ejerciciosFiltrados =
-                                    List.from(ejerciciosPredefinidos);
-                              } else {
-                                ejerciciosFiltrados = ejerciciosPredefinidos
-                                    .where((ejercicio) => ejercicio['nombre']
-                                        .toString()
-                                        .toLowerCase()
-                                        .contains(value.toLowerCase()))
-                                    .toList();
-                              }
-                            });
-                          },
-                        ),
+                        ],
                       ),
+                    ),
 
-                      // Lista de ejercicios filtrada
-                      ejerciciosFiltrados.isEmpty
+                    // Scrollable exercise list
+                    Expanded(
+                      child: ejerciciosFiltrados.isEmpty
                           ? Center(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 30.0),
-                                child: Column(
-                                  children: [
-                                    Icon(
-                                      Amicons.iconly_search_curved_fill,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Amicons.iconly_search_curved_fill,
+                                    color: colorScheme.onBackground
+                                        .withOpacity(0.3),
+                                    size: 40,
+                                  ),
+                                  const SizedBox(height: 15),
+                                  Text(
+                                    'No se encontraron ejercicios',
+                                    style: subtitleStyle.copyWith(
                                       color: colorScheme.onBackground
-                                          .withOpacity(0.3),
-                                      size: 50,
+                                          .withOpacity(0.5),
                                     ),
-                                    const SizedBox(height: 15),
-                                    Text(
-                                      'No se encontraron ejercicios',
-                                      style: subtitleStyle.copyWith(
-                                        color: colorScheme.onBackground
-                                            .withOpacity(0.5),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             )
-                          : Container(
-                              constraints: BoxConstraints(
-                                maxHeight:
-                                    MediaQuery.of(context).size.height * 0.5,
-                              ),
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children:
-                                      ejerciciosFiltrados.map((ejercicio) {
-                                    return InkWell(
-                                      onTap: () {
-                                        // Al seleccionar un ejercicio, cierra este diálogo y abre el siguiente
-                                        Navigator.pop(context);
-                                        _mostrarDetallesEjercicio(
-                                            context, ejercicio['nombre']);
-                                      },
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 8, horizontal: 4),
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              padding: const EdgeInsets.all(10),
-                                              decoration: BoxDecoration(
-                                                color: colorScheme.primary
-                                                    .withOpacity(0.1),
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                              child: Icon(
-                                                ejercicio['icono'],
-                                                color: colorScheme.primary,
-                                                size: 24,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 16),
-                                            Expanded(
-                                              child: Text(
-                                                ejercicio['nombre'],
-                                                style: subtitleStyle.copyWith(
-                                                  color: colorScheme.onSurface,
-                                                  fontSize: 16,
-                                                ),
-                                              ),
-                                            ),
-                                            Icon(
-                                              Amicons.iconly_info_circle_fill,
-                                              color: colorScheme.onBackground
-                                                  .withOpacity(0.5),
-                                              size: 22,
-                                            ),
-                                          ],
-                                        ),
+                          : ListView.builder(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15),
+                              itemCount: ejerciciosFiltrados.length,
+                              itemBuilder: (context, index) {
+                                final ejercicio = ejerciciosFiltrados[index];
+                                return InkWell(
+                                  onTap: () {
+                                    // Al seleccionar un ejercicio, cierra este diálogo y abre el siguiente
+                                    Navigator.pop(context);
+                                    _mostrarDetallesEjercicio(
+                                        context, ejercicio['nombre']);
+                                  },
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Container(
+                                    margin: const EdgeInsets.only(bottom: 8),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10, horizontal: 12),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          colorScheme.surface.withOpacity(0.5),
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: colorScheme.primary
+                                            .withOpacity(0.1),
+                                        width: 1,
                                       ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                            color: colorScheme.primary
+                                                .withOpacity(0.1),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
+                                          child: Icon(
+                                            ejercicio['icono'],
+                                            color: colorScheme.primary,
+                                            size: 24,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 16),
+                                        Expanded(
+                                          child: Text(
+                                            ejercicio['nombre'],
+                                            style: subtitleStyle.copyWith(
+                                              color: colorScheme.onSurface,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        ),
+                                        Icon(
+                                          Amicons.iconly_info_circle_fill,
+                                          color: colorScheme.onBackground
+                                              .withOpacity(0.5),
+                                          size: 22,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
+                    ),
 
-                      const SizedBox(height: 20),
-
-                      // Botón Cancelar
-                      OutlinedButton(
+                    // Bottom button
+                    Container(
+                      padding: const EdgeInsets.all(15),
+                      child: OutlinedButton(
                         onPressed: () => Navigator.pop(context),
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
@@ -1657,8 +1684,8 @@ class Routinespage extends StatelessWidget {
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -1668,7 +1695,8 @@ class Routinespage extends StatelessWidget {
     );
   }
 
-  // NUEVO: Método para el segundo paso (detalles del ejercicio)
+// You should also update your second dialog method to be consistent:
+// Segunda pantalla del proceso - también con posición fija
   void _mostrarDetallesEjercicio(BuildContext context, String nombreEjercicio) {
     final TextEditingController seriesController = TextEditingController();
     final TextEditingController repeticionesController =
@@ -1677,233 +1705,269 @@ class Routinespage extends StatelessWidget {
 
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        insetPadding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Container(
-          padding: const EdgeInsets.all(25),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                colorScheme.surface,
-                colorScheme.surface.withOpacity(0.9),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(25),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                blurRadius: 15,
-                spreadRadius: 0,
-                offset: const Offset(0, 5),
+      // También usar useSafeArea: false para mantener posición fija
+      useSafeArea: false,
+      builder: (context) {
+        // Calculate screen dimensions
+        final Size screenSize = MediaQuery.of(context).size;
+        final double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+        final bool isKeyboardOpen = keyboardHeight > 0;
+
+        // Calculate dialog height based on keyboard state
+        final double dialogHeight = isKeyboardOpen
+            ? screenSize.height * 0.5 // 50% when keyboard is open
+            : screenSize.height * 0.7; // 70% when closed
+
+        return Align(
+          // Keep dialog at the top part of the screen
+          alignment: Alignment.topCenter,
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              width: screenSize.width * 0.9, // 90% of screen width
+              height: dialogHeight,
+              margin: EdgeInsets.only(
+                top: screenSize.height * 0.05, // 5% from top
               ),
-            ],
-            border: Border.all(
-              color: colorScheme.primary.withOpacity(0.2),
-              width: 1.5,
-            ),
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Ícono y título
-                Container(
-                  padding: const EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        colorScheme.primary.withOpacity(0.2),
-                        colorScheme.primary.withOpacity(0.1),
-                      ],
-                    ),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Amicons.lucide_clucidepboard,
-                    color: colorScheme.primary,
-                    size: 40,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  nombreEjercicio,
-                  style: titleStyle.copyWith(
-                    color: colorScheme.onSurface,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'Configura los detalles',
-                  style: bodyStyle.copyWith(
-                    color: colorScheme.onBackground.withOpacity(0.7),
-                    fontSize: 16,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-
-                const SizedBox(height: 30),
-
-                // Campo de series
-                _buildEnhancedTextField(
-                  seriesController,
-                  'Número de Series',
-                  'Ej: 3, 4',
-                  Amicons.remix_restart,
-                  TextInputType.number,
-                ),
-
-                const SizedBox(height: 25),
-
-                // Campo de repeticiones
-                _buildEnhancedTextField(
-                  repeticionesController,
-                  'Repeticiones por Serie',
-                  'Ej: 10, 12, 15',
-                  Amicons.remix_repeat,
-                  TextInputType.text,
-                ),
-
-                const SizedBox(height: 35),
-
-                // Botones de acción
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Botón Volver
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          _mostrarDialogoAgregarEjercicio(
-                              context); // Volver a la selección
-                        },
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          side: BorderSide(
-                              color: colorScheme.onBackground.withOpacity(0.3)),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16)),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Amicons.iconly_arrow_left_curved_fill,
-                              color: colorScheme.onBackground,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Volver',
-                              style: bodyStyle.copyWith(
-                                color: colorScheme.onBackground,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(width: 16),
-
-                    // Botón Agregar
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [
-                              colorScheme.primary,
-                              colorScheme.primaryContainer,
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: colorScheme.primary.withOpacity(0.3),
-                              blurRadius: 8,
-                              spreadRadius: 0,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () {
-                              if (seriesController.text.isNotEmpty &&
-                                  repeticionesController.text.isNotEmpty) {
-                                // Crear nuevo ejercicio
-                                final ejercicio = Ejercicio(
-                                  id: DateTime.now()
-                                      .millisecondsSinceEpoch
-                                      .toString(),
-                                  nombre: nombreEjercicio,
-                                  dia: selectedDay,
-                                  series:
-                                      int.tryParse(seriesController.text) ?? 0,
-                                  repeticiones: repeticionesController.text,
-                                );
-
-                                // Llamar al controlador principal
-                                controller.agregarEjercicio(ejercicio);
-                                Navigator.pop(context);
-                              } else {
-                                // Mostrar mensaje de error si falta información
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(SnackBar(
-                                  content: Text(
-                                    'Por favor, completa todos los campos',
-                                    style:
-                                        bodyStyle.copyWith(color: Colors.white),
-                                  ),
-                                  backgroundColor: colorScheme.error,
-                                ));
-                              }
-                            },
-                            borderRadius: BorderRadius.circular(16),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Icon(
-                                    Amicons.iconly_plus_curved_fill,
-                                    color: Colors.white,
-                                    size: 20,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'Agregar',
-                                    style: subtitleStyle.copyWith(
-                                      color: colorScheme.onPrimary,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    colorScheme.surface,
+                    colorScheme.surface.withOpacity(0.9),
                   ],
                 ),
-              ],
+                borderRadius: BorderRadius.circular(25),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 15,
+                    spreadRadius: 0,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+                border: Border.all(
+                  color: colorScheme.primary.withOpacity(0.2),
+                  width: 1.5,
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  // Static header section
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        // Icon and title
+                        Container(
+                          padding: const EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                colorScheme.primary.withOpacity(0.2),
+                                colorScheme.primary.withOpacity(0.1),
+                              ],
+                            ),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Amicons.lucide_clucidepboard,
+                            color: colorScheme.primary,
+                            size: 40,
+                          ),
+                        ),
+                        const SizedBox(height: 15),
+                        Text(
+                          nombreEjercicio,
+                          style: titleStyle.copyWith(
+                            color: colorScheme.onSurface,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'Configura los detalles',
+                          style: bodyStyle.copyWith(
+                            color: colorScheme.onBackground.withOpacity(0.7),
+                            fontSize: 16,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Scrollable content with fields
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        children: [
+                          // Campo de series
+                          _buildEnhancedTextField(
+                            seriesController,
+                            'Número de Series',
+                            'Ej: 3, 4',
+                            Amicons.remix_restart,
+                            TextInputType.number,
+                          ),
+
+                          const SizedBox(height: 25),
+
+                          // Campo de repeticiones
+                          _buildEnhancedTextField(
+                            repeticionesController,
+                            'Repeticiones por Serie',
+                            'Ej: 10, 12, 15',
+                            Amicons.remix_repeat,
+                            TextInputType.text,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Fixed button section
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Botón Volver
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              _mostrarDialogoAgregarEjercicio(context);
+                            },
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              side: BorderSide(
+                                  color: colorScheme.onBackground
+                                      .withOpacity(0.3)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16)),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Amicons.iconly_arrow_left_curved_fill,
+                                  color: colorScheme.onBackground,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Volver',
+                                  style: bodyStyle.copyWith(
+                                    color: colorScheme.onBackground,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(width: 16),
+
+                        // Botón Agregar
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                                colors: [
+                                  colorScheme.primary,
+                                  colorScheme.primaryContainer,
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: colorScheme.primary.withOpacity(0.3),
+                                  blurRadius: 8,
+                                  spreadRadius: 0,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () {
+                                  if (seriesController.text.isNotEmpty &&
+                                      repeticionesController.text.isNotEmpty) {
+                                    // Create and add exercise
+                                    final ejercicio = Ejercicio(
+                                      id: DateTime.now()
+                                          .millisecondsSinceEpoch
+                                          .toString(),
+                                      nombre: nombreEjercicio,
+                                      dia: selectedDay,
+                                      series:
+                                          int.tryParse(seriesController.text) ??
+                                              0,
+                                      repeticiones: repeticionesController.text,
+                                    );
+
+                                    controller.agregarEjercicio(ejercicio);
+                                    Navigator.pop(context);
+                                  } else {
+                                    // Show error message
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                      content: Text(
+                                        'Por favor, completa todos los campos',
+                                        style: bodyStyle.copyWith(
+                                            color: Colors.white),
+                                      ),
+                                      backgroundColor: colorScheme.error,
+                                    ));
+                                  }
+                                },
+                                borderRadius: BorderRadius.circular(16),
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(
+                                        Amicons.iconly_plus_curved_fill,
+                                        color: Colors.white,
+                                        size: 20,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        'Agregar',
+                                        style: subtitleStyle.copyWith(
+                                          color: colorScheme.onPrimary,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 

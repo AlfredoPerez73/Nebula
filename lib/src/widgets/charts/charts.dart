@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart';
-import '../controllers/workoutstats.dart'; // Asegúrate de que la ruta sea correcta
+import '../../controllers/workoutstats.dart'; // Asegúrate de que la ruta sea correcta
 
 class WorkoutStatsWidget extends StatefulWidget {
   const WorkoutStatsWidget({Key? key}) : super(key: key);

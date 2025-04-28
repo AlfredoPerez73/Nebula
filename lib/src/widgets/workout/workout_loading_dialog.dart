@@ -1,7 +1,4 @@
-// lib/src/views/widgets/workout_loading_dialog.dart
-
 import 'package:flutter/material.dart';
-import 'package:amicons/amicons.dart';
 
 class WorkoutLoadingDialog extends StatelessWidget {
   const WorkoutLoadingDialog({Key? key}) : super(key: key);
@@ -45,14 +42,15 @@ class WorkoutLoadingDialog extends StatelessWidget {
                   width: 40,
                   height: 40,
                   child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF9067C6)),
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(Color(0xFF9067C6)),
                     strokeWidth: 3,
                   ),
                 ),
               ),
             ),
             const SizedBox(height: 20),
-            
+
             // Texto
             const Text(
               "Creando tu rutina...",
@@ -72,7 +70,7 @@ class WorkoutLoadingDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 15),
-            
+
             // Indicador adicional
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -86,7 +84,7 @@ class WorkoutLoadingDialog extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildPulsingDot({required int delayMilliseconds}) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 5),

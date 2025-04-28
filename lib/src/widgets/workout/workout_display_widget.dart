@@ -1,13 +1,12 @@
-// lib/src/views/widgets/workout_display_widget.dart
-
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:amicons/amicons.dart';
+import 'package:get/get.dart';
+import '../../controllers/ai_exercise.controller.dart';
 
 class WorkoutDisplayWidget extends StatefulWidget {
   final Map<String, dynamic> workoutData;
   final VoidCallback onClose;
-  
+
   const WorkoutDisplayWidget({
     Key? key,
     required this.workoutData,
@@ -18,18 +17,27 @@ class WorkoutDisplayWidget extends StatefulWidget {
   State<WorkoutDisplayWidget> createState() => _WorkoutDisplayWidgetState();
 }
 
-class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget> with SingleTickerProviderStateMixin {
+class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int selectedDayIndex = 0;
-  
+
+  // Controlador de rutinas para guardar
+  final WorkoutRoutineController workoutController =
+      Get.find<WorkoutRoutineController>();
+
+  // Estado para mostrar si la rutina está guardada
+  bool _isSaved = false;
+  bool _isSaving = false;
+
   @override
   void initState() {
     super.initState();
-    
+
     // Inicializar el controlador de tabs para los días de entrenamiento
     final days = _getWorkoutDays();
     _tabController = TabController(length: days.length, vsync: this);
-    
+
     // Añadir listener para cambio de tab
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
@@ -38,17 +46,44 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget> with Single
         });
       }
     });
+
+    // Guardar automáticamente la rutina cuando se muestra
+    _autoSaveWorkout();
   }
-  
+
+  // Método para guardar automáticamente la rutina
+  Future<void> _autoSaveWorkout() async {
+    // Verificar si la rutina ya tiene ID (ya está guardada)
+    if (widget.workoutData.containsKey('id')) {
+      setState(() => _isSaved = true);
+      return;
+    }
+
+    setState(() => _isSaving = true);
+
+    try {
+      // Guardar la rutina sin mostrar mensaje al usuario
+      final success = await workoutController.saveWorkout(showMessage: false);
+      setState(() {
+        _isSaved = success;
+        _isSaving = false;
+      });
+    } catch (e) {
+      setState(() => _isSaving = false);
+      print('Error al guardar rutina automáticamente: $e');
+    }
+  }
+
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
   }
-  
+
   List<Map<String, dynamic>> _getWorkoutDays() {
     try {
-      final List<dynamic> days = widget.workoutData['workoutDays'] as List<dynamic>;
+      final List<dynamic> days =
+          widget.workoutData['workoutDays'] as List<dynamic>;
       return days.map((day) => day as Map<String, dynamic>).toList();
     } catch (e) {
       return [];
@@ -58,7 +93,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget> with Single
   @override
   Widget build(BuildContext context) {
     final workoutDays = _getWorkoutDays();
-    
+
     if (workoutDays.isEmpty) {
       return Center(
         child: Text(
@@ -67,7 +102,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget> with Single
         ),
       );
     }
-    
+
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -76,10 +111,10 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget> with Single
         children: [
           // Barra superior
           _buildAppBar(),
-          
+
           // Encabezado de la rutina
           _buildRoutineHeader(),
-          
+
           // Tabs para días de entrenamiento
           Container(
             decoration: BoxDecoration(
@@ -109,7 +144,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget> with Single
               }).toList(),
             ),
           ),
-          
+
           // Contenido del día seleccionado
           Expanded(
             child: TabBarView(
@@ -123,7 +158,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget> with Single
       ),
     );
   }
-  
+
   Widget _buildAppBar() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -137,54 +172,116 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget> with Single
             ),
             onPressed: widget.onClose,
           ),
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(
-                  Icons.save_outlined,
-                  color: Color(0xFFF7ECE1),
-                ),
-                onPressed: () {
-                  // Implementar guardar la rutina
-                  Get.snackbar(
-                    'Rutina guardada',
-                    'Tu rutina ha sido guardada correctamente',
-                    snackPosition: SnackPosition.BOTTOM,
-                  );
-                },
-              ),
-              IconButton(
-                icon: const Icon(
-                  Icons.share_outlined,
-                  color: Color(0xFFF7ECE1),
-                ),
-                onPressed: () {
-                  // Implementar compartir rutina
-                  Get.snackbar(
-                    'Compartir',
-                    'Función para compartir rutina próximamente disponible',
-                    snackPosition: SnackPosition.BOTTOM,
-                  );
-                },
-              ),
-            ],
-          ),
+          // Indicador de guardado
+          _buildSaveIndicator(),
         ],
       ),
     );
   }
-  
+
+  // Widget para mostrar el estado de guardado
+  Widget _buildSaveIndicator() {
+    if (_isSaving) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                    Colors.white.withOpacity(0.8)),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              "Guardando...",
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.white.withOpacity(0.8),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else if (_isSaved) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: const Color(0xFF4CAF50).withOpacity(0.2),
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(
+            color: const Color(0xFF4CAF50).withOpacity(0.3),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.check_circle,
+              color: Color(0xFF4CAF50),
+              size: 16,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              "Guardada",
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.white.withOpacity(0.8),
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return IconButton(
+        icon: Icon(
+          Icons.save_alt,
+          color: Colors.white.withOpacity(0.8),
+          size: 22,
+        ),
+        onPressed: () async {
+          setState(() => _isSaving = true);
+          final success = await workoutController.saveWorkout();
+          setState(() {
+            _isSaving = false;
+            _isSaved = success;
+          });
+        },
+      );
+    }
+  }
+
   Widget _buildRoutineHeader() {
-    final routineName = widget.workoutData['routineName'] as String? ?? "Rutina personalizada";
-    final routineDescription = widget.workoutData['description'] as String? ?? "";
+    final routineName =
+        widget.workoutData['routineName'] as String? ?? "Rutina personalizada";
+    final routineDescription =
+        widget.workoutData['description'] as String? ?? "";
     final level = widget.workoutData['level'] as String? ?? "";
     final daysPerWeek = widget.workoutData['daysPerWeek']?.toString() ?? "";
-    
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(
+            routineName,
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFFF7ECE1),
+            ),
+          ),
+          const SizedBox(height: 10),
           Row(
             children: [
               Container(
@@ -204,7 +301,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget> with Single
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                     Text(
+                    Text(
                       "Nivel: $level • $daysPerWeek días por semana",
                       style: TextStyle(
                         fontSize: 14,
@@ -217,7 +314,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget> with Single
             ],
           ),
           const SizedBox(height: 12),
-          if (routineDescription.isNotEmpty) 
+          if (routineDescription.isNotEmpty)
             Text(
               routineDescription,
               style: TextStyle(
@@ -230,17 +327,17 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget> with Single
       ),
     );
   }
-  
+
   Widget _buildDayContent(Map<String, dynamic> day) {
     final String focus = day["focus"] as String? ?? "Entrenamiento";
     final String notes = day["notes"] as String? ?? "";
     List<dynamic> exercises = [];
-    
+
     // Verificar si hay ejercicios para este día
     if (day.containsKey("exercises") && day["exercises"] is List) {
       exercises = day["exercises"] as List<dynamic>;
     }
-    
+
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Padding(
@@ -299,7 +396,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget> with Single
               ),
             ),
             const SizedBox(height: 20),
-            
+
             // Notas del día (si existen)
             if (notes.isNotEmpty) ...[
               Text(
@@ -333,7 +430,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget> with Single
               ),
               const SizedBox(height: 20),
             ],
-            
+
             // Lista de ejercicios
             Text(
               "Ejercicios",
@@ -344,7 +441,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget> with Single
               ),
             ),
             const SizedBox(height: 10),
-            
+
             if (exercises.isEmpty)
               Center(
                 child: Padding(
@@ -369,9 +466,9 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget> with Single
                   return _buildExerciseCard(exercise, index + 1);
                 },
               ),
-            
+
             const SizedBox(height: 30),
-            
+
             // Información adicional
             _buildAdditionalInfo(),
           ],
@@ -379,7 +476,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget> with Single
       ),
     );
   }
-  
+
   Widget _buildExerciseCard(Map<String, dynamic> exercise, int index) {
     final String name = exercise["name"] as String? ?? "Ejercicio";
     final String muscle = exercise["muscle"] as String? ?? "";
@@ -387,7 +484,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget> with Single
     final String reps = exercise["reps"] as String? ?? "10-12";
     final String rest = exercise["rest"] as String? ?? "60s";
     final String notes = exercise["notes"] as String? ?? "";
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
@@ -432,17 +529,24 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget> with Single
               if (muscle.isNotEmpty)
                 Container(
                   margin: const EdgeInsets.only(top: 5),
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
                     color: const Color(0xFF9067C6).withOpacity(0.2),
                     borderRadius: BorderRadius.circular(10),
                   ),
+                  // Usar un ancho máximo para forzar el salto de línea
+                  constraints: const BoxConstraints(
+                    maxWidth: 200, // Ajusta este valor según tus necesidades
+                  ),
                   child: Text(
                     muscle,
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 10,
                       color: Colors.white.withOpacity(0.9),
                     ),
+                    softWrap: true, // Permite el salto de línea
+                    overflow: TextOverflow.visible, // No corta el texto
                   ),
                 ),
             ],
@@ -454,9 +558,12 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget> with Single
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildExerciseDetail("Series", sets.toString(), Amicons.flaticon_add_rounded_fill),
-                _buildExerciseDetail("Repeticiones", reps, Amicons.flaticon_add_sharp),
-                _buildExerciseDetail("Descanso", rest, Amicons.iconly_time_circle_broken),
+                _buildExerciseDetail("Series", sets.toString(),
+                    Amicons.flaticon_add_rounded_fill),
+                _buildExerciseDetail(
+                    "Repeticiones", reps, Amicons.flaticon_add_sharp),
+                _buildExerciseDetail(
+                    "Descanso", rest, Amicons.iconly_time_circle_broken),
               ],
             ),
             if (notes.isNotEmpty) ...[
@@ -483,30 +590,12 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget> with Single
               ),
             ],
             const SizedBox(height: 10),
-            TextButton.icon(
-              onPressed: () {
-                // Aquí podrías mostrar un tutorial detallado del ejercicio
-                Get.snackbar(
-                  'Tutorial',
-                  'Tutorial de $name próximamente disponible',
-                  snackPosition: SnackPosition.BOTTOM,
-                );
-              },
-              icon: const Icon(
-                Amicons.lucide_video,
-                size: 18,
-              ),
-              label: const Text("Ver tutorial"),
-              style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFF9067C6),
-              ),
-            ),
           ],
         ),
       ),
     );
   }
-  
+
   Widget _buildExerciseDetail(String label, String value, IconData icon) {
     return Column(
       children: [
@@ -542,15 +631,17 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget> with Single
       ],
     );
   }
-  
+
   Widget _buildAdditionalInfo() {
-    final String nutritionTips = widget.workoutData['nutritionTips'] as String? ?? "";
-    final String restDayTips = widget.workoutData['restDayTips'] as String? ?? "";
-    
+    final String nutritionTips =
+        widget.workoutData['nutritionTips'] as String? ?? "";
+    final String restDayTips =
+        widget.workoutData['restDayTips'] as String? ?? "";
+
     if (nutritionTips.isEmpty && restDayTips.isEmpty) {
       return const SizedBox();
     }
-    
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -565,31 +656,40 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget> with Single
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Información adicional",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFFF7ECE1),
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Información adicional",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFFF7ECE1),
+                ),
+              ),
+              // Aquí ya no se necesita un botón de guardar,
+              // ya que se guarda automáticamente
+            ],
           ),
           const SizedBox(height: 15),
-          
+
           // Consejos nutricionales
           if (nutritionTips.isNotEmpty) ...[
-            _buildInfoSection("Nutrición", nutritionTips, Amicons.lucide_utensils),
+            _buildInfoSection(
+                "Nutrición", nutritionTips, Amicons.lucide_utensils),
             const SizedBox(height: 15),
           ],
-          
+
           // Consejos para días de descanso
           if (restDayTips.isNotEmpty) ...[
-            _buildInfoSection("Días de descanso", restDayTips, Amicons.lucide_battery_charging),
+            _buildInfoSection("Días de descanso", restDayTips,
+                Amicons.lucide_battery_charging),
           ],
         ],
       ),
     );
   }
-  
+
   Widget _buildInfoSection(String title, String content, IconData icon) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

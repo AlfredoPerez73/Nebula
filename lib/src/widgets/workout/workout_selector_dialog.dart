@@ -1,12 +1,10 @@
-// lib/src/views/widgets/workout_selector_dialog.dart
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:amicons/amicons.dart';
 
 class WorkoutSelectorDialog extends StatefulWidget {
-  final Function(String level, String goal, int daysPerWeek, String? focusMuscleGroup, String? additionalDetails) onGeneratePressed;
-  
+  final Function(String level, String goal, int daysPerWeek,
+      String? focusMuscleGroup, String? additionalDetails) onGeneratePressed;
+
   const WorkoutSelectorDialog({
     Key? key,
     required this.onGeneratePressed,
@@ -20,15 +18,29 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
   // Opciones seleccionadas
   String selectedLevel = 'Intermedio';
   String selectedGoal = 'Hipertrofia';
-  int selectedDays = 4;
+  int selectedDays = 3;
   String selectedMuscleGroup = 'Todos';
   final TextEditingController detailsController = TextEditingController();
-  
+
   // Opciones disponibles
   final List<String> levels = ['Principiante', 'Intermedio', 'Avanzado'];
-  final List<String> goals = ['Pérdida de peso', 'Hipertrofia', 'Definición', 'Fuerza', 'Mantenimiento'];
-  final List<int> daysOptions = [3, 4, 5, 6];
-  final List<String> muscleGroups = ['Todos', 'Piernas', 'Pecho', 'Espalda', 'Brazos', 'Hombros', 'Core'];
+  final List<String> goals = [
+    'Pérdida de peso',
+    'Hipertrofia',
+    'Definición',
+    'Fuerza',
+    'Mantenimiento'
+  ];
+  final List<int> daysOptions = [3, 4, 5];
+  final List<String> muscleGroups = [
+    'Todos',
+    'Piernas',
+    'Pecho',
+    'Espalda',
+    'Brazos',
+    'Hombros',
+    'Core'
+  ];
 
   @override
   void dispose() {
@@ -92,7 +104,7 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
               ],
             ),
             const SizedBox(height: 10),
-            
+
             // Contenido con scroll para pantallas pequeñas
             Flexible(
               child: SingleChildScrollView(
@@ -112,7 +124,7 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
                       },
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Objetivo
                     _buildSectionTitle("Objetivo"),
                     const SizedBox(height: 8),
@@ -126,7 +138,7 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
                       },
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Días por semana
                     _buildSectionTitle("Días por semana"),
                     const SizedBox(height: 8),
@@ -145,7 +157,7 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
                       }).toList(),
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Grupo muscular de enfoque
                     _buildSectionTitle("Enfoque muscular (opcional)"),
                     const SizedBox(height: 8),
@@ -159,7 +171,8 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
                             padding: EdgeInsets.only(right: 8),
                             child: _buildMuscleGroupChip(
                               muscleGroup: muscleGroups[index],
-                              isSelected: selectedMuscleGroup == muscleGroups[index],
+                              isSelected:
+                                  selectedMuscleGroup == muscleGroups[index],
                               onSelected: () {
                                 setState(() {
                                   selectedMuscleGroup = muscleGroups[index];
@@ -171,7 +184,7 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Detalles adicionales
                     _buildSectionTitle("Detalles adicionales (opcional)"),
                     const SizedBox(height: 8),
@@ -190,10 +203,13 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
                         style: const TextStyle(color: Colors.white),
                         maxLines: 2,
                         decoration: InputDecoration(
-                          hintText: "Ej: Con poco equipamiento, para entrenar en casa...",
-                          hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+                          hintText:
+                              "Ej: Con poco equipamiento, para entrenar en casa...",
+                          hintStyle:
+                              TextStyle(color: Colors.white.withOpacity(0.5)),
                           border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(vertical: 15),
+                          contentPadding:
+                              const EdgeInsets.symmetric(vertical: 15),
                         ),
                       ),
                     ),
@@ -201,23 +217,25 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 20),
-            
+
             // Botón de generar
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
                   Get.back(); // Cerrar el diálogo
-                  
+
                   // Llamar a la función con los parámetros seleccionados
                   widget.onGeneratePressed(
                     selectedLevel,
                     selectedGoal,
                     selectedDays,
                     selectedMuscleGroup == 'Todos' ? null : selectedMuscleGroup,
-                    detailsController.text.isEmpty ? null : detailsController.text,
+                    detailsController.text.isEmpty
+                        ? null
+                        : detailsController.text,
                   );
                 },
                 style: ElevatedButton.styleFrom(
@@ -244,7 +262,7 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
       ),
     );
   }
-  
+
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
@@ -255,7 +273,7 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
       ),
     );
   }
-  
+
   Widget _buildOptionSelector({
     required List<String> options,
     required String selectedOption,
@@ -269,18 +287,23 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
         itemBuilder: (context, index) {
           final option = options[index];
           final isSelected = selectedOption == option;
-          
+
           return Padding(
             padding: EdgeInsets.only(right: 8),
             child: GestureDetector(
               onTap: () => onOptionSelected(option),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: isSelected ? const Color(0xFF9067C6) : Colors.white.withOpacity(0.08),
+                  color: isSelected
+                      ? const Color(0xFF9067C6)
+                      : Colors.white.withOpacity(0.08),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: isSelected ? const Color(0xFF9067C6) : Colors.white.withOpacity(0.1),
+                    color: isSelected
+                        ? const Color(0xFF9067C6)
+                        : Colors.white.withOpacity(0.1),
                     width: 1,
                   ),
                 ),
@@ -288,8 +311,11 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
                   option,
                   style: TextStyle(
                     fontSize: 14,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    color: isSelected ? Colors.white : Colors.white.withOpacity(0.8),
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
+                    color: isSelected
+                        ? Colors.white
+                        : Colors.white.withOpacity(0.8),
                   ),
                 ),
               ),
@@ -299,7 +325,7 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
       ),
     );
   }
-  
+
   Widget _buildDayOption({
     required int days,
     required bool isSelected,
@@ -311,10 +337,14 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF9067C6) : Colors.white.withOpacity(0.08),
+          color: isSelected
+              ? const Color(0xFF9067C6)
+              : Colors.white.withOpacity(0.08),
           shape: BoxShape.circle,
           border: Border.all(
-            color: isSelected ? const Color(0xFF9067C6) : Colors.white.withOpacity(0.1),
+            color: isSelected
+                ? const Color(0xFF9067C6)
+                : Colors.white.withOpacity(0.1),
             width: 1,
           ),
         ),
@@ -331,7 +361,7 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
       ),
     );
   }
-  
+
   Widget _buildMuscleGroupChip({
     required String muscleGroup,
     required bool isSelected,
@@ -342,10 +372,14 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF9067C6) : Colors.white.withOpacity(0.08),
+          color: isSelected
+              ? const Color(0xFF9067C6)
+              : Colors.white.withOpacity(0.08),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? const Color(0xFF9067C6) : Colors.white.withOpacity(0.1),
+            color: isSelected
+                ? const Color(0xFF9067C6)
+                : Colors.white.withOpacity(0.1),
             width: 1,
           ),
         ),

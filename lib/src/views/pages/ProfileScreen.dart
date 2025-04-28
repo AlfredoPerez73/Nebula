@@ -3,9 +3,11 @@ import 'package:get/get.dart';
 import 'package:nebula/src/views/pages/workoutHistoryPage.dart';
 import 'package:nebula/src/views/pages/EditProfilePage.dart';
 import 'package:nebula/src/views/pages/iMCCalculatorPage.dart';
-import 'package:nebula/src/widgets/charts.dart';
+import 'package:nebula/src/widgets/charts/charts.dart';
 import '../../controllers/user.controller.dart';
 import 'package:amicons/amicons.dart';
+import 'package:flutter/services.dart';
+import '../../utils/app_color.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -18,57 +20,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final AuthController authController = Get.find<AuthController>();
 
   @override
+  void initState() {
+    super.initState();
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+    ));
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF242038),
-              Color(0xFF725AC1),
-              Color(0xFF9067C6),
-            ],
-            stops: [0.1, 0.6, 1.0],
-          ),
+        decoration: BoxDecoration(
+          gradient: AppColors.backgroundGradient,
         ),
         child: Stack(
           children: [
             // Elementos decorativos en el fondo
-            Positioned(
-              top: -100,
-              right: -100,
-              child: Container(
-                height: 300,
-                width: 300,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.03),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: -50,
-              left: -50,
-              child: Container(
-                height: 200,
-                width: 200,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.02),
-                ),
-              ),
-            ),
+            _buildBackgroundElements(),
 
+            // Contenido principal
             SafeArea(
-              child: Column(
-                children: [
-                  // Appbar personalizada
-                  _buildEnhancedAppBar(),
+              child: CustomScrollView(
+                physics: const BouncingScrollPhysics(),
+                slivers: [
+                  // AppBar
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: _SliverAppBarDelegate(
+                      minHeight: 80,
+                      maxHeight: 80,
+                      child: _buildAppBar(),
+                    ),
+                  ),
 
-                  // Contenido principal
-                  Expanded(
+                  // Contenido
+                  SliverToBoxAdapter(
                     child: _buildMainContent(),
                   ),
                 ],
@@ -80,69 +69,140 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildEnhancedAppBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.15),
-          width: 1,
+  Widget _buildBackgroundElements() {
+    return Stack(
+      children: [
+        // Círculos decorativos semi-transparentes
+        Positioned(
+          top: -80,
+          right: -80,
+          child: Container(
+            height: 250,
+            width: 250,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  const Color(0xFF9067C6).withOpacity(0.2),
+                  const Color(0xFF9067C6).withOpacity(0.0),
+                ],
+              ),
+            ),
+          ),
         ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      const Color(0xFF9067C6),
-                      const Color(0xFF8D86C9),
+        Positioned(
+          bottom: MediaQuery.of(context).size.height * 0.3,
+          left: -100,
+          child: Container(
+            height: 200,
+            width: 200,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  const Color(0xFF8D86C9).withOpacity(0.15),
+                  const Color(0xFF8D86C9).withOpacity(0.0),
+                ],
+              ),
+            ),
+          ),
+        ),
+        // Líneas gráficas decorativas
+        Positioned(
+          top: MediaQuery.of(context).size.height * 0.35,
+          right: -50,
+          child: Transform.rotate(
+            angle: 0.8,
+            child: Container(
+              height: 150,
+              width: 150,
+              child: CustomPaint(
+                painter: GridPainter(
+                  color: Colors.white.withOpacity(0.05),
+                  strokeWidth: 1,
+                  spacing: 10,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAppBar() {
+    return Container(
+      color: const Color(0xFF242038).withOpacity(0.9),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color(0xFF9067C6),
+                        Color(0xFF7652B2),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF9067C6).withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
                     ],
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 5,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
+                  child: const Icon(
+                    Amicons.lucide_user_round_cog,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ),
-                child: const Icon(
-                  Amicons.lucide_user_round_cog,
-                  color: Color(0xFFF7ECE1),
-                  size: 24,
+                const SizedBox(width: 15),
+                Text(
+                  "MI PERFIL",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2.2,
+                    color: Colors.white,
+                    shadows: [
+                      Shadow(
+                        offset: Offset(0, 1),
+                        blurRadius: 2,
+                        color: Colors.black26,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              padding: const EdgeInsets.all(9),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.1),
+                  width: 1,
                 ),
               ),
-              const SizedBox(width: 12),
-              const Text(
-                "PERFIL",
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 2.0,
-                  color: Color(0xFFF7ECE1),
-                  shadows: [
-                    Shadow(
-                      offset: Offset(0, 1),
-                      blurRadius: 3,
-                      color: Colors.black26,
-                    ),
-                  ],
-                ),
+              child: const Icon(
+                Amicons.iconly_notification_fill,
+                color: Colors.white,
+                size: 22,
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -151,110 +211,251 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.fromLTRB(22, 15, 22, 30),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Perfil del usuario
-            _buildEnhancedProfileCard(),
+            _buildProfileCard(),
 
-            const SizedBox(height: 25),
+            const SizedBox(height: 24),
 
             // Detalles del perfil
-            _buildEnhancedDetailsCard(),
+            _buildDetailsCard(),
 
-            const SizedBox(height: 25),
+            const SizedBox(height: 24),
 
-            // Estadísticas de entrenamiento (NUEVO COMPONENTE)
+            // Estadísticas de entrenamiento
             const WorkoutStatsWidget(),
 
-            const SizedBox(height: 25),
+            const SizedBox(height: 24),
 
             // Opciones adicionales
-            _buildEnhancedOptionsCard(),
+            _buildOptionsCard(),
 
-            const SizedBox(height: 25),
+            const SizedBox(height: 16),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildEnhancedProfileCard() {
+  Widget _buildProfileCard() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.white.withOpacity(0.12),
-            Colors.white.withOpacity(0.05),
+            Colors.white.withOpacity(0.08),
+            Colors.white.withOpacity(0.04),
           ],
         ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
-          width: 1.5,
+          color: Colors.white.withOpacity(0.1),
+          width: 1,
         ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
             blurRadius: 15,
-            spreadRadius: 1,
             offset: const Offset(0, 8),
           ),
         ],
       ),
       child: Column(
         children: [
-          // Avatar del usuario con efecto resplandor
+          // Parte superior con gradiente
           Container(
-            width: 120,
-            height: 120,
+            height: 85,
+            width: double.infinity,
             decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
+              gradient: const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  const Color(0xFF9067C6).withOpacity(0.7),
-                  const Color(0xFF725AC1).withOpacity(0.5),
+                  Color(0xFF9067C6),
+                  Color(0xFF7652B2),
                 ],
+              ),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(24),
+                topRight: Radius.circular(24),
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF9067C6).withOpacity(0.5),
-                  blurRadius: 20,
-                  spreadRadius: 5,
-                  offset: const Offset(0, 5),
+                  color: const Color(0xFF9067C6).withOpacity(0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
                 ),
               ],
-              border: Border.all(
-                color: Colors.white.withOpacity(0.3),
-                width: 4,
-              ),
-            ),
-            child: const Center(
-              child: Icon(
-                Amicons.lucide_user_round_pen,
-                color: Color(0xFFF7ECE1),
-                size: 65,
-              ),
             ),
           ),
 
-          const SizedBox(height: 25),
+          // Contenido principal con avatar
+          Transform.translate(
+            offset: const Offset(0, -45),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(30, 0, 30, 20),
+              child: Column(
+                children: [
+                  // Avatar con efecto borde iluminado
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Colors.white.withOpacity(0.9),
+                          Colors.white.withOpacity(0.4),
+                        ],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 20,
+                          spreadRadius: 2,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color(0xFF9067C6),
+                            Color(0xFF7652B2),
+                          ],
+                        ),
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          Amicons.lucide_user_round_pen,
+                          color: Colors.white,
+                          size: 50,
+                        ),
+                      ),
+                    ),
+                  ),
 
-          // Nombre del usuario
-          Obx(() => Text(
-                authController.userModel.value?.nombre ?? "Usuario",
-                style: const TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFFF7ECE1),
-                  letterSpacing: 0.5,
+                  const SizedBox(height: 16),
+
+                  // Nombre del usuario
+                  Obx(() => Text(
+                        authController.userModel.value?.nombre ?? "Usuario",
+                        style: const TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFFF7ECE1),
+                          letterSpacing: 0.5,
+                          shadows: [
+                            Shadow(
+                              offset: Offset(0, 1),
+                              blurRadius: 2,
+                              color: Colors.black26,
+                            ),
+                          ],
+                        ),
+                      )),
+
+                  const SizedBox(height: 8),
+
+                  // Email del usuario
+                  Obx(() => Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.1),
+                            width: 1,
+                          ),
+                        ),
+                        child: Text(
+                          authController.userModel.value?.email ??
+                              "Email no disponible",
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFFCAC4CE).withOpacity(0.9),
+                          ),
+                        ),
+                      )),
+
+                  const SizedBox(height: 20),
+
+                  // Botón para editar perfil
+                  _buildGlassButton(
+                    "Editar perfil",
+                    Amicons.iconly_edit_curved_fill,
+                    const Color(0xFF9067C6),
+                    () {
+                      Get.to(() => const EditProfilePage());
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailsCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF8D86C9).withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Amicons.remix_profile_fill,
+                  color: Color(0xFF8D86C9),
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                "DETALLES PERSONALES",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.5,
+                  color: Colors.white,
                   shadows: [
                     Shadow(
                       offset: Offset(0, 1),
@@ -263,162 +464,127 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ],
                 ),
-              )),
-
-          const SizedBox(height: 8),
-
-          // Email del usuario
-          Obx(() => Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  authController.userModel.value?.email ??
-                      "Email no disponible",
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: const Color(0xFFCAC4CE).withOpacity(0.9),
-                  ),
-                ),
-              )),
-
-          const SizedBox(height: 25),
-
-          // Botón para editar perfil
-          _buildEnhancedButton(
-            "Editar perfil",
-            () {
-              Get.to(() => const EditProfilePage());
-            },
-            const Color(0xFF9067C6),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEnhancedDetailsCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(25),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withOpacity(0.12),
-            Colors.white.withOpacity(0.05),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.2),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 15,
-            spreadRadius: 1,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                "Detalles personales",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFFF7ECE1),
-                  letterSpacing: 0.5,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF8D86C9).withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Amicons.remix_profile_fill,
-                  color: Color(0xFFF7ECE1),
-                  size: 20,
-                ),
               ),
             ],
           ),
 
           const SizedBox(height: 20),
+
           // Información detallada del usuario
+          Row(
+            children: [
+              Expanded(
+                child: Obx(() => _buildDetailItem(
+                      Amicons.remix_line_height,
+                      "Altura",
+                      "${authController.userModel.value?.altura.toString() ?? '0'} cm",
+                    )),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Obx(() => _buildDetailItem(
+                      Amicons.flaticon_rings_wedding_rounded_fill,
+                      "Peso",
+                      "${authController.userModel.value?.peso.toString() ?? '0'} kg",
+                    )),
+              ),
+            ],
+          ),
 
-          Obx(() => _buildEnhancedInfoRow(
-                Amicons.remix_line_height,
-                "Altura",
-                "${authController.userModel.value?.altura.toString() ?? '0'} cm",
-              )),
+          const SizedBox(height: 16),
 
-          const SizedBox(height: 15),
-
-          Obx(() => _buildEnhancedInfoRow(
-                Amicons.flaticon_rings_wedding_rounded_fill,
-                "Peso",
-                "${authController.userModel.value?.peso.toString() ?? '0'} kg",
-              )),
-
-          const SizedBox(height: 15),
-
-          Obx(() => _buildEnhancedInfoRow(
-                Amicons.lucide_dumbbell,
-                "Nivel de experiencia",
-                authController.userModel.value?.nivelExperiencia ??
-                    "Sin información",
-              )),
-
-          const SizedBox(height: 15),
-
-          Obx(() => _buildEnhancedInfoRow(
-                Amicons.flaticon_gym_rounded_fill,
-                "Objetivo principal",
-                authController.userModel.value?.objetivo ?? "Sin información",
-              )),
+          Row(
+            children: [
+              Expanded(
+                child: Obx(() => _buildDetailItem(
+                      Amicons.lucide_dumbbell,
+                      "Nivel de experiencia",
+                      authController.userModel.value?.nivelExperiencia ??
+                          "Sin información",
+                    )),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Obx(() => _buildDetailItem(
+                      Amicons.flaticon_gym_rounded_fill,
+                      "Objetivo principal",
+                      authController.userModel.value?.objetivo ??
+                          "Sin información",
+                    )),
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildEnhancedOptionsCard() {
+  Widget _buildDetailItem(IconData icon, String label, String value) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.03),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.08),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF8D86C9).withOpacity(0.15),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(
+              icon,
+              color: const Color(0xFF9067C6),
+              size: 18,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: const Color(0xFFCAC4CE).withOpacity(0.8),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFFF7ECE1),
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOptionsCard() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(25),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withOpacity(0.12),
-            Colors.white.withOpacity(0.05),
-          ],
-        ),
+        color: Colors.white.withOpacity(0.05),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
-          width: 1.5,
+          color: Colors.white.withOpacity(0.1),
+          width: 1,
         ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
             blurRadius: 15,
-            spreadRadius: 1,
             offset: const Offset(0, 8),
           ),
         ],
@@ -427,36 +593,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                "Opciones adicionales",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFFF7ECE1),
-                  letterSpacing: 0.5,
-                ),
-              ),
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF8D86C9).withOpacity(0.3),
+                  color: const Color(0xFF8D86C9).withOpacity(0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
                   Amicons.iconly_more_circle_fill,
-                  color: Color(0xFFF7ECE1),
+                  color: Color(0xFF8D86C9),
                   size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                "OPCIONES",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.5,
+                  color: Colors.white,
+                  shadows: [
+                    Shadow(
+                      offset: Offset(0, 1),
+                      blurRadius: 2,
+                      color: Colors.black26,
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
           const SizedBox(height: 20),
-          _buildEnhancedOptionButton(
+          _buildOptionButton(
             "Historial de entrenamientos",
             Amicons.remix_history,
-            Colors.teal,
+            const Color(0xFF4ECDC4),
             () {
               Navigator.push(
                 context,
@@ -465,11 +638,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               );
             },
           ),
-          const SizedBox(height: 15),
-          _buildEnhancedOptionButton(
+          const SizedBox(height: 14),
+          _buildOptionButton(
             "Medidas corporales",
             Amicons.remix_body_scan,
-            Colors.deepPurple,
+            const Color(0xFF9067C6),
             () {
               Navigator.push(
                 context,
@@ -478,11 +651,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               );
             },
           ),
-          const SizedBox(height: 15),
-          _buildEnhancedOptionButton(
+          const SizedBox(height: 14),
+          _buildOptionButton(
             "Cerrar sesión",
             Amicons.iconly_logout_curved,
-            Colors.redAccent,
+            const Color(0xFFFF6B6B),
             () {
               authController.signOut();
             },
@@ -492,7 +665,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildEnhancedOptionButton(
+  Widget _buildOptionButton(
       String text, IconData icon, Color color, VoidCallback onTap) {
     return Material(
       color: Colors.transparent,
@@ -503,36 +676,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [
-                color.withOpacity(0.7),
-                color.withOpacity(0.4),
-              ],
-            ),
+            color: color.withOpacity(0.08),
             borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: color.withOpacity(0.3),
-                blurRadius: 8,
-                spreadRadius: 0,
-                offset: const Offset(0, 3),
-              ),
-            ],
+            border: Border.all(
+              color: color.withOpacity(0.2),
+              width: 1,
+            ),
           ),
           child: Row(
             children: [
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: color.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   icon,
-                  color: Colors.white,
-                  size: 24,
+                  color: color,
+                  size: 22,
                 ),
               ),
               const SizedBox(width: 15),
@@ -546,10 +708,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
               ),
-              const Icon(
+              Icon(
                 Amicons.iconly_arrow_right_curved_fill,
-                color: Colors.white,
-                size: 22,
+                color: color.withOpacity(0.7),
+                size: 20,
               ),
             ],
           ),
@@ -558,63 +720,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildEnhancedInfoRow(IconData icon, String label, String value) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.1),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF8D86C9).withOpacity(0.2),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(
-              icon,
-              color: const Color(0xFF8D86C9),
-              size: 20,
-            ),
-          ),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: const Color(0xFFCAC4CE).withOpacity(0.8),
-                  ),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFFF7ECE1),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEnhancedButton(
-      String text, VoidCallback onPressed, Color color) {
+  Widget _buildGlassButton(
+      String text, IconData icon, Color color, VoidCallback onPressed) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -625,47 +732,114 @@ class _ProfileScreenState extends State<ProfileScreen> {
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
               colors: [
-                color,
-                Color.lerp(color, Colors.deepPurple, 0.3) ?? color,
+                color.withOpacity(0.7),
+                color.withOpacity(0.4),
               ],
             ),
             borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.2),
+              width: 1,
+            ),
             boxShadow: [
               BoxShadow(
                 color: color.withOpacity(0.3),
-                blurRadius: 10,
+                blurRadius: 8,
                 spreadRadius: 0,
                 offset: const Offset(0, 4),
               ),
             ],
           ),
-          child: Center(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  text,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                const Icon(
-                  Amicons.iconly_edit_curved_fill,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                text,
+                style: const TextStyle(
                   color: Colors.white,
-                  size: 18,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 10),
+              Icon(
+                icon,
+                color: Colors.white,
+                size: 18,
+              ),
+            ],
           ),
         ),
       ),
     );
   }
+}
+
+// Clase para el SliverAppBar delegado
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate({
+    required this.minHeight,
+    required this.maxHeight,
+    required this.child,
+  });
+
+  final double minHeight;
+  final double maxHeight;
+  final Widget child;
+
+  @override
+  double get minExtent => minHeight;
+  @override
+  double get maxExtent => maxHeight;
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return SizedBox.expand(child: child);
+  }
+
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+    return maxHeight != oldDelegate.maxHeight ||
+        minHeight != oldDelegate.minHeight ||
+        child != oldDelegate.child;
+  }
+}
+
+// Pintor personalizado para las líneas de fondo
+class GridPainter extends CustomPainter {
+  final Color color;
+  final double strokeWidth;
+  final double spacing;
+
+  GridPainter({
+    required this.color,
+    required this.strokeWidth,
+    required this.spacing,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke;
+
+    // Dibujar líneas horizontales
+    for (double i = 0; i < size.height; i += spacing) {
+      canvas.drawLine(Offset(0, i), Offset(size.width, i), paint);
+    }
+
+    // Dibujar líneas verticales
+    for (double i = 0; i < size.width; i += spacing) {
+      canvas.drawLine(Offset(i, 0), Offset(i, size.height), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
