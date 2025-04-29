@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:amicons/amicons.dart';
 import 'package:nebula/src/controllers/ai_exercise.controller.dart';
+import 'package:nebula/src/widgets/workout/all_workouts_screens.dart';
 import '../../controllers/user.controller.dart';
 import '../../widgets/workout/workout_display_widget.dart';
 import '../../widgets/workout/workout_loading_dialog.dart';
@@ -349,6 +350,7 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
     return Obx(() {
       // Verificar si hay rutinas guardadas
       bool hasWorkouts = workoutController.savedWorkouts.isNotEmpty;
+      bool hasMoreWorkouts = workoutController.savedWorkouts.length > 3;
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -364,6 +366,30 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
                   color: Color(0xFFF7ECE1),
                 ),
               ),
+              if (hasMoreWorkouts)
+                TextButton(
+                  onPressed: () {
+                    _showAllWorkouts();
+                  },
+                  child: Row(
+                    children: [
+                      Text(
+                        "Ver todos",
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF9067C6),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 12,
+                        color: Color(0xFF9067C6),
+                      ),
+                    ],
+                  ),
+                ),
             ],
           ),
           const SizedBox(height: 16),
@@ -377,6 +403,26 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
               : _buildEmptyWorkoutState(),
         ],
       );
+    });
+  }
+
+// Añade este nuevo método
+  void _showAllWorkouts() {
+    // Usar Navigator en lugar de Get.to para mejor control de memoria y recursos
+    Navigator.of(context)
+        .push(
+      MaterialPageRoute(
+        builder: (context) =>
+            AllWorkoutsScreen(workoutController: workoutController),
+      ),
+    )
+        .then((value) {
+      // Refrescar la lista de rutinas al regresar
+      if (mounted) {
+        setState(() {
+          workoutController.loadSavedWorkouts();
+        });
+      }
     });
   }
 
