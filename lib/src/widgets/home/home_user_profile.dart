@@ -15,6 +15,10 @@ class HomeUserProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Detectar si la pantalla es pequeña para ajustes responsivos
+    final screenSize = MediaQuery.of(context).size;
+    final isSmallScreen = screenSize.width < 360;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       decoration:
@@ -24,7 +28,7 @@ class HomeUserProfile extends StatelessWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -32,46 +36,49 @@ class HomeUserProfile extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryColor.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(14),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryColor.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: Icon(
+                              Icons.person_rounded,
+                              color: AppColors.accentColor,
+                              size: isSmallScreen ? 18 : 22,
+                            ),
                           ),
-                          child: Icon(
-                            Icons.person_rounded,
-                            color: AppColors.accentColor,
-                            size: 22,
+                          SizedBox(width: isSmallScreen ? 8 : 12),
+                          Text(
+                            "TU PERFIL",
+                            style: TextStyle(
+                              fontSize: isSmallScreen ? 16 : 18,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.accentColor,
+                              letterSpacing: 1.2,
+                              shadows: [
+                                Shadow(
+                                  offset: const Offset(0, 1),
+                                  blurRadius: 2,
+                                  color: Colors.black.withOpacity(0.3),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          "TU PERFIL",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.accentColor,
-                            letterSpacing: 1.2,
-                            shadows: [
-                              Shadow(
-                                offset: const Offset(0, 1),
-                                blurRadius: 2,
-                                color: Colors.black.withOpacity(0.3),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     _buildProfileActionButton(
                       icon: Icons.edit_rounded,
                       onTap: () => Get.to(() => const EditProfilePageSkills()),
+                      isSmallScreen: isSmallScreen,
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: isSmallScreen ? 16 : 24),
 
                 // User Info
                 Obx(() {
@@ -84,8 +91,8 @@ class HomeUserProfile extends StatelessWidget {
                   return Row(
                     children: [
                       Container(
-                        width: 64,
-                        height: 64,
+                        width: isSmallScreen ? 50 : 64,
+                        height: isSmallScreen ? 50 : 64,
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.topLeft,
@@ -108,15 +115,15 @@ class HomeUserProfile extends StatelessWidget {
                         child: Center(
                           child: Text(
                             userInitial,
-                            style: const TextStyle(
-                              fontSize: 26,
+                            style: TextStyle(
+                              fontSize: isSmallScreen ? 22 : 26,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
                           ),
                         ),
                       ),
-                      const SizedBox(width: 16),
+                      SizedBox(width: isSmallScreen ? 12 : 16),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,25 +131,30 @@ class HomeUserProfile extends StatelessWidget {
                             Text(
                               authController.userModel.value?.nombre ??
                                   "Usuario",
-                              style: const TextStyle(
-                                fontSize: 22,
+                              style: TextStyle(
+                                fontSize: isSmallScreen ? 18 : 22,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            const SizedBox(height: 4),
+                            SizedBox(height: isSmallScreen ? 2 : 4),
                             Text(
                               authController.userModel.value?.email ??
                                   "email@ejemplo.com",
                               style: TextStyle(
-                                fontSize: 14,
+                                fontSize: isSmallScreen ? 12 : 14,
                                 color: Colors.white.withOpacity(0.7),
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            const SizedBox(height: 6),
+                            SizedBox(height: isSmallScreen ? 4 : 6),
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 4),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: isSmallScreen ? 8 : 12,
+                                  vertical: isSmallScreen ? 3 : 4),
                               decoration: BoxDecoration(
                                 color: Colors.white.withOpacity(0.15),
                                 borderRadius: BorderRadius.circular(20),
@@ -152,10 +164,12 @@ class HomeUserProfile extends StatelessWidget {
                                         .userModel.value?.nivelExperiencia ??
                                     "Principiante",
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: isSmallScreen ? 10 : 12,
                                   fontWeight: FontWeight.w600,
                                   color: AppColors.accentColor,
                                 ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
@@ -165,9 +179,9 @@ class HomeUserProfile extends StatelessWidget {
                   );
                 }),
 
-                const SizedBox(height: 24),
+                SizedBox(height: isSmallScreen ? 16 : 24),
 
-                // Stats Grid - MODIFICADO para ser simétrico
+                // Stats Grid - Ahora más responsivo
                 Obx(() {
                   // Datos del perfil
                   final objetivo =
@@ -180,31 +194,36 @@ class HomeUserProfile extends StatelessWidget {
 
                   return GridView.count(
                     crossAxisCount: 2,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
+                    crossAxisSpacing: isSmallScreen ? 8 : 12,
+                    mainAxisSpacing: isSmallScreen ? 8 : 12,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    childAspectRatio: 1.1, // Proporciones cuadradas
+                    childAspectRatio:
+                        isSmallScreen ? 1.2 : 1.1, // Ajuste de proporciones
                     children: [
                       _buildSymmetricalStatCard(
                         title: "Objetivo",
                         value: objetivo,
                         icon: Icons.fitness_center_rounded,
+                        isSmallScreen: isSmallScreen,
                       ),
                       _buildSymmetricalStatCard(
                         title: "Peso",
                         value: peso,
                         icon: Icons.monitor_weight_rounded,
+                        isSmallScreen: isSmallScreen,
                       ),
                       _buildSymmetricalStatCard(
                         title: "Altura",
                         value: altura,
                         icon: Icons.height_rounded,
+                        isSmallScreen: isSmallScreen,
                       ),
                       _buildSymmetricalStatCard(
                         title: "IMC",
                         value: imc,
                         icon: Icons.speed_rounded,
+                        isSmallScreen: isSmallScreen,
                       ),
                     ],
                   );
@@ -230,6 +249,7 @@ class HomeUserProfile extends StatelessWidget {
   Widget _buildProfileActionButton({
     required IconData icon,
     required VoidCallback onTap,
+    required bool isSmallScreen,
   }) {
     return Material(
       color: Colors.transparent,
@@ -238,7 +258,7 @@ class HomeUserProfile extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.all(10),
+          padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
           decoration: BoxDecoration(
             color: AppColors.accentColor.withOpacity(0.15),
             borderRadius: BorderRadius.circular(12),
@@ -246,21 +266,22 @@ class HomeUserProfile extends StatelessWidget {
           child: Icon(
             icon,
             color: AppColors.accentColor,
-            size: 20,
+            size: isSmallScreen ? 16 : 20,
           ),
         ),
       ),
     );
   }
 
-  // Nuevo método para tarjetas de estadísticas simétricas
+  // Método para tarjetas de estadísticas simétricas ahora con parámetro isSmallScreen
   Widget _buildSymmetricalStatCard({
     required String title,
     required String value,
     required IconData icon,
+    required bool isSmallScreen,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.08),
         borderRadius: BorderRadius.circular(20),
@@ -276,12 +297,14 @@ class HomeUserProfile extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: isSmallScreen ? 12 : 14,
               fontWeight: FontWeight.w500,
               color: Colors.white.withOpacity(0.7),
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: isSmallScreen ? 8 : 12),
 
           // Fila de icono y valor
           Row(
@@ -289,7 +312,7 @@ class HomeUserProfile extends StatelessWidget {
             children: [
               // Icono a la izquierda
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
                   color: AppColors.primaryColor.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(12),
@@ -297,17 +320,17 @@ class HomeUserProfile extends StatelessWidget {
                 child: Icon(
                   icon,
                   color: AppColors.accentColor,
-                  size: 20,
+                  size: isSmallScreen ? 16 : 20,
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: isSmallScreen ? 8 : 12),
 
               // Valor con tamaño flexible
               Expanded(
                 child: Text(
                   value,
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: TextStyle(
+                    fontSize: isSmallScreen ? 14 : 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),

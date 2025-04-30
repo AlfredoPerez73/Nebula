@@ -14,6 +14,10 @@ class HomeWelcomeBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Obtener el tamaño de la pantalla para ajustes responsivos
+    final screenSize = MediaQuery.of(context).size;
+    final isSmallScreen = screenSize.width < 360;
+
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: 4),
@@ -66,7 +70,7 @@ class HomeWelcomeBanner extends StatelessWidget {
 
           // Content
           Padding(
-            padding: const EdgeInsets.all(24),
+            padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -74,46 +78,53 @@ class HomeWelcomeBanner extends StatelessWidget {
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: EdgeInsets.all(isSmallScreen ? 8 : 12),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Amicons.lucide_dumbbell,
                         color: Colors.white,
-                        size: 22,
+                        size: isSmallScreen ? 18 : 22,
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "BIENVENIDO A NEBULA",
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white.withOpacity(0.9),
-                            letterSpacing: 1.0,
+                    SizedBox(width: isSmallScreen ? 8 : 16),
+                    Expanded(
+                      // Usar Expanded para evitar desbordamiento
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "BIENVENIDO A NEBULA",
+                            style: TextStyle(
+                              fontSize: isSmallScreen ? 10 : 12,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white.withOpacity(0.9),
+                              letterSpacing: 1.0,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        const Text(
-                          "TU ENTRENADOR PERSONAL",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            letterSpacing: 0.5,
+                          SizedBox(height: isSmallScreen ? 2 : 4),
+                          Text(
+                            "TU ENTRENADOR PERSONAL",
+                            style: TextStyle(
+                              fontSize: isSmallScreen ? 14 : 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              letterSpacing: 0.5,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
 
-                const SizedBox(height: 20),
+                SizedBox(height: isSmallScreen ? 12 : 20),
 
                 // User info
                 Obx(() {
@@ -128,67 +139,78 @@ class HomeWelcomeBanner extends StatelessWidget {
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.15),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: Center(
-                              child: Text(
-                                userInitial,
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.primaryColor,
+                      Expanded(
+                        // Usar Expanded para permitir que el nombre/email se ajuste
+                        child: Row(
+                          children: [
+                            Container(
+                              width: isSmallScreen ? 40 : 50,
+                              height: isSmallScreen ? 40 : 50,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.15),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Center(
+                                child: Text(
+                                  userInitial,
+                                  style: TextStyle(
+                                    fontSize: isSmallScreen ? 18 : 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.primaryColor,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 14),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                userName,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
+                            SizedBox(width: isSmallScreen ? 8 : 14),
+                            Expanded(
+                              // Expandir para evitar desbordamiento
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    userName,
+                                    style: TextStyle(
+                                      fontSize: isSmallScreen ? 14 : 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  SizedBox(height: isSmallScreen ? 2 : 4),
+                                  Text(
+                                    userEmail,
+                                    style: TextStyle(
+                                      fontSize: isSmallScreen ? 9 : 11,
+                                      color: Colors.white.withOpacity(0.7),
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                userEmail,
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.white.withOpacity(0.7),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                            ),
+                          ],
+                        ),
                       ),
+                      SizedBox(width: 8), // Espacio entre el texto y el icono
                       Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: EdgeInsets.all(isSmallScreen ? 8 : 12),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.15),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.notifications_active_outlined,
                           color: Colors.white,
-                          size: 20,
+                          size: isSmallScreen ? 16 : 20,
                         ),
                       ),
                     ],

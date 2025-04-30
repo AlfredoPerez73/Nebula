@@ -16,6 +16,10 @@ class HomeAIRecommendation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Obtener el tamaño de la pantalla para ajustes responsivos
+    final screenSize = MediaQuery.of(context).size;
+    final isSmallScreen = screenSize.width < 360;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       decoration: AppColors.solidCardDecoration(
@@ -28,7 +32,11 @@ class HomeAIRecommendation extends StatelessWidget {
           ClipPath(
             clipper: WaveClipper(),
             child: Container(
-              padding: const EdgeInsets.fromLTRB(24, 24, 24, 45),
+              padding: EdgeInsets.fromLTRB(
+                  isSmallScreen ? 16 : 24,
+                  isSmallScreen ? 16 : 24,
+                  isSmallScreen ? 16 : 24,
+                  isSmallScreen ? 30 : 45),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
@@ -46,42 +54,44 @@ class HomeAIRecommendation extends StatelessWidget {
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: EdgeInsets.all(isSmallScreen ? 8 : 12),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: const Icon(
-                      Icons.psychology_rounded, // ícono de cerebro/IA
+                    child: Icon(
+                      Icons.psychology_rounded,
                       color: Colors.white,
-                      size: 24,
+                      size: isSmallScreen ? 20 : 24,
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: isSmallScreen ? 8 : 16),
                   Expanded(
+                    // Usar Expanded para evitar desbordamiento horizontal
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: isSmallScreen ? 6 : 8,
+                                  vertical: isSmallScreen ? 3 : 4),
                               decoration: BoxDecoration(
                                 color: AppColors.primaryColor.withOpacity(0.3),
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: const Text(
+                              child: Text(
                                 "IA POWERED",
                                 style: TextStyle(
-                                  fontSize: 10,
+                                  fontSize: isSmallScreen ? 8 : 10,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
                                   letterSpacing: 1.0,
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 8),
+                            SizedBox(width: isSmallScreen ? 6 : 8),
                             Container(
                               width: 6,
                               height: 6,
@@ -92,15 +102,17 @@ class HomeAIRecommendation extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 6),
-                        const Text(
+                        SizedBox(height: isSmallScreen ? 4 : 6),
+                        Text(
                           "ENTRENAMIENTO PERSONALIZADO",
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: isSmallScreen ? 14 : 18,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                             letterSpacing: 0.5,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
@@ -112,25 +124,29 @@ class HomeAIRecommendation extends StatelessWidget {
 
           // Content
           Padding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+            padding: EdgeInsets.fromLTRB(isSmallScreen ? 16 : 24, 0,
+                isSmallScreen ? 16 : 24, isSmallScreen ? 16 : 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Obx(() => Text(
                       "Para tu nivel ${authController.userModel.value?.nivelExperiencia ?? 'principiante'} y tu objetivo de ${authController.userModel.value?.objetivo ?? 'mantenimiento'}, te recomendamos:",
                       style: TextStyle(
-                        fontSize: 15,
+                        fontSize: isSmallScreen ? 13 : 15,
                         height: 1.5,
                         color: Colors.white.withOpacity(0.9),
                       ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
                     )),
-                const SizedBox(height: 16),
-                _buildTrainingRecommendations(),
-                const SizedBox(height: 24),
+                SizedBox(height: isSmallScreen ? 12 : 16),
+                _buildTrainingRecommendations(context),
+                SizedBox(height: isSmallScreen ? 16 : 24),
                 _buildPrimaryButton(
                   text: "Generar rutina personalizada",
                   icon: Icons.psychology_rounded,
                   onPressed: showWorkoutSelector,
+                  context: context,
                 ),
               ],
             ),
@@ -140,7 +156,10 @@ class HomeAIRecommendation extends StatelessWidget {
     );
   }
 
-  Widget _buildTrainingRecommendations() {
+  Widget _buildTrainingRecommendations(BuildContext context) {
+    // Detectar si la pantalla es pequeña
+    final isSmallScreen = MediaQuery.of(context).size.width < 360;
+
     // Lista personalizada de recomendaciones basadas en el nivel del usuario
     String nivelExperiencia =
         authController.userModel.value?.nivelExperiencia?.toLowerCase() ??
@@ -253,11 +272,11 @@ class HomeAIRecommendation extends StatelessWidget {
     return Column(
       children: recommendations.map((rec) {
         return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
+          padding: EdgeInsets.only(bottom: isSmallScreen ? 8 : 12),
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(12),
@@ -265,18 +284,21 @@ class HomeAIRecommendation extends StatelessWidget {
                 child: Icon(
                   rec['icon'],
                   color: Colors.white,
-                  size: 16,
+                  size: isSmallScreen ? 14 : 16,
                 ),
               ),
-              const SizedBox(width: 14),
+              SizedBox(width: isSmallScreen ? 10 : 14),
               Expanded(
+                // Usar Expanded para evitar desbordamiento
                 child: Text(
                   rec['text'],
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: TextStyle(
+                    fontSize: isSmallScreen ? 14 : 16,
                     fontWeight: FontWeight.w500,
                     color: Colors.white,
                   ),
+                  maxLines: 2, // Permitir hasta 2 líneas si es necesario
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
@@ -290,7 +312,10 @@ class HomeAIRecommendation extends StatelessWidget {
     required String text,
     required IconData icon,
     required VoidCallback onPressed,
+    required BuildContext context,
   }) {
+    final isSmallScreen = MediaQuery.of(context).size.width < 360;
+
     return Material(
       color: Colors.transparent,
       borderRadius: BorderRadius.circular(16),
@@ -299,7 +324,9 @@ class HomeAIRecommendation extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+          padding: EdgeInsets.symmetric(
+              vertical: isSmallScreen ? 12 : 16,
+              horizontal: isSmallScreen ? 16 : 20),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.centerLeft,
@@ -325,16 +352,21 @@ class HomeAIRecommendation extends StatelessWidget {
               Icon(
                 icon,
                 color: AppColors.primaryColor,
-                size: 20,
+                size: isSmallScreen ? 18 : 20,
               ),
-              const SizedBox(width: 10),
-              Text(
-                text,
-                style: TextStyle(
-                  color: AppColors.darkPurple,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.5,
+              SizedBox(width: isSmallScreen ? 6 : 10),
+              Flexible(
+                // Usar Flexible para permitir que el texto se ajuste
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    color: AppColors.darkPurple,
+                    fontSize: isSmallScreen ? 14 : 16,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],

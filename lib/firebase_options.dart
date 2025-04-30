@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -52,11 +49,23 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyDJd83ylrbnFNDSMIPLkax1YqXUU3r7qrI',
+    appId: '1:992872060483:web:9d3cc1b6a1dfffe0b926f6',
+    messagingSenderId: '992872060483',
+    projectId: 'nebulabd',
+    authDomain: 'nebulabd.firebaseapp.com',
+    databaseURL: 'https://nebulabd-default-rtdb.firebaseio.com',
+    storageBucket: 'nebulabd.firebasestorage.app',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBSF-8_P1rskYsguYf7OJdGbUvZmTtTa4A',
     appId: '1:992872060483:android:e596143cb64267c5b926f6',
     messagingSenderId: '992872060483',
     projectId: 'nebulabd',
+    databaseURL: 'https://nebulabd-default-rtdb.firebaseio.com',
     storageBucket: 'nebulabd.firebasestorage.app',
   );
+
 }

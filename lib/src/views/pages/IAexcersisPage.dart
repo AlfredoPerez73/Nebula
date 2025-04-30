@@ -45,8 +45,8 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
   @override
   void initState() {
     super.initState();
-    // Cargar las rutinas guardadas al iniciar
     workoutController.loadSavedWorkouts();
+    _sortWorkoutsByDate();
   }
 
   @override
@@ -348,6 +348,7 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
 
   Widget _buildRecentWorkoutsSection() {
     return Obx(() {
+      _sortWorkoutsByDate();
       // Verificar si hay rutinas guardadas
       bool hasWorkouts = workoutController.savedWorkouts.isNotEmpty;
       bool hasMoreWorkouts = workoutController.savedWorkouts.length > 3;
@@ -406,9 +407,10 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
     });
   }
 
-// Añade este nuevo método
   void _showAllWorkouts() {
-    // Usar Navigator en lugar de Get.to para mejor control de memoria y recursos
+    // Añade esta línea para ordenar antes de mostrar todas las rutinas
+    _sortWorkoutsByDate();
+
     Navigator.of(context)
         .push(
       MaterialPageRoute(
@@ -421,9 +423,32 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
       if (mounted) {
         setState(() {
           workoutController.loadSavedWorkouts();
+          _sortWorkoutsByDate(); // Añade esta línea
         });
       }
     });
+  }
+
+  void _sortWorkoutsByDate() {
+    if (workoutController.savedWorkouts.isNotEmpty) {
+      workoutController.savedWorkouts.sort((a, b) {
+        // Obtener las fechas de creación
+        String dateA = a['createdAt'] ?? '';
+        String dateB = b['createdAt'] ?? '';
+
+        // Si alguna fecha está vacía, manejar el caso
+        if (dateA.isEmpty) return 1; // a va después
+        if (dateB.isEmpty) return -1; // b va después
+
+        try {
+          // Comparar fechas en orden descendente (más reciente primero)
+          return DateTime.parse(dateB).compareTo(DateTime.parse(dateA));
+        } catch (e) {
+          print("Error al ordenar por fecha: $e");
+          return 0;
+        }
+      });
+    }
   }
 
   Widget _buildSavedWorkoutItem(Map<String, dynamic> workout) {
