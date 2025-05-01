@@ -566,6 +566,9 @@ class _EditProfilePageState extends State<EditProfilePageSkills> {
         selectedObjetivo,
       );
 
+      await authController.refreshUserData();
+      authController.notifyModelChanged();
+
       Get.snackbar(
         "¡Perfil Actualizado!",
         "Tus datos se han guardado correctamente",

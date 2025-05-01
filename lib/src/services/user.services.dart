@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/user.model.dart';
+import 'dart:developer' as developer;
 
 class FirebaseService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -69,17 +70,31 @@ class FirebaseService {
     return null;
   }
 
-  // Obtener datos del usuario
+  // Obtener datos del usuario - MEJORADO CON LOGS
   Future<Usuario?> getUserData(String uid) async {
     try {
+      developer.log("Obteniendo datos de usuario: $uid",
+          name: "FirebaseService");
+
       DocumentSnapshot userDoc =
           await _firestore.collection('users').doc(uid).get();
+
       if (userDoc.exists) {
-        return Usuario.fromFirestore(
-            userDoc.data() as Map<String, dynamic>, uid);
+        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+
+        // Log para verificar datos
+        developer.log(
+            "Datos obtenidos - Peso: ${userData['peso']}, Altura: ${userData['altura']}",
+            name: "FirebaseService");
+
+        return Usuario.fromFirestore(userData, uid);
+      } else {
+        developer.log("El documento de usuario no existe",
+            name: "FirebaseService");
       }
     } catch (e) {
-      print("Error al obtener datos del usuario: $e");
+      developer.log("Error al obtener datos del usuario: $e",
+          name: "FirebaseService");
     }
     return null;
   }
@@ -93,7 +108,7 @@ class FirebaseService {
     }
   }
 
-// Método para actualizar el perfil del usuario en Firestore
+  // Método para actualizar el perfil del usuario en Firestore
   Future<void> updateUserProfile(
     String uid,
     String nombre,
@@ -104,8 +119,12 @@ class FirebaseService {
         'nombre': nombre,
         'email': email,
       });
+
+      developer.log("Perfil actualizado en Firestore: $nombre, $email",
+          name: "FirebaseService");
     } catch (e) {
-      print("Error al actualizar el perfil del usuario: $e");
+      developer.log("Error al actualizar el perfil: $e",
+          name: "FirebaseService");
       throw Exception("No se pudo actualizar el perfil");
     }
   }
@@ -118,15 +137,43 @@ class FirebaseService {
     String objetivo,
   ) async {
     try {
+      // Log antes de actualizar
+      developer.log(
+          "Actualizando datos en Firestore - Peso: $peso, Altura: $altura",
+          name: "FirebaseService");
+
       await _firestore.collection('users').doc(uid).update({
         'nivelExperiencia': nivelExperiencia,
         'peso': peso,
         'altura': altura,
         'objetivo': objetivo,
       });
+
+      // Log después de actualizar
+      developer.log("Datos actualizados en Firestore exitosamente",
+          name: "FirebaseService");
     } catch (e) {
-      print("Error al actualizar el perfil del usuario: $e");
+      developer.log("Error al actualizar el perfil: $e",
+          name: "FirebaseService");
       throw Exception("No se pudo actualizar el perfil");
+    }
+  }
+
+  // NUEVO: Método para actualizar solo el peso
+  Future<void> updateUserWeight(String uid, double peso) async {
+    try {
+      developer.log("Actualizando solo el peso en Firestore: $peso",
+          name: "FirebaseService");
+
+      await _firestore.collection('users').doc(uid).update({
+        'peso': peso,
+      });
+
+      developer.log("Peso actualizado en Firestore exitosamente",
+          name: "FirebaseService");
+    } catch (e) {
+      developer.log("Error al actualizar el peso: $e", name: "FirebaseService");
+      throw Exception("No se pudo actualizar el peso");
     }
   }
 }

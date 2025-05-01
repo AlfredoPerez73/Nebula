@@ -243,6 +243,7 @@ class WorkoutRoutineController extends GetxController {
 
       // Actualizar la lista observable
       savedWorkouts.value = workouts;
+      _sortSavedWorkoutsByDate();
     } catch (e) {
       // No mostrar error al usuario ya que puede ser llamado en segundo plano
     }
@@ -263,6 +264,24 @@ class WorkoutRoutineController extends GetxController {
         backgroundColor: const Color(0xFFE57373),
         colorText: const Color(0xFFFFFFFF),
       );
+    }
+  }
+
+  void _sortSavedWorkoutsByDate() {
+    if (savedWorkouts.isNotEmpty) {
+      savedWorkouts.sort((a, b) {
+        String dateA = a['createdAt'] ?? '';
+        String dateB = b['createdAt'] ?? '';
+
+        if (dateA.isEmpty) return 1;
+        if (dateB.isEmpty) return -1;
+
+        try {
+          return DateTime.parse(dateB).compareTo(DateTime.parse(dateA));
+        } catch (e) {
+          return 0;
+        }
+      });
     }
   }
 

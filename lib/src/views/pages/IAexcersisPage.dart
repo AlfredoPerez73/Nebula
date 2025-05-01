@@ -348,7 +348,6 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
 
   Widget _buildRecentWorkoutsSection() {
     return Obx(() {
-      _sortWorkoutsByDate();
       // Verificar si hay rutinas guardadas
       bool hasWorkouts = workoutController.savedWorkouts.isNotEmpty;
       bool hasMoreWorkouts = workoutController.savedWorkouts.length > 3;
@@ -421,10 +420,8 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
         .then((value) {
       // Refrescar la lista de rutinas al regresar
       if (mounted) {
-        setState(() {
-          workoutController.loadSavedWorkouts();
-          _sortWorkoutsByDate(); // Añade esta línea
-        });
+        workoutController.loadSavedWorkouts();
+        _sortWorkoutsByDate(); // Añade esta línea
       }
     });
   }

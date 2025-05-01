@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:nebula/src/controllers/user.controller.dart';
 import 'package:nebula/src/utils/app_color.dart';
 import 'package:nebula/src/utils/ui_helpers.dart';
 import 'package:nebula/src/views/pages/iMCCalculatorPage.dart';
+import 'dart:developer' as developer;
 
 class HomeBmiCard extends StatelessWidget {
   final AuthController authController;
@@ -18,279 +20,301 @@ class HomeBmiCard extends StatelessWidget {
     final Size screenSize = MediaQuery.of(context).size;
     final bool isSmallScreen = screenSize.width < 360;
 
-    double bmi = _calculateBMI();
-    String bmiCategory = _getBMICategory(bmi);
-    Color categoryColor = _getBMICategoryColor(bmiCategory);
+    // CAMBIO IMPORTANTE: Ahora usamos Obx para observar cambios en el modelo de usuario
+    return Obx(() {
+      // Log para debugging
+      developer.log(
+          "HomeBmiCard - Reconstruyendo con peso: ${authController.userModel.value?.peso}",
+          name: "HomeBmiCard");
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 24),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: categoryColor.withOpacity(0.3),
-            blurRadius: 20,
-            spreadRadius: 0,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
-        child: Stack(
-          children: [
-            // Fondo con patrón sutil
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.02),
-                ),
-                child: CustomPaint(
-                  painter: PatternPainter(
-                    color: categoryColor.withOpacity(0.1),
+      double bmi = _calculateBMI();
+      String bmiCategory = _getBMICategory(bmi);
+      Color categoryColor = _getBMICategoryColor(bmiCategory);
+
+      return Container(
+        margin: const EdgeInsets.only(bottom: 24),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: [
+            BoxShadow(
+              color: categoryColor.withOpacity(0.3),
+              blurRadius: 20,
+              spreadRadius: 0,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(28),
+          child: Stack(
+            children: [
+              // Fondo con patrón sutil
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.02),
+                  ),
+                  child: CustomPaint(
+                    painter: PatternPainter(
+                      color: categoryColor.withOpacity(0.1),
+                    ),
                   ),
                 ),
               ),
-            ),
 
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header - Ahora con padding adaptable según tamaño de pantalla
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(
-                      horizontal: isSmallScreen ? 16 : 24,
-                      vertical: isSmallScreen ? 20 : 28),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        categoryColor,
-                        _getGradientSecondaryColor(categoryColor),
-                      ],
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Título con tamaño adaptable
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding:
-                                      EdgeInsets.all(isSmallScreen ? 8 : 10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Icon(
-                                    Icons.insert_chart_rounded,
-                                    color: Colors.white,
-                                    size: isSmallScreen ? 18 : 22,
-                                  ),
-                                ),
-                                SizedBox(width: isSmallScreen ? 10 : 14),
-                                Flexible(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "ÍNDICE DE",
-                                        style: TextStyle(
-                                          fontSize: isSmallScreen ? 10 : 12,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.white,
-                                          letterSpacing: 1.1,
-                                        ),
-                                      ),
-                                      SizedBox(height: isSmallScreen ? 1 : 2),
-                                      Text(
-                                        "MASA CORPORAL",
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontSize: isSmallScreen ? 16 : 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                          letterSpacing: 0.5,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          // Etiqueta de categoría
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: isSmallScreen ? 10 : 14,
-                                vertical: isSmallScreen ? 4 : 6),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(30),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.3),
-                                width: 1,
-                              ),
-                            ),
-                            child: Text(
-                              bmiCategory,
-                              style: TextStyle(
-                                fontSize: isSmallScreen ? 12 : 14,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header - Ahora con padding adaptable según tamaño de pantalla
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(
+                        horizontal: isSmallScreen ? 16 : 24,
+                        vertical: isSmallScreen ? 20 : 28),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          categoryColor,
+                          _getGradientSecondaryColor(categoryColor),
                         ],
                       ),
-                      SizedBox(height: isSmallScreen ? 16 : 24),
-                      // Estadísticas del IMC con tamaño adaptable
-                      Row(
-                        children: [
-                          _buildBMIStat(
-                            context: context,
-                            label: "Tu IMC",
-                            value: bmi.toStringAsFixed(1),
-                            iconData: Icons.speed_rounded,
-                          ),
-                          SizedBox(width: isSmallScreen ? 16 : 24),
-                          _buildBMIStat(
-                            context: context,
-                            label: "Peso actual",
-                            value:
-                                "${authController.userModel.value?.peso ?? 0} kg",
-                            iconData: Icons.monitor_weight_rounded,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Body Content - Adaptable
-                Container(
-                  padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        categoryColor.withOpacity(0.2),
-                        categoryColor.withOpacity(0.05),
-                      ],
                     ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // BMI Scale Visualization - Altura adaptable
-                      Container(
-                        height: isSmallScreen ? 50 : 60,
-                        margin:
-                            EdgeInsets.only(bottom: isSmallScreen ? 16 : 24),
-                        child: _buildBMIScale(context, bmi),
-                      ),
-
-                      // Health Tip - Tamaño adaptable
-                      Container(
-                        padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: categoryColor.withOpacity(0.15),
-                              blurRadius: 12,
-                              spreadRadius: 0,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
-                              padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                              decoration: BoxDecoration(
-                                color: categoryColor.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Icon(
-                                Icons.lightbulb_outline_rounded,
-                                color: categoryColor,
-                                size: isSmallScreen ? 20 : 24,
-                              ),
-                            ),
-                            SizedBox(width: isSmallScreen ? 12 : 16),
+                            // Título con tamaño adaptable
                             Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              child: Row(
                                 children: [
-                                  Text(
-                                    "Consejo de salud",
-                                    style: TextStyle(
-                                      fontSize: isSmallScreen ? 14 : 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: categoryColor,
+                                  Container(
+                                    padding:
+                                        EdgeInsets.all(isSmallScreen ? 8 : 10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Icon(
+                                      Icons.insert_chart_rounded,
+                                      color: Colors.white,
+                                      size: isSmallScreen ? 18 : 22,
                                     ),
                                   ),
-                                  SizedBox(height: isSmallScreen ? 6 : 8),
-                                  Text(
-                                    _getBMIHealthTip(
-                                        bmiCategory, isSmallScreen),
-                                    style: TextStyle(
-                                      fontSize: isSmallScreen ? 12 : 14,
-                                      color: Colors.black.withOpacity(0.7),
-                                      height: 1.5,
+                                  SizedBox(width: isSmallScreen ? 10 : 14),
+                                  Flexible(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "ÍNDICE DE",
+                                          style: TextStyle(
+                                            fontSize: isSmallScreen ? 10 : 12,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
+                                            letterSpacing: 1.1,
+                                          ),
+                                        ),
+                                        SizedBox(height: isSmallScreen ? 1 : 2),
+                                        Text(
+                                          "MASA CORPORAL",
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: isSmallScreen ? 16 : 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            letterSpacing: 0.5,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
                               ),
                             ),
+                            // Etiqueta de categoría
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: isSmallScreen ? 10 : 14,
+                                  vertical: isSmallScreen ? 4 : 6),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(30),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.3),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Text(
+                                bmiCategory,
+                                style: TextStyle(
+                                  fontSize: isSmallScreen ? 12 : 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
-                      ),
-
-                      SizedBox(height: isSmallScreen ? 20 : 24),
-                      _buildActionButton(
-                        context: context,
-                        text: "Más información",
-                        icon: Icons.arrow_forward_rounded,
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const BMICalculatorPage()),
-                          );
-                        },
-                        color: categoryColor,
-                      ),
-                    ],
+                        SizedBox(height: isSmallScreen ? 16 : 24),
+                        // Estadísticas del IMC con tamaño adaptable
+                        Row(
+                          children: [
+                            _buildBMIStat(
+                              context: context,
+                              label: "Tu IMC",
+                              value: bmi.toStringAsFixed(1),
+                              iconData: Icons.speed_rounded,
+                            ),
+                            SizedBox(width: isSmallScreen ? 16 : 24),
+                            _buildBMIStat(
+                              context: context,
+                              label: "Peso actual",
+                              value:
+                                  "${authController.userModel.value?.peso ?? 0} kg",
+                              iconData: Icons.monitor_weight_rounded,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+
+                  // Body Content - Adaptable
+                  Container(
+                    padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          categoryColor.withOpacity(0.2),
+                          categoryColor.withOpacity(0.05),
+                        ],
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // BMI Scale Visualization - Altura adaptable
+                        Container(
+                          height: isSmallScreen ? 50 : 60,
+                          margin:
+                              EdgeInsets.only(bottom: isSmallScreen ? 16 : 24),
+                          child: _buildBMIScale(context, bmi),
+                        ),
+
+                        // Health Tip - Tamaño adaptable
+                        Container(
+                          padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: categoryColor.withOpacity(0.15),
+                                blurRadius: 12,
+                                spreadRadius: 0,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
+                                decoration: BoxDecoration(
+                                  color: categoryColor.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Icon(
+                                  Icons.lightbulb_outline_rounded,
+                                  color: categoryColor,
+                                  size: isSmallScreen ? 20 : 24,
+                                ),
+                              ),
+                              SizedBox(width: isSmallScreen ? 12 : 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Consejo de salud",
+                                      style: TextStyle(
+                                        fontSize: isSmallScreen ? 14 : 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: categoryColor,
+                                      ),
+                                    ),
+                                    SizedBox(height: isSmallScreen ? 6 : 8),
+                                    Text(
+                                      _getBMIHealthTip(
+                                          bmiCategory, isSmallScreen),
+                                      style: TextStyle(
+                                        fontSize: isSmallScreen ? 12 : 14,
+                                        color: Colors.black.withOpacity(0.7),
+                                        height: 1.5,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        SizedBox(height: isSmallScreen ? 20 : 24),
+                        _buildActionButton(
+                          context: context,
+                          text: "Más información",
+                          icon: Icons.arrow_forward_rounded,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const BMICalculatorPage()),
+                            );
+                          },
+                          color: categoryColor,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
+  // CAMBIO IMPORTANTE: Método mejorado para calcular IMC
   double _calculateBMI() {
     double? altura = authController.userModel.value?.altura;
     double? peso = authController.userModel.value?.peso;
 
+    // Log para depuración
+    developer.log(
+        "HomeBmiCard - Calculando IMC con peso: $peso, altura: $altura",
+        name: "HomeBmiCard");
+
     if (altura != null && peso != null && altura > 0) {
-      return peso / ((altura / 100) * (altura / 100));
+      // Cálculo optimizado para evitar errores de redondeo
+      double alturaEnMetros = altura / 100;
+      double imcCalculado = peso / (alturaEnMetros * alturaEnMetros);
+
+      // Log para depuración
+      developer.log("HomeBmiCard - IMC calculado: $imcCalculado",
+          name: "HomeBmiCard");
+
+      return imcCalculado;
     }
     return 0.0;
   }

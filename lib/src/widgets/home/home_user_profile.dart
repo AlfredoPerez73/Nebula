@@ -1,9 +1,11 @@
+import 'dart:ui';
+
+import 'package:amicons/amicons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nebula/src/controllers/user.controller.dart';
 import 'package:nebula/src/utils/app_color.dart';
 import 'package:nebula/src/views/pages/editProfilePageSkills.dart';
-import 'dart:ui';
 
 class HomeUserProfile extends StatelessWidget {
   final AuthController authController;
@@ -13,7 +15,6 @@ class HomeUserProfile extends StatelessWidget {
     required this.authController,
   }) : super(key: key);
 
-  @override
   Widget build(BuildContext context) {
     // Detectar si la pantalla es pequeña para ajustes responsivos
     final screenSize = MediaQuery.of(context).size;
@@ -181,7 +182,36 @@ class HomeUserProfile extends StatelessWidget {
 
                 SizedBox(height: isSmallScreen ? 16 : 24),
 
-                // Stats Grid - Ahora más responsivo
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Color(0xFF38295C),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        Icons.dashboard_customize,
+                        color: Colors.white.withOpacity(0.8),
+                        size: 16,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Text(
+                      "DETALLES PERSONALES",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 16),
+
+                // NUEVA IMPLEMENTACIÓN: Stats Cards en una fila horizontal con scroll
                 Obx(() {
                   // Datos del perfil
                   final objetivo =
@@ -191,41 +221,53 @@ class HomeUserProfile extends StatelessWidget {
                   final altura =
                       "${authController.userModel.value?.altura ?? 0} cm";
                   final imc = _calculateBMI().toStringAsFixed(1);
+                  final nivelExperiencia =
+                      authController.userModel.value?.nivelExperiencia ??
+                          "Principiante";
 
-                  return GridView.count(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: isSmallScreen ? 8 : 12,
-                    mainAxisSpacing: isSmallScreen ? 8 : 12,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    childAspectRatio:
-                        isSmallScreen ? 1.2 : 1.1, // Ajuste de proporciones
-                    children: [
-                      _buildSymmetricalStatCard(
-                        title: "Objetivo",
-                        value: objetivo,
-                        icon: Icons.fitness_center_rounded,
-                        isSmallScreen: isSmallScreen,
+                  // Configuración para las nuevas tarjetas verticales
+                  final statCards = [
+                    {
+                      "title": "Altura",
+                      "value": altura,
+                      "icon": Amicons.lucide_arrow_up_down,
+                    },
+                    {
+                      "title": "Peso",
+                      "value": peso,
+                      "icon": Amicons.vuesax_weight,
+                    },
+                    {
+                      "title": "Nivel de experiencia",
+                      "value": nivelExperiencia,
+                      "icon": Amicons.remix_medal_fill,
+                    },
+                    {
+                      "title": "Objetivo principal",
+                      "value": objetivo,
+                      "icon": Amicons.lucide_hand_metal,
+                    },
+                  ];
+
+                  // Fila horizontal con scroll
+                  return Container(
+                    height: 180, // Altura fija para las tarjetas
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: statCards.map((card) {
+                          return Padding(
+                            padding: EdgeInsets.only(right: 12),
+                            child: _buildVerticalCard(
+                              title: card["title"] as String,
+                              value: card["value"] as String,
+                              icon: card["icon"] as IconData,
+                              isSmallScreen: isSmallScreen,
+                            ),
+                          );
+                        }).toList(),
                       ),
-                      _buildSymmetricalStatCard(
-                        title: "Peso",
-                        value: peso,
-                        icon: Icons.monitor_weight_rounded,
-                        isSmallScreen: isSmallScreen,
-                      ),
-                      _buildSymmetricalStatCard(
-                        title: "Altura",
-                        value: altura,
-                        icon: Icons.height_rounded,
-                        isSmallScreen: isSmallScreen,
-                      ),
-                      _buildSymmetricalStatCard(
-                        title: "IMC",
-                        value: imc,
-                        icon: Icons.speed_rounded,
-                        isSmallScreen: isSmallScreen,
-                      ),
-                    ],
+                    ),
                   );
                 }),
               ],
@@ -236,16 +278,85 @@ class HomeUserProfile extends StatelessWidget {
     );
   }
 
-  double _calculateBMI() {
-    double? altura = authController.userModel.value?.altura;
-    double? peso = authController.userModel.value?.peso;
+  // Nuevo widget para tarjetas verticales con diseño profesional
+  Widget _buildVerticalCard({
+    required String title,
+    required String value,
+    required IconData icon,
+    required bool isSmallScreen,
+  }) {
+    // Colores profesionales
+    final cardBgColor = Color(0xFF38295C);
 
-    if (altura != null && peso != null && altura > 0) {
-      return peso / ((altura / 100) * (altura / 100));
-    }
-    return 0.0;
+    return Container(
+      width: 130, // Ancho fijo para cada tarjeta
+      decoration: BoxDecoration(
+        color: cardBgColor,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Icono
+            Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                icon,
+                color: Color(0xFFA29BFE),
+                size: 22,
+              ),
+            ),
+
+            SizedBox(height: 12),
+
+            // Título
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Colors.white.withOpacity(0.7),
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+
+            SizedBox(height: 8),
+
+            // Valor con texto grande
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
+  // Diseño refinado basado en la imagen de referenci
+
+  // Método existente - MANTENIDO IGUAL
   Widget _buildProfileActionButton({
     required IconData icon,
     required VoidCallback onTap,
@@ -273,75 +384,13 @@ class HomeUserProfile extends StatelessWidget {
     );
   }
 
-  // Método para tarjetas de estadísticas simétricas ahora con parámetro isSmallScreen
-  Widget _buildSymmetricalStatCard({
-    required String title,
-    required String value,
-    required IconData icon,
-    required bool isSmallScreen,
-  }) {
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.1),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Título
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: isSmallScreen ? 12 : 14,
-              fontWeight: FontWeight.w500,
-              color: Colors.white.withOpacity(0.7),
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          SizedBox(height: isSmallScreen ? 8 : 12),
+  double _calculateBMI() {
+    double? altura = authController.userModel.value?.altura;
+    double? peso = authController.userModel.value?.peso;
 
-          // Fila de icono y valor
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Icono a la izquierda
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
-                decoration: BoxDecoration(
-                  color: AppColors.primaryColor.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  icon,
-                  color: AppColors.accentColor,
-                  size: isSmallScreen ? 16 : 20,
-                ),
-              ),
-              SizedBox(width: isSmallScreen ? 8 : 12),
-
-              // Valor con tamaño flexible
-              Expanded(
-                child: Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: isSmallScreen ? 14 : 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+    if (altura != null && peso != null && altura > 0) {
+      return peso / ((altura / 100) * (altura / 100));
+    }
+    return 0.0;
   }
 }
