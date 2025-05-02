@@ -8,10 +8,10 @@ class CustomBottomNavigation extends StatelessWidget {
   final Function(int) onTap;
 
   const CustomBottomNavigation({
-    Key? key,
+    super.key,
     required this.currentIndex,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +22,8 @@ class CustomBottomNavigation extends StatelessWidget {
           end: Alignment.bottomCenter,
           colors: [
             Colors.transparent,
-            const Color(0xFF242038).withOpacity(0.05),
-            const Color(0xFF242038).withOpacity(0.8),
+            const Color(0xFF242038).withValues(alpha: 0.05),
+            const Color(0xFF242038).withValues(alpha: 0.8),
           ],
         ),
       ),
@@ -33,18 +33,18 @@ class CustomBottomNavigation extends StatelessWidget {
         child: Container(
           height: 72,
           decoration: BoxDecoration(
-            color: const Color(0xFF242038).withOpacity(0.75),
+            color: const Color(0xFF242038).withValues(alpha: 0.75),
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.15),
+                color: Colors.black.withValues(alpha: 0.15),
                 blurRadius: 10,
                 spreadRadius: 0,
                 offset: const Offset(0, 4),
               ),
             ],
             border: Border.all(
-              color: Colors.white.withOpacity(0.08),
+              color: Colors.white.withValues(alpha: 0.08),
               width: 1.5,
             ),
           ),
@@ -87,14 +87,14 @@ class CustomBottomNavigation extends StatelessWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    const Color(0xFF9067C6).withOpacity(0.8),
-                    const Color(0xFF9067C6).withOpacity(0.4),
+                    const Color(0xFF9067C6).withValues(alpha: 0.8),
+                    const Color(0xFF9067C6).withValues(alpha: 0.4),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF9067C6).withOpacity(0.3),
+                    color: const Color(0xFF9067C6).withValues(alpha: 0.3),
                     blurRadius: 8,
                     spreadRadius: 0,
                     offset: const Offset(0, 2),
@@ -108,15 +108,18 @@ class CustomBottomNavigation extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: isSelected ? Colors.white : Colors.white.withOpacity(0.5),
+              color: isSelected
+                  ? Colors.white
+                  : Colors.white.withValues(alpha: 0.5),
               size: 24,
             ),
             const SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
-                color:
-                    isSelected ? Colors.white : Colors.white.withOpacity(0.5),
+                color: isSelected
+                    ? Colors.white
+                    : Colors.white.withValues(alpha: 0.5),
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 fontSize: 12,
               ),

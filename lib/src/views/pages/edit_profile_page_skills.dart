@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import '../../controllers/user.controller.dart';
 
 class EditProfilePageSkills extends StatefulWidget {
-  const EditProfilePageSkills({Key? key}) : super(key: key);
+  const EditProfilePageSkills({super.key});
 
   @override
   State<EditProfilePageSkills> createState() => _EditProfilePageState();
@@ -43,10 +43,9 @@ class _EditProfilePageState extends State<EditProfilePageSkills> {
     emailController.text = authController.userModel.value?.email ?? '';
 
     // Inicializar los nuevos campos
-    pesoController.text =
-        authController.userModel.value?.peso?.toString() ?? '';
+    pesoController.text = authController.userModel.value?.peso.toString() ?? '';
     alturaController.text =
-        authController.userModel.value?.altura?.toString() ?? '';
+        authController.userModel.value?.altura.toString() ?? '';
     selectedNivelExperiencia =
         authController.userModel.value?.nivelExperiencia ?? 'Principiante';
     selectedObjetivo =
@@ -178,14 +177,14 @@ class _EditProfilePageState extends State<EditProfilePageSkills> {
                 height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: const Color(0xFF9067C6).withOpacity(0.3),
+                  color: const Color(0xFF9067C6).withValues(alpha: 0.3),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     width: 3,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
+                      color: Colors.black.withValues(alpha: 0.2),
                       blurRadius: 10,
                       offset: const Offset(0, 5),
                     ),
@@ -265,15 +264,15 @@ class _EditProfilePageState extends State<EditProfilePageSkills> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
+        color: Colors.white.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -317,15 +316,15 @@ class _EditProfilePageState extends State<EditProfilePageSkills> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
+        color: Colors.white.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -416,24 +415,24 @@ class _EditProfilePageState extends State<EditProfilePageSkills> {
       decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(
-          color: const Color(0xFFCAC4CE).withOpacity(0.8),
+          color: const Color(0xFFCAC4CE).withValues(alpha: 0.8),
           fontWeight: FontWeight.w500,
         ),
         prefixIcon: Icon(icon, color: const Color(0xFF8D86C9)),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
           borderSide: const BorderSide(color: Color(0xFF9067C6), width: 2),
         ),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.05),
+        fillColor: Colors.white.withValues(alpha: 0.05),
         contentPadding:
             const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       ),
@@ -455,10 +454,10 @@ class _EditProfilePageState extends State<EditProfilePageSkills> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(15),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
         ),
       ),
       child: DropdownButtonFormField<String>(
@@ -466,7 +465,7 @@ class _EditProfilePageState extends State<EditProfilePageSkills> {
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(
-            color: const Color(0xFFCAC4CE).withOpacity(0.8),
+            color: const Color(0xFFCAC4CE).withValues(alpha: 0.8),
             fontWeight: FontWeight.w500,
           ),
           prefixIcon: Icon(icon, color: const Color(0xFF8D86C9)),
@@ -503,7 +502,7 @@ class _EditProfilePageState extends State<EditProfilePageSkills> {
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF9067C6).withOpacity(0.3),
+                color: const Color(0xFF9067C6).withValues(alpha: 0.3),
                 blurRadius: 10,
                 offset: const Offset(0, 5),
               ),
@@ -548,6 +547,7 @@ class _EditProfilePageState extends State<EditProfilePageSkills> {
 
   Future<void> _saveChanges() async {
     try {
+      final navigator = Navigator.of(context);
       // Parse numerical values
       double peso = double.tryParse(pesoController.text) ?? 0.0;
       double altura = double.tryParse(alturaController.text) ?? 0.0;
@@ -582,7 +582,7 @@ class _EditProfilePageState extends State<EditProfilePageSkills> {
       );
 
       // Volver a la pantalla anterior
-      Navigator.of(context).pop();
+      navigator.pop();
     } catch (e) {
       Get.snackbar(
         "Error",

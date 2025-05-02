@@ -7,12 +7,13 @@ import 'package:nebula/src/models/historyTraining.model.dart';
 import 'package:intl/intl.dart';
 
 class WorkoutHistoryPage extends StatelessWidget {
-  const WorkoutHistoryPage({Key? key}) : super(key: key);
+  const WorkoutHistoryPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     // Inicializar el controlador a través de GetX
-    final HistoryEntrenamientoController controller = Get.put(HistoryEntrenamientoController());
+    final HistoryEntrenamientoController controller =
+        Get.put(HistoryEntrenamientoController());
 
     return Scaffold(
       backgroundColor: const Color(0xFF242038),
@@ -58,7 +59,7 @@ class WorkoutHistoryPage extends StatelessWidget {
           "Seguimiento de tus rutinas y progreso",
           style: TextStyle(
             fontSize: 16,
-            color: const Color(0xFFCAC4CE).withOpacity(0.8),
+            color: const Color(0xFFCAC4CE).withValues(alpha: 0.8),
           ),
         ),
       ],
@@ -66,168 +67,131 @@ class WorkoutHistoryPage extends StatelessWidget {
   }
 
   Widget _buildFilterSection(HistoryEntrenamientoController controller) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Text(
-        "Filtro",
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: Color(0xFFF7ECE1),
-        ),
-      ),
-      const SizedBox(height: 10),
-      Obx(() => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.08),
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: Colors.white.withOpacity(0.1),
-            width: 1,
-          ),
-        ),
-        child: DropdownButton<String>(
-          value: controller.selectedTimeFrame,
-          icon: const Icon(Icons.arrow_drop_down, color: Color(0xFFCAC4CE)),
-          elevation: 16,
-          style: const TextStyle(color: Color(0xFFF7ECE1)),
-          underline: Container(),
-          dropdownColor: const Color(0xFF242038),
-          isExpanded: true,
-          onChanged: (value) {
-            if (value != null) {
-              controller.setSelectedTimeFrame(value);
-            }
-          },
-          items: HistoryEntrenamientoController.timeFrames.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-        ),
-      )),
-    ],
-  );
-}
-  Widget _buildFilterDropdown(String label, String value, List<String> items,
-      Function(String?) onChanged) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
+        const Text(
+          "Filtro",
           style: TextStyle(
-            fontSize: 14,
-            color: const Color(0xFFCAC4CE).withOpacity(0.8),
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFFF7ECE1),
           ),
         ),
-        const SizedBox(height: 5),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.08),
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: Colors.white.withOpacity(0.1),
-              width: 1,
-            ),
-          ),
-          child: DropdownButton<String>(
-            value: value,
-            icon: const Icon(Icons.arrow_drop_down, color: Color(0xFFCAC4CE)),
-            elevation: 16,
-            style: const TextStyle(color: Color(0xFFF7ECE1)),
-            underline: Container(),
-            dropdownColor: const Color(0xFF242038),
-            isExpanded: true,
-            onChanged: onChanged,
-            items: items.map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-          ),
-        ),
+        const SizedBox(height: 10),
+        Obx(() => Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.1),
+                  width: 1,
+                ),
+              ),
+              child: DropdownButton<String>(
+                value: controller.selectedTimeFrame,
+                icon:
+                    const Icon(Icons.arrow_drop_down, color: Color(0xFFCAC4CE)),
+                elevation: 16,
+                style: const TextStyle(color: Color(0xFFF7ECE1)),
+                underline: Container(),
+                dropdownColor: const Color(0xFF242038),
+                isExpanded: true,
+                onChanged: (value) {
+                  if (value != null) {
+                    controller.setSelectedTimeFrame(value);
+                  }
+                },
+                items: HistoryEntrenamientoController.timeFrames
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+            )),
       ],
     );
   }
 
   Widget _buildStatsSection(HistoryEntrenamientoController controller) {
     return Obx(() => Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF8D86C9),
-            Color(0xFF9067C6),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.bar_chart_rounded,
-                color: Color(0xFFF7ECE1),
-                size: 24,
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Estadísticas de Entrenamiento",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFFF7ECE1),
-                      ),
-                    ),
-                    Text(
-                      "Resumen de tu actividad reciente",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: const Color(0xFFF7ECE1).withOpacity(0.8),
-                      ),
-                    ),
-                  ],
-                ),
+          width: double.infinity,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFF8D86C9),
+                Color(0xFF9067C6),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.3),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildStatItem(
-                  "${controller.entrenamientosMes}", "Entrenamientos\neste mes", Icons.calendar_month),
-              _buildStatItem(
-                  "${controller.cumplimientoMeta.toStringAsFixed(0)}%", "Cumplimiento\nde meta", Icons.track_changes),
-              _buildStatItem("${controller.tiempoTotal}h", "Tiempo\ntotal", Icons.timer),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.bar_chart_rounded,
+                    color: Color(0xFFF7ECE1),
+                    size: 24,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Estadísticas de Entrenamiento",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFFF7ECE1),
+                          ),
+                        ),
+                        Text(
+                          "Resumen de tu actividad reciente",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color:
+                                const Color(0xFFF7ECE1).withValues(alpha: 0.8),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildStatItem("${controller.entrenamientosMes}",
+                      "Entrenamientos\neste mes", Icons.calendar_month),
+                  _buildStatItem(
+                      "${controller.cumplimientoMeta.toStringAsFixed(0)}%",
+                      "Cumplimiento\nde meta",
+                      Icons.track_changes),
+                  _buildStatItem("${controller.tiempoTotal}h", "Tiempo\ntotal",
+                      Icons.timer),
+                ],
+              ),
+              const SizedBox(height: 15),
             ],
           ),
-          const SizedBox(height: 15),
-        ],
-      ),
-    ));
+        ));
   }
 
   Widget _buildStatItem(String value, String label, IconData icon) {
@@ -236,7 +200,7 @@ class WorkoutHistoryPage extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
+            color: Colors.white.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(
@@ -258,7 +222,7 @@ class WorkoutHistoryPage extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: 12,
-            color: const Color(0xFFF7ECE1).withOpacity(0.8),
+            color: const Color(0xFFF7ECE1).withValues(alpha: 0.8),
           ),
           textAlign: TextAlign.center,
         ),
@@ -268,9 +232,10 @@ class WorkoutHistoryPage extends StatelessWidget {
 
   Widget _buildWorkoutHistory(HistoryEntrenamientoController controller) {
     if (controller.cargando) {
-      return const Center(child: CircularProgressIndicator(color: Color(0xFF9067C6)));
+      return const Center(
+          child: CircularProgressIndicator(color: Color(0xFF9067C6)));
     }
-    
+
     if (controller.tieneError) {
       return Center(
         child: Column(
@@ -295,15 +260,16 @@ class WorkoutHistoryPage extends StatelessWidget {
         ),
       );
     }
-    
+
     final entrenamientos = controller.entrenamientosFiltrados;
-    
+
     if (entrenamientos.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.fitness_center, color: Colors.grey.withOpacity(0.5), size: 64),
+            Icon(Icons.fitness_center,
+                color: Colors.grey.withValues(alpha: 0.5), size: 64),
             const SizedBox(height: 16),
             const Text(
               "No hay entrenamientos en el historial",
@@ -333,7 +299,7 @@ class WorkoutHistoryPage extends StatelessWidget {
               "${entrenamientos.length} entrenamiento(s)",
               style: TextStyle(
                 fontSize: 14,
-                color: const Color(0xFFCAC4CE).withOpacity(0.8),
+                color: const Color(0xFFCAC4CE).withValues(alpha: 0.8),
               ),
             ),
           ],
@@ -347,13 +313,12 @@ class WorkoutHistoryPage extends StatelessWidget {
     );
   }
 
-  Widget _buildWorkoutCard(
-      HistoryEntrenamientoController controller,
+  Widget _buildWorkoutCard(HistoryEntrenamientoController controller,
       HistoryEntrenamiento entrenamiento) {
     // Para demo, asignamos un tipo aleatorio y un icono basado en el primer carácter del nombre
     final tipos = ["Fuerza", "Cardio", "Flexibilidad", "Personalizado"];
     final tipo = tipos[entrenamiento.nombre.length % tipos.length];
-    
+
     IconData getIconBasedOnType(String tipo) {
       switch (tipo) {
         case "Fuerza":
@@ -366,25 +331,26 @@ class WorkoutHistoryPage extends StatelessWidget {
           return Amicons.iconly_add_user_curved_fill;
       }
     }
-    
+
     Color getColorBasedOnType(String tipo) {
       switch (tipo) {
         case "Fuerza":
-          return Colors.blue.withOpacity(0.4);
+          return Colors.blue.withValues(alpha: 0.4);
         case "Cardio":
-          return Colors.green.withOpacity(0.4);
+          return Colors.green.withValues(alpha: 0.4);
         case "Flexibilidad":
-          return Colors.purple.withOpacity(0.4);
+          return Colors.purple.withValues(alpha: 0.4);
         default:
-          return Colors.orange.withOpacity(0.4);
+          return Colors.orange.withValues(alpha: 0.4);
       }
     }
-    
+
     final icon = getIconBasedOnType(tipo);
     final color = getColorBasedOnType(tipo);
-    
+
     // Para demo, usamos una fecha reciente
-    final date = DateTime.now().subtract(Duration(days: entrenamiento.nombre.length % 10));
+    final date = DateTime.now()
+        .subtract(Duration(days: entrenamiento.nombre.length % 10));
     final DateFormat formatter = DateFormat('dd MMM, yyyy');
     final String formattedDate = formatter.format(date);
 
@@ -392,10 +358,10 @@ class WorkoutHistoryPage extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 15),
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
+        color: Colors.white.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(15),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -434,7 +400,7 @@ class WorkoutHistoryPage extends StatelessWidget {
                       formattedDate,
                       style: TextStyle(
                         fontSize: 14,
-                        color: const Color(0xFFCAC4CE).withOpacity(0.8),
+                        color: const Color(0xFFCAC4CE).withValues(alpha: 0.8),
                       ),
                     ),
                   ],
@@ -445,15 +411,16 @@ class WorkoutHistoryPage extends StatelessWidget {
           const SizedBox(height: 15),
           Row(
             children: [
-              _buildWorkoutDetail(Icons.timer, "${entrenamiento.ejercicios.length} series"),
-              const SizedBox(width: 15),
               _buildWorkoutDetail(
-                  Icons.fitness_center, "${entrenamiento.ejercicios.length} ejercicios"),
+                  Icons.timer, "${entrenamiento.ejercicios.length} series"),
+              const SizedBox(width: 15),
+              _buildWorkoutDetail(Icons.fitness_center,
+                  "${entrenamiento.ejercicios.length} ejercicios"),
               const SizedBox(width: 15),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF9067C6).withOpacity(0.4),
+                  color: const Color(0xFF9067C6).withValues(alpha: 0.4),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
@@ -513,7 +480,7 @@ class WorkoutHistoryPage extends StatelessWidget {
           text,
           style: TextStyle(
             fontSize: 14,
-            color: const Color(0xFFCAC4CE).withOpacity(0.8),
+            color: const Color(0xFFCAC4CE).withValues(alpha: 0.8),
           ),
         ),
       ],
@@ -545,7 +512,7 @@ class WorkoutHistoryPage extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 10,
               offset: const Offset(0, -5),
             ),
@@ -561,7 +528,7 @@ class WorkoutHistoryPage extends StatelessWidget {
                 height: 5,
                 width: 40,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.3),
+                  color: Colors.white.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
@@ -572,7 +539,7 @@ class WorkoutHistoryPage extends StatelessWidget {
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.white.withValues(alpha: 0.1),
                     width: 1,
                   ),
                 ),
@@ -612,7 +579,8 @@ class WorkoutHistoryPage extends StatelessWidget {
                               formattedDate,
                               style: TextStyle(
                                 fontSize: 16,
-                                color: const Color(0xFFCAC4CE).withOpacity(0.8),
+                                color: const Color(0xFFCAC4CE)
+                                    .withValues(alpha: 0.8),
                               ),
                             ),
                           ],
@@ -621,7 +589,6 @@ class WorkoutHistoryPage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  
                 ],
               ),
             ),
@@ -641,7 +608,8 @@ class WorkoutHistoryPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 15),
-                    ...entrenamiento.ejercicios.map((ejercicio) => _buildExerciseItem(ejercicio)),
+                    ...entrenamiento.ejercicios
+                        .map((ejercicio) => _buildExerciseItem(ejercicio)),
                     const SizedBox(height: 20),
                     const Text(
                       "Notas",
@@ -655,10 +623,10 @@ class WorkoutHistoryPage extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(15),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.08),
+                        color: Colors.white.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(15),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.1),
+                          color: Colors.white.withValues(alpha: 0.1),
                           width: 1,
                         ),
                       ),
@@ -666,7 +634,7 @@ class WorkoutHistoryPage extends StatelessWidget {
                         "Buena sesión de entrenamiento. Para la próxima, intentar mejorar la técnica.",
                         style: TextStyle(
                           fontSize: 14,
-                          color: const Color(0xFFF7ECE1).withOpacity(0.9),
+                          color: const Color(0xFFF7ECE1).withValues(alpha: 0.9),
                         ),
                       ),
                     ),
@@ -675,39 +643,9 @@ class WorkoutHistoryPage extends StatelessWidget {
               ),
             ),
             // Botones de acción
-            
           ],
         ),
       ),
-    );
-  }
-
-  // Widget de estadísticas para el modal
-  Widget _buildWorkoutDetailStat(IconData icon, String value, String label) {
-    return Column(
-      children: [
-        Icon(
-          icon,
-          color: const Color(0xFF9067C6),
-          size: 24,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFFF7ECE1),
-          ),
-        ),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            color: const Color(0xFFCAC4CE).withOpacity(0.8),
-          ),
-        ),
-      ],
     );
   }
 
@@ -717,10 +655,10 @@ class WorkoutHistoryPage extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
+        color: Colors.white.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -729,7 +667,7 @@ class WorkoutHistoryPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: const Color(0xFF9067C6).withOpacity(0.3),
+              color: const Color(0xFF9067C6).withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Icon(
@@ -757,8 +695,8 @@ class WorkoutHistoryPage extends StatelessWidget {
                     _buildExerciseDetail(
                         "${ejercicio.series} series", Icons.repeat),
                     const SizedBox(width: 15),
-                    _buildExerciseDetail(
-                        "${ejercicio.repeticiones} reps", Icons.format_list_numbered),
+                    _buildExerciseDetail("${ejercicio.repeticiones} reps",
+                        Icons.format_list_numbered),
                     const SizedBox(width: 12),
                     _buildExerciseDetail(ejercicio.dia, Icons.view_day),
                   ],
@@ -790,7 +728,7 @@ class WorkoutHistoryPage extends StatelessWidget {
           text,
           style: TextStyle(
             fontSize: 14,
-            color: const Color(0xFFCAC4CE).withOpacity(0.8),
+            color: const Color(0xFFCAC4CE).withValues(alpha: 0.8),
           ),
         ),
       ],

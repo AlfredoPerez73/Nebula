@@ -12,7 +12,7 @@ class EnhancedTextField extends StatelessWidget {
   final ColorScheme colorScheme;
 
   const EnhancedTextField({
-    Key? key,
+    super.key,
     required this.controller,
     required this.label,
     required this.hint,
@@ -22,19 +22,19 @@ class EnhancedTextField extends StatelessWidget {
     required this.colorScheme,
     this.primaryColor,
     this.secondaryColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     final Color borderColor = secondaryColor != null
-        ? secondaryColor!.withOpacity(0.2)
-        : colorScheme.primary.withOpacity(0.2);
+        ? secondaryColor!.withValues(alpha: 0.2)
+        : colorScheme.primary.withValues(alpha: 0.2);
 
     final Color iconColor = secondaryColor ?? colorScheme.primary;
 
     return Container(
       decoration: BoxDecoration(
-        color: colorScheme.background.withOpacity(0.2),
+        color: colorScheme.surface.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: borderColor,
@@ -55,12 +55,12 @@ class EnhancedTextField extends StatelessWidget {
           border: InputBorder.none,
           labelText: label,
           labelStyle: bodyStyle.copyWith(
-            color: colorScheme.onBackground,
+            color: colorScheme.onSurface,
             fontSize: 16,
           ),
           hintText: hint,
           hintStyle: bodyStyle.copyWith(
-            color: colorScheme.onBackground.withOpacity(0.5),
+            color: colorScheme.onSurface.withValues(alpha: 0.5),
             fontSize: 15,
           ),
           prefixIcon: Container(

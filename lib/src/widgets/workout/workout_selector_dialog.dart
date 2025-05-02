@@ -6,9 +6,9 @@ class WorkoutSelectorDialog extends StatefulWidget {
       String? focusMuscleGroup, String? additionalDetails) onGeneratePressed;
 
   const WorkoutSelectorDialog({
-    Key? key,
+    super.key,
     required this.onGeneratePressed,
-  }) : super(key: key);
+  });
 
   @override
   State<WorkoutSelectorDialog> createState() => _WorkoutSelectorDialogState();
@@ -66,12 +66,12 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
           ),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               blurRadius: 15,
               spreadRadius: 5,
               offset: const Offset(0, 5),
@@ -91,13 +91,13 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                   ),
                 ),
                 IconButton(
                   icon: Icon(
                     Icons.close,
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                   ),
                   onPressed: () => Get.back(),
                 ),
@@ -161,7 +161,7 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
                     // Grupo muscular de enfoque
                     _buildSectionTitle("Enfoque muscular (opcional)"),
                     const SizedBox(height: 8),
-                    Container(
+                    SizedBox(
                       height: 40,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
@@ -191,10 +191,10 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.08),
+                        color: Colors.white.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(15),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.1),
+                          color: Colors.white.withValues(alpha: 0.1),
                           width: 1,
                         ),
                       ),
@@ -205,8 +205,8 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
                         decoration: InputDecoration(
                           hintText:
                               "Ej: Con poco equipamiento, para entrenar en casa...",
-                          hintStyle:
-                              TextStyle(color: Colors.white.withOpacity(0.5)),
+                          hintStyle: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.5)),
                           border: InputBorder.none,
                           contentPadding:
                               const EdgeInsets.symmetric(vertical: 15),
@@ -269,7 +269,7 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
       style: TextStyle(
         fontSize: 15,
         fontWeight: FontWeight.bold,
-        color: Colors.white.withOpacity(0.9),
+        color: Colors.white.withValues(alpha: 0.9),
       ),
     );
   }
@@ -279,7 +279,7 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
     required String selectedOption,
     required Function(String) onOptionSelected,
   }) {
-    return Container(
+    return SizedBox(
       height: 40,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -298,12 +298,12 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
                 decoration: BoxDecoration(
                   color: isSelected
                       ? const Color(0xFF9067C6)
-                      : Colors.white.withOpacity(0.08),
+                      : Colors.white.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: isSelected
                         ? const Color(0xFF9067C6)
-                        : Colors.white.withOpacity(0.1),
+                        : Colors.white.withValues(alpha: 0.1),
                     width: 1,
                   ),
                 ),
@@ -315,7 +315,7 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
                         isSelected ? FontWeight.bold : FontWeight.normal,
                     color: isSelected
                         ? Colors.white
-                        : Colors.white.withOpacity(0.8),
+                        : Colors.white.withValues(alpha: 0.8),
                   ),
                 ),
               ),
@@ -339,12 +339,12 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
         decoration: BoxDecoration(
           color: isSelected
               ? const Color(0xFF9067C6)
-              : Colors.white.withOpacity(0.08),
+              : Colors.white.withValues(alpha: 0.08),
           shape: BoxShape.circle,
           border: Border.all(
             color: isSelected
                 ? const Color(0xFF9067C6)
-                : Colors.white.withOpacity(0.1),
+                : Colors.white.withValues(alpha: 0.1),
             width: 1,
           ),
         ),
@@ -354,7 +354,9 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: isSelected ? Colors.white : Colors.white.withOpacity(0.8),
+              color: isSelected
+                  ? Colors.white
+                  : Colors.white.withValues(alpha: 0.8),
             ),
           ),
         ),
@@ -374,12 +376,12 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
         decoration: BoxDecoration(
           color: isSelected
               ? const Color(0xFF9067C6)
-              : Colors.white.withOpacity(0.08),
+              : Colors.white.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected
                 ? const Color(0xFF9067C6)
-                : Colors.white.withOpacity(0.1),
+                : Colors.white.withValues(alpha: 0.1),
             width: 1,
           ),
         ),
@@ -388,7 +390,8 @@ class _WorkoutSelectorDialogState extends State<WorkoutSelectorDialog> {
           style: TextStyle(
             fontSize: 14,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected ? Colors.white : Colors.white.withOpacity(0.8),
+            color:
+                isSelected ? Colors.white : Colors.white.withValues(alpha: 0.8),
           ),
         ),
       ),

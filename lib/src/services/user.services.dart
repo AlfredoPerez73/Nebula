@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import '../models/user.model.dart';
 import 'dart:developer' as developer;
 
@@ -48,7 +49,7 @@ class FirebaseService {
         throw Exception("Firebase Auth devolvió usuario nulo");
       }
     } catch (e) {
-      throw e;
+      throw Exception("Firebase Auth devolvió usuario nulo");
     }
   }
 
@@ -65,7 +66,7 @@ class FirebaseService {
         return await getUserData(user.uid);
       }
     } catch (e) {
-      print("Error en el inicio de sesión: $e");
+      debugPrint("Error en el inicio de sesión: $e");
     }
     return null;
   }
@@ -104,7 +105,7 @@ class FirebaseService {
     try {
       await _auth.signOut();
     } catch (e) {
-      print("Error al cerrar sesión: $e");
+      debugPrint("Error al cerrar sesión: $e");
     }
   }
 

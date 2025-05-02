@@ -11,7 +11,7 @@ class EnhancedButton extends StatelessWidget {
   final double height;
 
   const EnhancedButton({
-    Key? key,
+    super.key,
     required this.text,
     required this.icon,
     required this.onPressed,
@@ -20,7 +20,7 @@ class EnhancedButton extends StatelessWidget {
     required this.subtitleStyle,
     this.width,
     this.height = 58,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,7 @@ class EnhancedButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.3),
+            color: color.withValues(alpha: 0.3),
             blurRadius: 10,
             spreadRadius: 0,
             offset: const Offset(0, 4),

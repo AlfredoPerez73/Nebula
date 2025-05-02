@@ -8,9 +8,9 @@ class AllWorkoutsScreen extends StatelessWidget {
   final WorkoutRoutineController workoutController;
 
   const AllWorkoutsScreen({
-    Key? key,
+    super.key,
     required this.workoutController,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class AllWorkoutsScreen extends StatelessWidget {
                     Icon(
                       Amicons.lucide_dumbbell,
                       size: 64,
-                      color: const Color(0xFF9067C6).withOpacity(0.7),
+                      color: const Color(0xFF9067C6).withValues(alpha: 0.7),
                     ),
                     const SizedBox(height: 24),
                     const Text(
@@ -61,7 +61,7 @@ class AllWorkoutsScreen extends StatelessWidget {
                       "Genera tu primera rutina personalizada con IA",
                       style: TextStyle(
                         fontSize: 16,
-                        color: const Color(0xFFF7ECE1).withOpacity(0.7),
+                        color: const Color(0xFFF7ECE1).withValues(alpha: 0.7),
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -112,10 +112,10 @@ class AllWorkoutsScreen extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF8D86C9).withOpacity(0.15),
+        color: const Color(0xFF8D86C9).withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF8D86C9).withOpacity(0.2),
+          color: const Color(0xFF8D86C9).withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -144,8 +144,8 @@ class AllWorkoutsScreen extends StatelessWidget {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          const Color(0xFF8D86C9).withOpacity(opacity),
-                          const Color(0xFF9067C6).withOpacity(opacity),
+                          const Color(0xFF8D86C9).withValues(alpha: opacity),
+                          const Color(0xFF9067C6).withValues(alpha: opacity),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(12),
@@ -174,7 +174,8 @@ class AllWorkoutsScreen extends StatelessWidget {
                           "$days días/semana • ${_capitalizeFirstLetter(level)} • ${_capitalizeFirstLetter(goal)}",
                           style: TextStyle(
                             fontSize: 14,
-                            color: const Color(0xFFF7ECE1).withOpacity(0.7),
+                            color:
+                                const Color(0xFFF7ECE1).withValues(alpha: 0.7),
                           ),
                         ),
                       ],
@@ -187,14 +188,14 @@ class AllWorkoutsScreen extends StatelessWidget {
                         _formatDate(date),
                         style: TextStyle(
                           fontSize: 12,
-                          color: const Color(0xFFF7ECE1).withOpacity(0.6),
+                          color: const Color(0xFFF7ECE1).withValues(alpha: 0.6),
                         ),
                       ),
                       const SizedBox(height: 6),
                       Icon(
                         Icons.arrow_forward_ios,
                         size: 14,
-                        color: const Color(0xFFF7ECE1).withOpacity(0.6),
+                        color: const Color(0xFFF7ECE1).withValues(alpha: 0.6),
                       ),
                     ],
                   ),
@@ -231,10 +232,10 @@ class AllWorkoutsScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF9067C6).withOpacity(0.2),
+                        color: const Color(0xFF9067C6).withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: const Color(0xFF9067C6).withOpacity(0.3),
+                          color: const Color(0xFF9067C6).withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -324,7 +325,7 @@ class AllWorkoutsScreen extends StatelessWidget {
         return "${dateTime.day}/${dateTime.month}/${dateTime.year}";
       }
     } catch (e) {
-      print("Error al formatear fecha: $e");
+      debugPrint("Error al formatear fecha: $e");
       return dateStr;
     }
   }

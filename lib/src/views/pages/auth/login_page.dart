@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'registerPage.dart';
+import 'register_page.dart';
 import 'package:get/get.dart';
 import 'package:amicons/amicons.dart';
 import '../../../controllers/user.controller.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -54,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
                   width: 200,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFF9067C6).withOpacity(0.2),
+                    color: const Color(0xFF9067C6).withValues(alpha: 0.2),
                   ),
                 ),
               ),
@@ -66,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
                   width: 300,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: const Color(0xFF242038).withOpacity(0.3),
+                    color: const Color(0xFF242038).withValues(alpha: 0.3),
                   ),
                 ),
               ),
@@ -85,15 +85,16 @@ class _LoginPageState extends State<LoginPage> {
                     child: Container(
                       padding: const EdgeInsets.all(30),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.2),
+                        color: Colors.black.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(50),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.1),
+                          color: Colors.white.withValues(alpha: 0.1),
                           width: 1,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF242038).withOpacity(0.3),
+                            color:
+                                const Color(0xFF242038).withValues(alpha: 0.3),
                             blurRadius: 20,
                             spreadRadius: 5,
                           ),
@@ -112,8 +113,8 @@ class _LoginPageState extends State<LoginPage> {
                               color: const Color(0xFF242038),
                               boxShadow: [
                                 BoxShadow(
-                                  color:
-                                      const Color(0xFF9067C6).withOpacity(0.5),
+                                  color: const Color(0xFF9067C6)
+                                      .withValues(alpha: 0.5),
                                   blurRadius: 15,
                                   spreadRadius: 2,
                                 ),
@@ -191,7 +192,7 @@ class _LoginPageState extends State<LoginPage> {
                                   boxShadow: [
                                     BoxShadow(
                                       color: const Color(0xFF9067C6)
-                                          .withOpacity(0.5),
+                                          .withValues(alpha: 0.5),
                                       blurRadius: 10,
                                       offset: const Offset(0, 4),
                                     ),
@@ -259,11 +260,11 @@ class _LoginPageState extends State<LoginPage> {
                                     gradient: LinearGradient(
                                       colors: [
                                         const Color(0xFFCAC4CE)
-                                            .withOpacity(0.1),
+                                            .withValues(alpha: 0.1),
                                         const Color(0xFFCAC4CE)
-                                            .withOpacity(0.5),
+                                            .withValues(alpha: 0.5),
                                         const Color(0xFFCAC4CE)
-                                            .withOpacity(0.1),
+                                            .withValues(alpha: 0.1),
                                       ],
                                     ),
                                   ),
@@ -288,11 +289,11 @@ class _LoginPageState extends State<LoginPage> {
                                     gradient: LinearGradient(
                                       colors: [
                                         const Color(0xFFCAC4CE)
-                                            .withOpacity(0.1),
+                                            .withValues(alpha: 0.1),
                                         const Color(0xFFCAC4CE)
-                                            .withOpacity(0.5),
+                                            .withValues(alpha: 0.5),
                                         const Color(0xFFCAC4CE)
-                                            .withOpacity(0.1),
+                                            .withValues(alpha: 0.1),
                                       ],
                                     ),
                                   ),
@@ -314,8 +315,8 @@ class _LoginPageState extends State<LoginPage> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
                                 side: BorderSide(
-                                  color:
-                                      const Color(0xFFF7ECE1).withOpacity(0.3),
+                                  color: const Color(0xFFF7ECE1)
+                                      .withValues(alpha: 0.3),
                                   width: 1,
                                 ),
                               ),
@@ -363,7 +364,7 @@ class _LoginPageState extends State<LoginPage> {
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(
-            color: const Color(0xFFCAC4CE).withOpacity(0.8),
+            color: const Color(0xFFCAC4CE).withValues(alpha: 0.8),
             fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
@@ -390,20 +391,20 @@ class _LoginPageState extends State<LoginPage> {
                 )
               : null,
           filled: true,
-          fillColor: Colors.black.withOpacity(0.15),
+          fillColor: Colors.black.withValues(alpha: 0.15),
           contentPadding:
               const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide(
-              color: const Color(0xFF8D86C9).withOpacity(0.3),
+              color: const Color(0xFF8D86C9).withValues(alpha: 0.3),
               width: 1,
             ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide(
-              color: const Color(0xFF9067C6).withOpacity(0.5),
+              color: const Color(0xFF9067C6).withValues(alpha: 0.5),
               width: 1.5,
             ),
           ),
@@ -418,7 +419,7 @@ class DiagonalLinesPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFF9067C6).withOpacity(0.05)
+      ..color = const Color(0xFF9067C6).withValues(alpha: 0.05)
       ..strokeWidth = 1.5
       ..style = PaintingStyle.stroke;
 

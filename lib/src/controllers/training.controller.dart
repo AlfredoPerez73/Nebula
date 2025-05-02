@@ -1,6 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:nebula/src/models/exercises.model.dart';
-import 'package:nebula/src/models/historyExercises.model.dart';
 import 'package:nebula/src/models/training.model.dart';
 import 'package:nebula/src/services/training.services.dart';
 import 'package:nebula/src/controllers/historyTraining.controller.dart';
@@ -80,7 +80,7 @@ class EntrenamientoController extends GetxController {
           await historyController.cargarEntrenamientos();
         }
       } catch (e) {
-        print("Error sincronizando con historial: $e");
+        debugPrint("Error sincronizando con historial: $e");
       }
 
       await cargarEntrenamientos();
@@ -132,21 +132,11 @@ class EntrenamientoController extends GetxController {
       try {
         if (Get.isRegistered<HistoryEntrenamientoController>()) {
           final historyController = Get.find<HistoryEntrenamientoController>();
-
-          // Convertir el ejercicio normal a ejercicio de historial
-          final historyEjercicio = HistoryEjercicio(
-            id: ejercicio.id,
-            nombre: ejercicio.nombre,
-            dia: ejercicio.dia,
-            series: ejercicio.series,
-            repeticiones: ejercicio.repeticiones,
-          );
-
           // Solo actualizar el historial, sin tratar de usar métodos específicos
           await historyController.cargarEntrenamientos();
         }
       } catch (e) {
-        print("Error sincronizando con historial: $e");
+        debugPrint("Error sincronizando con historial: $e");
       }
 
       // Recargar el entrenamiento para obtener los cambios
@@ -297,4 +287,3 @@ class EntrenamientoController extends GetxController {
     }
   }
 }
-

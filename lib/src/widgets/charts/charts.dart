@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import '../../controllers/workoutstats.dart'; // Asegúrate de que la ruta sea correcta
 
 class WorkoutStatsWidget extends StatefulWidget {
-  const WorkoutStatsWidget({Key? key}) : super(key: key);
+  const WorkoutStatsWidget({super.key});
 
   @override
   State<WorkoutStatsWidget> createState() => _WorkoutStatsWidgetState();
@@ -93,18 +93,18 @@ class _WorkoutStatsWidgetState extends State<WorkoutStatsWidget>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.white.withOpacity(0.15),
-            Colors.white.withOpacity(0.05),
+            Colors.white.withValues(alpha: 0.15),
+            Colors.white.withValues(alpha: 0.05),
           ],
         ),
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
-          color: Colors.white.withOpacity(0.25),
+          color: Colors.white.withValues(alpha: 0.25),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.25),
+            color: Colors.black.withValues(alpha: 0.25),
             blurRadius: 20,
             spreadRadius: 2,
             offset: const Offset(0, 10),
@@ -142,7 +142,8 @@ class _WorkoutStatsWidgetState extends State<WorkoutStatsWidget>
                               Get.snackbar(
                                 'Actualizado',
                                 'Estadísticas actualizadas correctamente',
-                                backgroundColor: Colors.green.withOpacity(0.7),
+                                backgroundColor:
+                                    Colors.green.withValues(alpha: 0.7),
                                 colorText: Colors.white,
                                 snackPosition: SnackPosition.BOTTOM,
                                 margin: const EdgeInsets.all(20),
@@ -153,7 +154,8 @@ class _WorkoutStatsWidgetState extends State<WorkoutStatsWidget>
                               Get.snackbar(
                                 'Error',
                                 'No se pudieron actualizar las estadísticas: ${e.toString()}',
-                                backgroundColor: Colors.red.withOpacity(0.7),
+                                backgroundColor:
+                                    Colors.red.withValues(alpha: 0.7),
                                 colorText: Colors.white,
                                 snackPosition: SnackPosition.BOTTOM,
                                 margin: const EdgeInsets.all(20),
@@ -172,11 +174,12 @@ class _WorkoutStatsWidgetState extends State<WorkoutStatsWidget>
                             margin: const EdgeInsets.only(right: 10),
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF9067C6).withOpacity(0.4),
+                              color: const Color(0xFF9067C6)
+                                  .withValues(alpha: 0.4),
                               borderRadius: BorderRadius.circular(14),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
+                                  color: Colors.black.withValues(alpha: 0.1),
                                   blurRadius: 8,
                                   offset: const Offset(0, 3),
                                 ),
@@ -192,11 +195,12 @@ class _WorkoutStatsWidgetState extends State<WorkoutStatsWidget>
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF8D86C9).withOpacity(0.4),
+                            color:
+                                const Color(0xFF8D86C9).withValues(alpha: 0.4),
                             borderRadius: BorderRadius.circular(14),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
+                                color: Colors.black.withValues(alpha: 0.1),
                                 blurRadius: 8,
                                 offset: const Offset(0, 3),
                               ),
@@ -239,7 +243,7 @@ class _WorkoutStatsWidgetState extends State<WorkoutStatsWidget>
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: const Color(0xFF725AC1).withOpacity(0.25),
+            color: const Color(0xFF725AC1).withValues(alpha: 0.25),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(
@@ -367,7 +371,7 @@ class _WorkoutStatsWidgetState extends State<WorkoutStatsWidget>
             horizontalInterval: 1,
             getDrawingHorizontalLine: (value) {
               return FlLine(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
                 strokeWidth: 1,
                 dashArray: [5, 5],
               );
@@ -399,7 +403,7 @@ class _WorkoutStatsWidgetState extends State<WorkoutStatsWidget>
                   backDrawRodData: BackgroundBarChartRodData(
                     show: true,
                     toY: maxY,
-                    color: Colors.white.withOpacity(0.05),
+                    color: Colors.white.withValues(alpha: 0.05),
                   ),
                 ),
               ],
@@ -474,10 +478,6 @@ class _WorkoutStatsWidgetState extends State<WorkoutStatsWidget>
                         sections: setsData.asMap().entries.map((entry) {
                           final index = entry.key;
                           final stat = entry.value;
-                          final percentage = totalSets > 0
-                              ? (stat.value / totalSets) * 100
-                              : 0;
-
                           return PieChartSectionData(
                             color: pieColors[index % pieColors.length],
                             value: stat.value.toDouble(),
@@ -667,7 +667,7 @@ class _Badge extends StatelessWidget {
         border: Border.all(color: Colors.white, width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 5,
             spreadRadius: 1,
             offset: const Offset(0, 3),
@@ -697,7 +697,7 @@ class _SmallBadge extends StatelessWidget {
         border: Border.all(color: Colors.white, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 3,
             spreadRadius: 0,
             offset: const Offset(0, 2),

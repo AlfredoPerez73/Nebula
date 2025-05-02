@@ -8,9 +8,9 @@ class HomeWelcomeBanner extends StatelessWidget {
   final AuthController authController;
 
   const HomeWelcomeBanner({
-    Key? key,
+    super.key,
     required this.authController,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +26,14 @@ class HomeWelcomeBanner extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.primaryColor.withOpacity(0.9),
-            AppColors.darkPurple.withOpacity(0.95),
+            AppColors.primaryColor.withValues(alpha: 0.9),
+            AppColors.darkPurple.withValues(alpha: 0.95),
           ],
         ),
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryColor.withOpacity(0.3),
+            color: AppColors.primaryColor.withValues(alpha: 0.3),
             blurRadius: 15,
             spreadRadius: 0,
             offset: const Offset(0, 5),
@@ -51,7 +51,7 @@ class HomeWelcomeBanner extends StatelessWidget {
               width: 100,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.05),
+                color: Colors.white.withValues(alpha: 0.05),
               ),
             ),
           ),
@@ -63,7 +63,7 @@ class HomeWelcomeBanner extends StatelessWidget {
               width: 70,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.05),
+                color: Colors.white.withValues(alpha: 0.05),
               ),
             ),
           ),
@@ -80,7 +80,7 @@ class HomeWelcomeBanner extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.all(isSmallScreen ? 8 : 12),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Icon(
@@ -100,7 +100,7 @@ class HomeWelcomeBanner extends StatelessWidget {
                             style: TextStyle(
                               fontSize: isSmallScreen ? 10 : 12,
                               fontWeight: FontWeight.w600,
-                              color: Colors.white.withOpacity(0.9),
+                              color: Colors.white.withValues(alpha: 0.9),
                               letterSpacing: 1.0,
                             ),
                             maxLines: 1,
@@ -151,7 +151,7 @@ class HomeWelcomeBanner extends StatelessWidget {
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.15),
+                                    color: Colors.black.withValues(alpha: 0.15),
                                     blurRadius: 8,
                                     offset: const Offset(0, 3),
                                   ),
@@ -189,7 +189,8 @@ class HomeWelcomeBanner extends StatelessWidget {
                                     userEmail,
                                     style: TextStyle(
                                       fontSize: isSmallScreen ? 9 : 11,
-                                      color: Colors.white.withOpacity(0.7),
+                                      color:
+                                          Colors.white.withValues(alpha: 0.7),
                                     ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -204,7 +205,7 @@ class HomeWelcomeBanner extends StatelessWidget {
                       Container(
                         padding: EdgeInsets.all(isSmallScreen ? 8 : 12),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
+                          color: Colors.white.withValues(alpha: 0.15),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(

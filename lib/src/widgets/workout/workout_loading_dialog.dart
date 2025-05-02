@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class WorkoutLoadingDialog extends StatelessWidget {
-  const WorkoutLoadingDialog({Key? key}) : super(key: key);
+  const WorkoutLoadingDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,12 +14,12 @@ class WorkoutLoadingDialog extends StatelessWidget {
           color: const Color(0xFF242038),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withValues(alpha: 0.1),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               blurRadius: 15,
               spreadRadius: 5,
               offset: const Offset(0, 5),
@@ -34,7 +34,7 @@ class WorkoutLoadingDialog extends StatelessWidget {
               width: 70,
               height: 70,
               decoration: BoxDecoration(
-                color: const Color(0xFF9067C6).withOpacity(0.2),
+                color: const Color(0xFF9067C6).withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
               child: const Center(
@@ -66,7 +66,7 @@ class WorkoutLoadingDialog extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha: 0.8),
               ),
             ),
             const SizedBox(height: 15),

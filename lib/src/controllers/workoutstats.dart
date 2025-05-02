@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:nebula/src/controllers/training.controller.dart';
@@ -32,7 +33,9 @@ class WorkoutStatsController extends GetxController {
     // Verificamos si EntrenamientoController ya está registrado
     try {
       _entrenamientoController = Get.find<EntrenamientoController>();
-    } catch (e) {}
+    } catch (e) {
+      debugPrint("El entrenamiento ya esta registrado");
+    }
 
     // Esperamos un poco para asegurar que el controlador esté listo
     Future.delayed(Duration(milliseconds: 500), () {
@@ -50,7 +53,9 @@ class WorkoutStatsController extends GetxController {
 
       // Procesar los datos para crear estadísticas basadas en el día de la semana
       procesarDatosDeEntrenamiento();
-    } catch (e) {}
+    } catch (e) {
+      debugPrint("Hubo un error: ");
+    }
   }
 
   // Procesar los datos de entrenamiento para generar estadísticas
@@ -82,14 +87,13 @@ class WorkoutStatsController extends GetxController {
       // Recorrer los entrenamientos del usuario
       for (var entrenamiento in entrenamientoController.entrenamientos) {
         // Verificar si el entrenamiento tiene ejercicios
-        if (entrenamiento.ejercicios == null ||
-            entrenamiento.ejercicios.isEmpty) {
+        if (entrenamiento.ejercicios.isEmpty) {
           continue;
         }
 
         for (var ejercicio in entrenamiento.ejercicios) {
           // Verificar si el ejercicio tiene un día asignado
-          if (ejercicio.dia != null && ejercicio.dia.toString().isNotEmpty) {
+          if (ejercicio.dia.toString().isNotEmpty) {
             // Obtener el número de día de la semana (1-7) basado en el nombre del día
             int? weekday = _obtenerWeekdayDesdeDia(ejercicio.dia);
 
@@ -113,7 +117,8 @@ class WorkoutStatsController extends GetxController {
     ejerciciosPorDia.forEach((weekday, cantidad) {});
 
     seriesPorDia.forEach((weekday, cantidad) {
-      print('  Día $weekday (${weekdayToNameMap[weekday]}): $cantidad series');
+      debugPrint(
+          '  Día $weekday (${weekdayToNameMap[weekday]}): $cantidad series');
     });
 
     // Obtener la fecha del lunes de esta semana

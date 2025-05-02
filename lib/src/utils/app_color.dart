@@ -23,8 +23,8 @@ class AppColors {
     colors: [
       backgroundColor,
       Color.lerp(backgroundColor, primaryColor, 0.4) ??
-          primaryColor.withOpacity(0.8),
-      primaryColor.withOpacity(0.8),
+          primaryColor.withValues(alpha: 0.8),
+      primaryColor.withValues(alpha: 0.8),
     ],
     stops: const [0.2, 0.6, 1.0],
   );
@@ -49,14 +49,14 @@ class AppColors {
 
   // Sombras comunes
   static final BoxShadow primaryShadow = BoxShadow(
-    color: primaryColor.withOpacity(0.25),
+    color: primaryColor.withValues(alpha: 0.25),
     blurRadius: 15,
     spreadRadius: 1,
     offset: const Offset(0, 8),
   );
 
   static final BoxShadow cardShadow = BoxShadow(
-    color: Colors.black.withOpacity(0.12),
+    color: Colors.black.withValues(alpha: 0.12),
     blurRadius: 12,
     spreadRadius: 0,
     offset: const Offset(0, 6),
@@ -72,13 +72,13 @@ class AppColors {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          Colors.white.withOpacity(0.15),
-          Colors.white.withOpacity(0.05),
+          Colors.white.withValues(alpha: 0.15),
+          Colors.white.withValues(alpha: 0.05),
         ],
       ),
       borderRadius: BorderRadius.circular(28),
       border: Border.all(
-        color: accent.withOpacity(0.2),
+        color: accent.withValues(alpha: 0.2),
         width: 1.5,
       ),
       boxShadow: [cardShadow],
@@ -95,9 +95,9 @@ class AppColors {
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: [
-          color.withOpacity(opacity),
-          secondaryColor?.withOpacity(opacity) ??
-              color.withOpacity(opacity * 0.8),
+          color.withValues(alpha: opacity),
+          secondaryColor?.withValues(alpha: opacity) ??
+              color.withValues(alpha: opacity * 0.8),
         ],
       ),
       borderRadius: BorderRadius.circular(radius),
@@ -129,6 +129,6 @@ class AppColors {
   static TextStyle statLabelStyle = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w500,
-    color: Colors.white.withOpacity(0.7),
+    color: Colors.white.withValues(alpha: 0.7),
   );
 }

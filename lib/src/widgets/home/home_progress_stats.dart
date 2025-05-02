@@ -9,10 +9,10 @@ class HomeProgressStats extends StatelessWidget {
   final EntrenamientoController entrenamientoController;
 
   const HomeProgressStats({
-    Key? key,
+    super.key,
     required this.authController,
     required this.entrenamientoController,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,13 +24,13 @@ class HomeProgressStats extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.secondaryColor.withOpacity(0.9),
-            AppColors.darkPurple.withOpacity(0.95),
+            AppColors.secondaryColor.withValues(alpha: 0.9),
+            AppColors.darkPurple.withValues(alpha: 0.95),
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.secondaryColor.withOpacity(0.3),
+            color: AppColors.secondaryColor.withValues(alpha: 0.3),
             blurRadius: 15,
             spreadRadius: 0,
             offset: const Offset(0, 8),
@@ -46,7 +46,7 @@ class HomeProgressStats extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.15),
+                color: Colors.black.withValues(alpha: 0.15),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,7 +59,7 @@ class HomeProgressStats extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.15),
+                              color: Colors.white.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: const Icon(
@@ -84,12 +84,12 @@ class HomeProgressStats extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
+                          color: Colors.white.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Obx(() => Text(
                               authController.userModel.value?.nivelExperiencia
-                                      ?.toUpperCase() ??
+                                      .toUpperCase() ??
                                   "PRINCIPIANTE",
                               style: const TextStyle(
                                 fontSize: 12,
@@ -106,7 +106,7 @@ class HomeProgressStats extends StatelessWidget {
                     "Monitorea tus avances de entrenamiento y logros",
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                       height: 1.4,
                     ),
                   ),
@@ -126,7 +126,7 @@ class HomeProgressStats extends StatelessWidget {
                 int maxLogros = 0;
                 String nivelExperiencia = authController
                         .userModel.value?.nivelExperiencia
-                        ?.toLowerCase() ??
+                        .toLowerCase() ??
                     "principiante";
 
                 // Determinar metas según nivel de experiencia
@@ -257,10 +257,10 @@ class HomeProgressStats extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -276,7 +276,7 @@ class HomeProgressStats extends StatelessWidget {
                 child: CircularProgressIndicator(
                   value: progress,
                   strokeWidth: 3.5,
-                  backgroundColor: Colors.white.withOpacity(0.15),
+                  backgroundColor: Colors.white.withValues(alpha: 0.15),
                   valueColor: AlwaysStoppedAnimation<Color>(accentColor),
                 ),
               ),
@@ -284,7 +284,7 @@ class HomeProgressStats extends StatelessWidget {
                 height: 38,
                 width: 38,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.3),
+                  color: color.withValues(alpha: 0.3),
                   shape: BoxShape.circle,
                 ),
                 child: Center(
@@ -306,14 +306,14 @@ class HomeProgressStats extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
-                  color: accentColor.withOpacity(0.8),
+                  color: accentColor.withValues(alpha: 0.8),
                 ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                 decoration: BoxDecoration(
                   color: isComplete
-                      ? accentColor.withOpacity(0.25)
+                      ? accentColor.withValues(alpha: 0.25)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -322,7 +322,8 @@ class HomeProgressStats extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: accentColor.withOpacity(isComplete ? 1.0 : 0.8),
+                    color:
+                        accentColor.withValues(alpha: isComplete ? 1.0 : 0.8),
                   ),
                 ),
               ),
@@ -347,7 +348,7 @@ class HomeProgressStats extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
-                  color: accentColor.withOpacity(0.7),
+                  color: accentColor.withValues(alpha: 0.7),
                 ),
               ),
             ],

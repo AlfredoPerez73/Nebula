@@ -2,9 +2,9 @@ import 'package:amicons/amicons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nebula/src/controllers/training.controller.dart';
-import 'package:nebula/src/views/pages/ProfileScreen.dart';
-import 'package:nebula/src/views/pages/IAexcersisPage.dart';
-import 'package:nebula/src/views/pages/routinesPage.dart';
+import 'package:nebula/src/views/pages/profile_screen.dart';
+import 'package:nebula/src/views/pages/ia_excersis_page.dart';
+import 'package:nebula/src/views/pages/routines_page.dart';
 import 'package:nebula/src/widgets/home/home_bmi_card.dart';
 import 'package:nebula/src/widgets/home/ia/home_ai_recommendation.dart';
 import 'package:nebula/src/widgets/workout/workout_display_widget.dart';
@@ -19,7 +19,7 @@ import '../utils/navigate_bar.dart';
 import '../utils/app_color.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenPageState();
@@ -74,7 +74,7 @@ class _HomeScreenPageState extends State<HomeScreen> {
                 width: 320,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.03),
+                  color: Colors.white.withValues(alpha: 0.03),
                 ),
               ),
             ),
@@ -86,7 +86,7 @@ class _HomeScreenPageState extends State<HomeScreen> {
                 width: 220,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.02),
+                  color: Colors.white.withValues(alpha: 0.02),
                 ),
               ),
             ),
@@ -98,7 +98,7 @@ class _HomeScreenPageState extends State<HomeScreen> {
                 width: 150,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColors.primaryColor.withOpacity(0.05),
+                  color: AppColors.primaryColor.withValues(alpha: 0.05),
                 ),
               ),
             ),
@@ -148,15 +148,15 @@ class _HomeScreenPageState extends State<HomeScreen> {
       flexibleSpace: Container(
         margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: Colors.white.withOpacity(0.15),
+            color: Colors.white.withValues(alpha: 0.15),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primaryColor.withOpacity(0.15),
+              color: AppColors.primaryColor.withValues(alpha: 0.15),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -174,12 +174,12 @@ class _HomeScreenPageState extends State<HomeScreen> {
                 end: Alignment.bottomRight,
                 colors: [
                   AppColors.darkPurple,
-                  AppColors.darkPurple.withOpacity(0.8),
+                  AppColors.darkPurple.withValues(alpha: 0.8),
                 ],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   blurRadius: 5,
                   offset: const Offset(0, 2),
                 ),
@@ -217,7 +217,7 @@ class _HomeScreenPageState extends State<HomeScreen> {
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1.2,
-                  color: AppColors.accentColor.withOpacity(0.7),
+                  color: AppColors.accentColor.withValues(alpha: 0.7),
                 ),
               ),
             ],

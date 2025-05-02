@@ -30,19 +30,21 @@ class Routinespage extends StatelessWidget {
     'Domingo'
   ];
 
-  // Esquema de colores refinado
+  static const Color appBackground = Color(0xFF121016);
+  static const Color appSurface = Color(0xFF1E1728);
+  static const Color appOnBackground = Colors.white70;
+
+  // Esquema de colores refinado sin las propiedades obsoletas
   final ColorScheme colorScheme = const ColorScheme(
     primary: Color(0xFF6A3DE8),
     primaryContainer: Color(0xFF53379B),
     secondary: Color(0xFF8C65F7),
     secondaryContainer: Color(0xFF35244F),
-    surface: Color(0xFF1E1728),
-    background: Color(0xFF121016),
+    surface: appSurface,
     error: Color(0xFFFF5252),
     onPrimary: Colors.white,
     onSecondary: Colors.white,
     onSurface: Colors.white,
-    onBackground: Colors.white70,
     onError: Colors.white,
     brightness: Brightness.dark,
   );
@@ -66,7 +68,7 @@ class Routinespage extends StatelessWidget {
     fontWeight: FontWeight.w400,
   );
 
-  Routinespage({Key? key}) : super(key: key);
+  Routinespage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +76,7 @@ class Routinespage extends StatelessWidget {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: colorScheme.background,
+      systemNavigationBarColor: appBackground,
       systemNavigationBarIconBrightness: Brightness.light,
     ));
 
@@ -91,7 +93,7 @@ class Routinespage extends StatelessWidget {
     );
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: appBackground,
       resizeToAvoidBottomInset: false, // Soluciona el problema de la navbar
       body: Container(
         height: double.infinity,
@@ -100,9 +102,9 @@ class Routinespage extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              colorScheme.background,
-              colorScheme.background.withOpacity(0.85),
-              colorScheme.primaryContainer.withOpacity(0.3),
+              appBackground,
+              appBackground.withValues(alpha: 0.85),
+              colorScheme.primaryContainer.withValues(alpha: 0.3),
             ],
             stops: const [0.1, 0.5, 1.0],
           ),
@@ -118,7 +120,7 @@ class Routinespage extends StatelessWidget {
                 width: 250,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: colorScheme.primary.withOpacity(0.04),
+                  color: colorScheme.primary.withValues(alpha: 0.04),
                 ),
               ),
             ),
@@ -130,7 +132,7 @@ class Routinespage extends StatelessWidget {
                 width: 200,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: colorScheme.primary.withOpacity(0.05),
+                  color: colorScheme.primary.withValues(alpha: 0.05),
                 ),
               ),
             ),

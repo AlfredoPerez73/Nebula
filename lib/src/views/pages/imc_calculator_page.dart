@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:amicons/amicons.dart';
-import 'package:nebula/src/views/pages/ProfileScreen.dart';
+import 'package:nebula/src/views/pages/profile_screen.dart';
 import '../../controllers/user.controller.dart';
 
 class BMICalculatorPage extends StatefulWidget {
-  const BMICalculatorPage({Key? key}) : super(key: key);
+  const BMICalculatorPage({super.key});
 
   @override
   State<BMICalculatorPage> createState() => _BMICalculatorPageState();
@@ -32,7 +32,7 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
 
   void _loadUserDataAndCalculate() {
     final user = authController.userModel.value;
-    if (user != null && user.altura != null && user.peso != null) {
+    if (user != null) {
       setState(() {
         _userHeight = user.altura;
         _userWeight = user.peso;
@@ -151,7 +151,7 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
           Icon(
             Icons.person_off,
             size: 70,
-            color: Colors.grey.withOpacity(0.5),
+            color: Colors.grey.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 20),
           const Text(
@@ -170,7 +170,7 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey.withOpacity(0.8),
+                color: Colors.grey.withValues(alpha: 0.8),
               ),
             ),
           ),
@@ -212,7 +212,7 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
           "Basado en tus datos de perfil actuales",
           style: TextStyle(
             fontSize: 16,
-            color: const Color(0xFFCAC4CE).withOpacity(0.8),
+            color: const Color(0xFFCAC4CE).withValues(alpha: 0.8),
           ),
         ),
       ],
@@ -228,13 +228,13 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
           end: Alignment.bottomRight,
           colors: [
             const Color(0xFF242038),
-            const Color(0xFF242038).withOpacity(0.9),
+            const Color(0xFF242038).withValues(alpha: 0.9),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -257,7 +257,7 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: _categoryColor.withOpacity(0.2),
+                  color: _categoryColor.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(30),
                   border: Border.all(color: _categoryColor, width: 1.5),
                 ),
@@ -305,7 +305,7 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
                         border: Border.all(color: _categoryColor, width: 3),
                         boxShadow: [
                           BoxShadow(
-                            color: _categoryColor.withOpacity(0.5),
+                            color: _categoryColor.withValues(alpha: 0.5),
                             blurRadius: 8,
                             spreadRadius: 2,
                           ),
@@ -397,10 +397,10 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: _categoryColor.withOpacity(0.1),
+        color: _categoryColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(15),
         border: Border.all(
-          color: _categoryColor.withOpacity(0.3),
+          color: _categoryColor.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -416,7 +416,7 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
             child: Text(
               explanation,
               style: TextStyle(
-                color: const Color(0xFFCAC4CE).withOpacity(0.9),
+                color: const Color(0xFFCAC4CE).withValues(alpha: 0.9),
                 fontSize: 14,
               ),
             ),
@@ -434,7 +434,7 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -487,7 +487,7 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
               Expanded(
                 child: _buildStatCard(
                     'IMC',
-                    '${_bmiResult?.toStringAsFixed(1) ?? "N/A"}',
+                    _bmiResult?.toStringAsFixed(1) ?? "N/A",
                     Icons.monitor_weight,
                     _categoryColor),
               ),
@@ -508,9 +508,9 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -600,7 +600,7 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -628,31 +628,29 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
             ],
           ),
           const SizedBox(height: 15),
-          ...actionItems
-              .map((item) => Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(
-                          Icons.check_circle,
-                          color: _categoryColor,
-                          size: 18,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            item,
-                            style: TextStyle(
-                              color: const Color(0xFFCAC4CE).withOpacity(0.9),
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ],
+          ...actionItems.map((item) => Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.check_circle,
+                      color: _categoryColor,
+                      size: 18,
                     ),
-                  ))
-              .toList(),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        item,
+                        style: TextStyle(
+                          color: const Color(0xFFCAC4CE).withValues(alpha: 0.9),
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )),
           const SizedBox(height: 15),
         ],
       ),
@@ -667,7 +665,7 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -703,7 +701,7 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
           Text(
             'El IMC es una herramienta de evaluación general y no considera otros factores como la composición corporal, distribución de grasa o masa muscular.',
             style: TextStyle(
-              color: const Color(0xFFCAC4CE).withOpacity(0.7),
+              color: const Color(0xFFCAC4CE).withValues(alpha: 0.7),
               fontSize: 12,
               fontStyle: FontStyle.italic,
             ),
@@ -739,9 +737,9 @@ class _BMICalculatorPageState extends State<BMICalculatorPage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
+              color: color.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: color.withOpacity(0.3)),
+              border: Border.all(color: color.withValues(alpha: 0.3)),
             ),
             child: Text(
               range,

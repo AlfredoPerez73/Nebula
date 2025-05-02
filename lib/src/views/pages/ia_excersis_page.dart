@@ -9,7 +9,7 @@ import '../../widgets/workout/workout_loading_dialog.dart';
 import '../../widgets/workout/workout_selector_dialog.dart';
 
 class Iaexcersispage extends StatefulWidget {
-  const Iaexcersispage({Key? key}) : super(key: key);
+  const Iaexcersispage({super.key});
 
   @override
   State<Iaexcersispage> createState() => _IaexcersisPageState();
@@ -97,14 +97,14 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: const Color(0xFFCAC4CE).withOpacity(0.9),
+                    color: const Color(0xFFCAC4CE).withValues(alpha: 0.9),
                   ),
                 )),
           ],
         ),
         Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF8D86C9).withOpacity(0.3),
+            color: const Color(0xFF8D86C9).withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(15),
           ),
           padding: const EdgeInsets.all(12),
@@ -135,7 +135,7 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF9067C6).withOpacity(0.5),
+            color: const Color(0xFF9067C6).withValues(alpha: 0.5),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -149,11 +149,11 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 5,
                       offset: const Offset(0, 2),
                     ),
@@ -192,7 +192,7 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
-                          color: const Color(0xFFF7ECE1).withOpacity(0.8),
+                          color: const Color(0xFFF7ECE1).withValues(alpha: 0.8),
                         ),
                       );
                     }),
@@ -301,12 +301,12 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
       width: 140,
       margin: const EdgeInsets.only(right: 16),
       child: Card(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(
-            color: color.withOpacity(0.3),
+            color: color.withValues(alpha: 0.3),
             width: 1.5,
           ),
         ),
@@ -335,7 +335,7 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFFF7ECE1).withOpacity(0.9),
+                    color: const Color(0xFFF7ECE1).withValues(alpha: 0.9),
                   ),
                 ),
               ],
@@ -441,7 +441,7 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
           // Comparar fechas en orden descendente (más reciente primero)
           return DateTime.parse(dateB).compareTo(DateTime.parse(dateA));
         } catch (e) {
-          print("Error al ordenar por fecha: $e");
+          debugPrint("Error al ordenar por fecha: $e");
           return 0;
         }
       });
@@ -477,10 +477,10 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF8D86C9).withOpacity(0.15),
+        color: const Color(0xFF8D86C9).withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF8D86C9).withOpacity(0.2),
+          color: const Color(0xFF8D86C9).withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -509,8 +509,8 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          const Color(0xFF8D86C9).withOpacity(opacity),
-                          const Color(0xFF9067C6).withOpacity(opacity),
+                          const Color(0xFF8D86C9).withValues(alpha: opacity),
+                          const Color(0xFF9067C6).withValues(alpha: opacity),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(12),
@@ -539,7 +539,8 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
                           "$days días/semana • ${_capitalizeFirstLetter(level)} • ${_capitalizeFirstLetter(goal)}",
                           style: TextStyle(
                             fontSize: 14,
-                            color: const Color(0xFFF7ECE1).withOpacity(0.7),
+                            color:
+                                const Color(0xFFF7ECE1).withValues(alpha: 0.7),
                           ),
                         ),
                       ],
@@ -552,14 +553,14 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
                         _formatDate(date),
                         style: TextStyle(
                           fontSize: 12,
-                          color: const Color(0xFFF7ECE1).withOpacity(0.6),
+                          color: const Color(0xFFF7ECE1).withValues(alpha: 0.6),
                         ),
                       ),
                       const SizedBox(height: 6),
                       Icon(
                         Icons.arrow_forward_ios,
                         size: 14,
-                        color: const Color(0xFFF7ECE1).withOpacity(0.6),
+                        color: const Color(0xFFF7ECE1).withValues(alpha: 0.6),
                       ),
                     ],
                   ),
@@ -596,10 +597,10 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF9067C6).withOpacity(0.2),
+                        color: const Color(0xFF9067C6).withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: const Color(0xFF9067C6).withOpacity(0.3),
+                          color: const Color(0xFF9067C6).withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -627,10 +628,10 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
       decoration: BoxDecoration(
-        color: const Color(0xFF8D86C9).withOpacity(0.15),
+        color: const Color(0xFF8D86C9).withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF8D86C9).withOpacity(0.2),
+          color: const Color(0xFF8D86C9).withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -640,7 +641,7 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
           Icon(
             Amicons.lucide_dumbbell,
             size: 48,
-            color: const Color(0xFF9067C6).withOpacity(0.7),
+            color: const Color(0xFF9067C6).withValues(alpha: 0.7),
           ),
           const SizedBox(height: 16),
           const Text(
@@ -657,7 +658,7 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
             "Genera tu primera rutina personalizada con IA",
             style: TextStyle(
               fontSize: 14,
-              color: const Color(0xFFF7ECE1).withOpacity(0.7),
+              color: const Color(0xFFF7ECE1).withValues(alpha: 0.7),
             ),
             textAlign: TextAlign.center,
           ),
@@ -715,7 +716,7 @@ class _IaexcersisPageState extends State<Iaexcersispage> {
         return "${dateTime.day}/${dateTime.month}/${dateTime.year}";
       }
     } catch (e) {
-      print("Error al formatear fecha: $e");
+      debugPrint("Error al formatear fecha: $e");
       return dateStr;
     }
   }

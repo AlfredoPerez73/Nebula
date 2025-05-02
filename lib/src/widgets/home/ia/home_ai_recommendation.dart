@@ -9,10 +9,10 @@ class HomeAIRecommendation extends StatelessWidget {
   final VoidCallback showWorkoutSelector;
 
   const HomeAIRecommendation({
-    Key? key,
+    super.key,
     required this.authController,
     required this.showWorkoutSelector,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +42,8 @@ class HomeAIRecommendation extends StatelessWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    AppColors.darkPurple.withOpacity(0.9),
-                    AppColors.primaryColor.withOpacity(0.9),
+                    AppColors.darkPurple.withValues(alpha: 0.9),
+                    AppColors.primaryColor.withValues(alpha: 0.9),
                   ],
                 ),
                 borderRadius: const BorderRadius.only(
@@ -56,7 +56,7 @@ class HomeAIRecommendation extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(isSmallScreen ? 8 : 12),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Icon(
@@ -78,7 +78,8 @@ class HomeAIRecommendation extends StatelessWidget {
                                   horizontal: isSmallScreen ? 6 : 8,
                                   vertical: isSmallScreen ? 3 : 4),
                               decoration: BoxDecoration(
-                                color: AppColors.primaryColor.withOpacity(0.3),
+                                color: AppColors.primaryColor
+                                    .withValues(alpha: 0.3),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
@@ -134,7 +135,7 @@ class HomeAIRecommendation extends StatelessWidget {
                       style: TextStyle(
                         fontSize: isSmallScreen ? 13 : 15,
                         height: 1.5,
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withValues(alpha: 0.9),
                       ),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
@@ -162,9 +163,9 @@ class HomeAIRecommendation extends StatelessWidget {
 
     // Lista personalizada de recomendaciones basadas en el nivel del usuario
     String nivelExperiencia =
-        authController.userModel.value?.nivelExperiencia?.toLowerCase() ??
+        authController.userModel.value?.nivelExperiencia.toLowerCase() ??
             "principiante";
-    String objetivo = authController.userModel.value?.objetivo?.toLowerCase() ??
+    String objetivo = authController.userModel.value?.objetivo.toLowerCase() ??
         "mantenimiento";
 
     List<Map<String, dynamic>> recommendations = [];
@@ -278,7 +279,7 @@ class HomeAIRecommendation extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -332,14 +333,14 @@ class HomeAIRecommendation extends StatelessWidget {
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
               colors: [
-                Colors.white.withOpacity(0.95),
-                Colors.white.withOpacity(0.85),
+                Colors.white.withValues(alpha: 0.95),
+                Colors.white.withValues(alpha: 0.85),
               ],
             ),
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withValues(alpha: 0.2),
                 blurRadius: 10,
                 spreadRadius: 0,
                 offset: const Offset(0, 4),

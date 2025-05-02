@@ -5,16 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:nebula/src/controllers/user.controller.dart';
 import 'package:nebula/src/utils/app_color.dart';
-import 'package:nebula/src/views/pages/editProfilePageSkills.dart';
+import 'package:nebula/src/views/pages/edit_profile_page_skills.dart';
 
 class HomeUserProfile extends StatelessWidget {
   final AuthController authController;
 
   const HomeUserProfile({
-    Key? key,
+    super.key,
     required this.authController,
-  }) : super(key: key);
+  });
 
+  @override
   Widget build(BuildContext context) {
     // Detectar si la pantalla es pequeña para ajustes responsivos
     final screenSize = MediaQuery.of(context).size;
@@ -43,7 +44,8 @@ class HomeUserProfile extends StatelessWidget {
                           Container(
                             padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
                             decoration: BoxDecoration(
-                              color: AppColors.primaryColor.withOpacity(0.2),
+                              color:
+                                  AppColors.primaryColor.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(14),
                             ),
                             child: Icon(
@@ -64,7 +66,7 @@ class HomeUserProfile extends StatelessWidget {
                                 Shadow(
                                   offset: const Offset(0, 1),
                                   blurRadius: 2,
-                                  color: Colors.black.withOpacity(0.3),
+                                  color: Colors.black.withValues(alpha: 0.3),
                                 ),
                               ],
                             ),
@@ -106,7 +108,8 @@ class HomeUserProfile extends StatelessWidget {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.primaryColor.withOpacity(0.3),
+                              color:
+                                  AppColors.primaryColor.withValues(alpha: 0.3),
                               blurRadius: 10,
                               spreadRadius: 0,
                               offset: const Offset(0, 4),
@@ -146,7 +149,7 @@ class HomeUserProfile extends StatelessWidget {
                                   "email@ejemplo.com",
                               style: TextStyle(
                                 fontSize: isSmallScreen ? 12 : 14,
-                                color: Colors.white.withOpacity(0.7),
+                                color: Colors.white.withValues(alpha: 0.7),
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -157,7 +160,7 @@ class HomeUserProfile extends StatelessWidget {
                                   horizontal: isSmallScreen ? 8 : 12,
                                   vertical: isSmallScreen ? 3 : 4),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.15),
+                                color: Colors.white.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
@@ -192,7 +195,7 @@ class HomeUserProfile extends StatelessWidget {
                       ),
                       child: Icon(
                         Icons.dashboard_customize,
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                         size: 16,
                       ),
                     ),
@@ -220,7 +223,6 @@ class HomeUserProfile extends StatelessWidget {
                       "${authController.userModel.value?.peso ?? 0} kg";
                   final altura =
                       "${authController.userModel.value?.altura ?? 0} cm";
-                  final imc = _calculateBMI().toStringAsFixed(1);
                   final nivelExperiencia =
                       authController.userModel.value?.nivelExperiencia ??
                           "Principiante";
@@ -250,7 +252,7 @@ class HomeUserProfile extends StatelessWidget {
                   ];
 
                   // Fila horizontal con scroll
-                  return Container(
+                  return SizedBox(
                     height: 180, // Altura fija para las tarjetas
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
@@ -295,7 +297,7 @@ class HomeUserProfile extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 5,
             offset: const Offset(0, 2),
           ),
@@ -311,7 +313,7 @@ class HomeUserProfile extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.15),
+                color: Colors.white.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -329,7 +331,7 @@ class HomeUserProfile extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha: 0.7),
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -371,7 +373,7 @@ class HomeUserProfile extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.all(isSmallScreen ? 8 : 10),
           decoration: BoxDecoration(
-            color: AppColors.accentColor.withOpacity(0.15),
+            color: AppColors.accentColor.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(
@@ -382,15 +384,5 @@ class HomeUserProfile extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  double _calculateBMI() {
-    double? altura = authController.userModel.value?.altura;
-    double? peso = authController.userModel.value?.peso;
-
-    if (altura != null && peso != null && altura > 0) {
-      return peso / ((altura / 100) * (altura / 100));
-    }
-    return 0.0;
   }
 }

@@ -8,10 +8,10 @@ class WorkoutDisplayWidget extends StatefulWidget {
   final VoidCallback onClose;
 
   const WorkoutDisplayWidget({
-    Key? key,
+    super.key,
     required this.workoutData,
     required this.onClose,
-  }) : super(key: key);
+  });
 
   @override
   State<WorkoutDisplayWidget> createState() => _WorkoutDisplayWidgetState();
@@ -70,7 +70,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
       });
     } catch (e) {
       setState(() => _isSaving = false);
-      print('Error al guardar rutina automáticamente: $e');
+      debugPrint('Error al guardar rutina automáticamente: $e');
     }
   }
 
@@ -98,7 +98,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
       return Center(
         child: Text(
           "No se encontraron días de entrenamiento",
-          style: TextStyle(color: Colors.white.withOpacity(0.8)),
+          style: TextStyle(color: Colors.white.withValues(alpha: 0.8)),
         ),
       );
     }
@@ -118,14 +118,14 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
           // Tabs para días de entrenamiento
           Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.08),
+              color: Colors.white.withValues(alpha: 0.08),
               border: Border(
                 top: BorderSide(
-                  color: Colors.white.withOpacity(0.1),
+                  color: Colors.white.withValues(alpha: 0.1),
                   width: 1,
                 ),
                 bottom: BorderSide(
-                  color: Colors.white.withOpacity(0.1),
+                  color: Colors.white.withValues(alpha: 0.1),
                   width: 1,
                 ),
               ),
@@ -134,7 +134,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
               controller: _tabController,
               isScrollable: true,
               labelColor: const Color(0xFFF7ECE1),
-              unselectedLabelColor: Colors.white.withOpacity(0.5),
+              unselectedLabelColor: Colors.white.withValues(alpha: 0.5),
               indicatorColor: const Color(0xFF9067C6),
               indicatorWeight: 3,
               tabs: workoutDays.map((day) {
@@ -185,7 +185,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(30),
         ),
         child: Row(
@@ -197,7 +197,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
               child: CircularProgressIndicator(
                 strokeWidth: 2,
                 valueColor: AlwaysStoppedAnimation<Color>(
-                    Colors.white.withOpacity(0.8)),
+                    Colors.white.withValues(alpha: 0.8)),
               ),
             ),
             const SizedBox(width: 8),
@@ -205,7 +205,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
               "Guardando...",
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha: 0.8),
               ),
             ),
           ],
@@ -215,10 +215,10 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: const Color(0xFF4CAF50).withOpacity(0.2),
+          color: const Color(0xFF4CAF50).withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(30),
           border: Border.all(
-            color: const Color(0xFF4CAF50).withOpacity(0.3),
+            color: const Color(0xFF4CAF50).withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -235,7 +235,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
               "Guardada",
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha: 0.8),
               ),
             ),
           ],
@@ -245,7 +245,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
       return IconButton(
         icon: Icon(
           Icons.save_alt,
-          color: Colors.white.withOpacity(0.8),
+          color: Colors.white.withValues(alpha: 0.8),
           size: 22,
         ),
         onPressed: () async {
@@ -305,7 +305,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
                       "Nivel: $level • $daysPerWeek días por semana",
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                       ),
                     ),
                   ],
@@ -319,7 +319,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
               routineDescription,
               style: TextStyle(
                 fontSize: 14,
-                color: Colors.white.withOpacity(0.9),
+                color: Colors.white.withValues(alpha: 0.9),
                 height: 1.3,
               ),
             ),
@@ -350,10 +350,10 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
               width: double.infinity,
               padding: const EdgeInsets.all(15),
               decoration: BoxDecoration(
-                color: const Color(0xFF9067C6).withOpacity(0.2),
+                color: const Color(0xFF9067C6).withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(15),
                 border: Border.all(
-                  color: const Color(0xFF9067C6).withOpacity(0.3),
+                  color: const Color(0xFF9067C6).withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
@@ -362,7 +362,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF9067C6).withOpacity(0.3),
+                      color: const Color(0xFF9067C6).withValues(alpha: 0.3),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -404,7 +404,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                 ),
               ),
               const SizedBox(height: 10),
@@ -412,10 +412,10 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
                 width: double.infinity,
                 padding: const EdgeInsets.all(15),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.08),
+                  color: Colors.white.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(15),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.white.withValues(alpha: 0.1),
                     width: 1,
                   ),
                 ),
@@ -423,7 +423,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
                   notes,
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                     height: 1.4,
                   ),
                 ),
@@ -437,7 +437,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.white.withOpacity(0.9),
+                color: Colors.white.withValues(alpha: 0.9),
               ),
             ),
             const SizedBox(height: 10),
@@ -450,7 +450,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
                     "No hay ejercicios para este día",
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha: 0.7),
                       fontStyle: FontStyle.italic,
                     ),
                   ),
@@ -488,10 +488,10 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
+        color: Colors.white.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(15),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -502,7 +502,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: const Color(0xFF9067C6).withOpacity(0.2),
+              color: const Color(0xFF9067C6).withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Center(
@@ -532,7 +532,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF9067C6).withOpacity(0.2),
+                    color: const Color(0xFF9067C6).withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   // Usar un ancho máximo para forzar el salto de línea
@@ -543,7 +543,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
                     muscle,
                     style: TextStyle(
                       fontSize: 10,
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                     ),
                     softWrap: true, // Permite el salto de línea
                     overflow: TextOverflow.visible, // No corta el texto
@@ -582,7 +582,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
                       notes,
                       style: TextStyle(
                         fontSize: 13,
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                       ),
                     ),
                   ),
@@ -602,7 +602,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: const Color(0xFF9067C6).withOpacity(0.2),
+            color: const Color(0xFF9067C6).withValues(alpha: 0.2),
             shape: BoxShape.circle,
           ),
           child: Icon(
@@ -625,7 +625,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
           label,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.white.withOpacity(0.7),
+            color: Colors.white.withValues(alpha: 0.7),
           ),
         ),
       ],
@@ -646,10 +646,10 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
+        color: Colors.white.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -699,7 +699,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: const Color(0xFF9067C6).withOpacity(0.2),
+                color: const Color(0xFF9067C6).withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
@@ -724,7 +724,7 @@ class _WorkoutDisplayWidgetState extends State<WorkoutDisplayWidget>
           content,
           style: TextStyle(
             fontSize: 14,
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha: 0.8),
             height: 1.4,
           ),
         ),

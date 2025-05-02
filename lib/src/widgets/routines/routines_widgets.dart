@@ -41,7 +41,7 @@ class RoutineWidgets {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: colorScheme.primary.withOpacity(0.4),
+            color: colorScheme.primary.withValues(alpha: 0.4),
             blurRadius: 12,
             spreadRadius: 2,
             offset: const Offset(0, 3),
@@ -78,14 +78,14 @@ class RoutineWidgets {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            colorScheme.secondaryContainer.withOpacity(0.95),
-            colorScheme.primaryContainer.withOpacity(0.9),
+            colorScheme.secondaryContainer.withValues(alpha: 0.95),
+            colorScheme.primaryContainer.withValues(alpha: 0.9),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             spreadRadius: 1,
             offset: const Offset(0, 4),
@@ -104,14 +104,14 @@ class RoutineWidgets {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      colorScheme.primary.withOpacity(0.7),
-                      colorScheme.primary.withOpacity(0.4),
+                      colorScheme.primary.withValues(alpha: 0.7),
+                      colorScheme.primary.withValues(alpha: 0.4),
                     ],
                   ),
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: colorScheme.primary.withOpacity(0.3),
+                      color: colorScheme.primary.withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -133,7 +133,7 @@ class RoutineWidgets {
                     Shadow(
                       offset: const Offset(0, 1),
                       blurRadius: 3,
-                      color: Colors.black.withOpacity(0.3),
+                      color: Colors.black.withValues(alpha: 0.3),
                     ),
                   ],
                 ),
@@ -142,7 +142,7 @@ class RoutineWidgets {
           ),
           Container(
             decoration: BoxDecoration(
-              color: colorScheme.primary.withOpacity(0.2),
+              color: colorScheme.primary.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: IconButton(
@@ -172,8 +172,8 @@ class RoutineWidgets {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  colorScheme.secondary.withOpacity(0.1),
-                  colorScheme.primary.withOpacity(0.1),
+                  colorScheme.secondary.withValues(alpha: 0.1),
+                  colorScheme.primary.withValues(alpha: 0.1),
                 ],
               ),
               shape: BoxShape.circle,
@@ -182,20 +182,20 @@ class RoutineWidgets {
             child: CircularProgressIndicator(
               color: colorScheme.primary,
               strokeWidth: 3,
-              backgroundColor: colorScheme.onSurface.withOpacity(0.1),
+              backgroundColor: colorScheme.onSurface.withValues(alpha: 0.1),
             ),
           ),
           const SizedBox(height: 24),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             decoration: BoxDecoration(
-              color: colorScheme.surface.withOpacity(0.5),
+              color: colorScheme.surface.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(50),
             ),
             child: Text(
               'Cargando rutinas...',
               style: subtitleStyle.copyWith(
-                color: colorScheme.onBackground,
+                color: colorScheme.onSurface,
                 fontWeight: FontWeight.w500,
                 letterSpacing: 0.5,
               ),
@@ -223,8 +223,8 @@ class RoutineWidgets {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    colorScheme.secondary.withOpacity(0.1),
-                    colorScheme.primary.withOpacity(0.1),
+                    colorScheme.secondary.withValues(alpha: 0.1),
+                    colorScheme.primary.withValues(alpha: 0.1),
                   ],
                 ),
                 shape: BoxShape.circle,
@@ -232,14 +232,14 @@ class RoutineWidgets {
               child: Icon(
                 Amicons.flaticon_gym_rounded_fill,
                 size: 70,
-                color: colorScheme.primary.withOpacity(0.6),
+                color: colorScheme.primary.withValues(alpha: 0.6),
               ),
             ),
             const SizedBox(height: 30),
             Text(
               'No tienes entrenamientos creados',
               style: titleStyle.copyWith(
-                color: colorScheme.onBackground,
+                color: colorScheme.onSurface,
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
               ),
@@ -251,7 +251,7 @@ class RoutineWidgets {
               child: Text(
                 'Crea tu primer entrenamiento para comenzar a organizar tus rutinas de ejercicio.',
                 style: bodyStyle.copyWith(
-                  color: colorScheme.onBackground.withOpacity(0.7),
+                  color: colorScheme.onSurface.withValues(alpha: 0.7),
                   fontSize: 16,
                   height: 1.5,
                 ),
@@ -289,7 +289,7 @@ class RoutineWidgets {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.3),
+            color: color.withValues(alpha: 0.3),
             blurRadius: 10,
             spreadRadius: 0,
             offset: const Offset(0, 4),
@@ -351,20 +351,20 @@ class RoutineWidgets {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            colorScheme.surface.withOpacity(0.9),
-            colorScheme.surface.withOpacity(0.85),
+            colorScheme.surface.withValues(alpha: 0.9),
+            colorScheme.surface.withValues(alpha: 0.85),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.15),
+            color: Colors.black.withValues(alpha: 0.15),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
         border: Border.all(
-          color: colorScheme.primary.withOpacity(0.2),
+          color: colorScheme.primary.withValues(alpha: 0.2),
           width: 1.5,
         ),
       ),
@@ -378,7 +378,7 @@ class RoutineWidgets {
             icon: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: colorScheme.primary.withOpacity(0.1),
+                color: colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -391,14 +391,14 @@ class RoutineWidgets {
               children: [
                 Icon(
                   Amicons.flaticon_gym_rounded_fill,
-                  color: colorScheme.primary.withOpacity(0.7),
+                  color: colorScheme.primary.withValues(alpha: 0.7),
                   size: 22,
                 ),
                 const SizedBox(width: 12),
                 Text(
                   'Selecciona una rutina',
                   style: bodyStyle.copyWith(
-                    color: colorScheme.onBackground,
+                    color: colorScheme.onSurface,
                     fontWeight: FontWeight.w500,
                     fontSize: 15,
                   ),
@@ -422,7 +422,7 @@ class RoutineWidgets {
                   children: [
                     Icon(
                       Amicons.flaticon_gym_rounded_fill,
-                      color: colorScheme.primary.withOpacity(0.7),
+                      color: colorScheme.primary.withValues(alpha: 0.7),
                       size: 22,
                     ),
                     const SizedBox(width: 12),
@@ -466,9 +466,8 @@ class RoutineWidgets {
               dateForThisDay.month == now.month &&
               dateForThisDay.year == now.year;
 
-          // Usar la selección del controlador o por defecto seleccionar el día actual
           final bool isSelected = diaCompleto == controller.diaSeleccionado ||
-              (controller.diaSeleccionado == null && isToday);
+              (controller.diaSeleccionado.isEmpty && isToday);
 
           return GestureDetector(
             onTap: () {
@@ -493,16 +492,16 @@ class RoutineWidgets {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          colorScheme.surface.withOpacity(0.95),
-                          colorScheme.surface.withOpacity(0.8),
+                          colorScheme.surface.withValues(alpha: 0.95),
+                          colorScheme.surface.withValues(alpha: 0.8),
                         ],
                       ),
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
                     color: isSelected
-                        ? colorScheme.primary.withOpacity(0.4)
-                        : Colors.black.withOpacity(0.1),
+                        ? colorScheme.primary.withValues(alpha: 0.4)
+                        : Colors.black.withValues(alpha: 0.1),
                     blurRadius: 10,
                     spreadRadius: isSelected ? 1 : 0,
                     offset: const Offset(0, 4),
@@ -513,7 +512,7 @@ class RoutineWidgets {
                     : isSelected
                         ? null
                         : Border.all(
-                            color: colorScheme.primary.withOpacity(0.1),
+                            color: colorScheme.primary.withValues(alpha: 0.1),
                             width: 1.5,
                           ),
               ),
@@ -525,7 +524,7 @@ class RoutineWidgets {
                     style: TextStyle(
                       color: isSelected
                           ? colorScheme.onPrimary
-                          : colorScheme.onBackground,
+                          : colorScheme.onSurface,
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 0.5,
@@ -537,10 +536,10 @@ class RoutineWidgets {
                     height: 40,
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? Colors.white.withOpacity(0.2)
+                          ? Colors.white.withValues(alpha: 0.2)
                           : (isToday
-                              ? colorScheme.primary.withOpacity(0.1)
-                              : colorScheme.surface.withOpacity(0.5)),
+                              ? colorScheme.primary.withValues(alpha: 0.1)
+                              : colorScheme.surface.withValues(alpha: 0.5)),
                       shape: BoxShape.circle,
                       border: isToday && !isSelected
                           ? Border.all(color: colorScheme.primary, width: 1)
@@ -590,14 +589,14 @@ class RoutineWidgets {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            colorScheme.secondaryContainer.withOpacity(0.9),
-            colorScheme.secondaryContainer.withOpacity(0.7),
+            colorScheme.secondaryContainer.withValues(alpha: 0.9),
+            colorScheme.secondaryContainer.withValues(alpha: 0.7),
           ],
         ),
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             spreadRadius: 0,
             offset: const Offset(0, 3),
@@ -612,7 +611,7 @@ class RoutineWidgets {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: colorScheme.primary.withOpacity(0.2),
+                  color: colorScheme.primary.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -623,7 +622,7 @@ class RoutineWidgets {
               ),
               const SizedBox(width: 12),
               Text(
-                '${controller.diaSeleccionado}',
+                controller.diaSeleccionado,
                 style: subtitleStyle.copyWith(
                   color: colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
@@ -634,7 +633,7 @@ class RoutineWidgets {
           ),
           Container(
             decoration: BoxDecoration(
-              color: colorScheme.error.withOpacity(0.1),
+              color: colorScheme.error.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Material(
@@ -682,13 +681,13 @@ class RoutineWidgets {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: colorScheme.surface.withOpacity(0.3),
+                      color: colorScheme.surface.withValues(alpha: 0.3),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       Amicons.flaticon_gym_rounded_fill,
                       size: 50,
-                      color: colorScheme.onBackground.withOpacity(0.4),
+                      color: colorScheme.onSurface.withValues(alpha: 0.4),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -696,13 +695,13 @@ class RoutineWidgets {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 25, vertical: 12),
                     decoration: BoxDecoration(
-                      color: colorScheme.surface.withOpacity(0.4),
+                      color: colorScheme.surface.withValues(alpha: 0.4),
                       borderRadius: BorderRadius.circular(50),
                     ),
                     child: Text(
                       'No hay ejercicios para este día',
                       style: subtitleStyle.copyWith(
-                        color: colorScheme.onBackground.withOpacity(0.7),
+                        color: colorScheme.onSurface.withValues(alpha: 0.7),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -729,11 +728,11 @@ class RoutineWidgets {
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: colorScheme.surface.withOpacity(0.7),
+        color: colorScheme.surface.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 6,
             offset: const Offset(0, 3),
           ),
@@ -746,7 +745,7 @@ class RoutineWidgets {
             width: 46,
             height: 46,
             decoration: BoxDecoration(
-              color: colorScheme.primary.withOpacity(0.2),
+              color: colorScheme.primary.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(
@@ -780,7 +779,7 @@ class RoutineWidgets {
                   '${ejercicio.series} series × ${ejercicio.repeticiones} repeticiones',
                   style: bodyStyle.copyWith(
                     fontSize: 12,
-                    color: colorScheme.onSurface.withOpacity(0.7),
+                    color: colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
               ],
@@ -820,7 +819,7 @@ class RoutineWidgets {
         width: 36,
         height: 36,
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Center(
@@ -850,20 +849,20 @@ class RoutineWidgets {
               end: Alignment.bottomRight,
               colors: [
                 colorScheme.surface,
-                colorScheme.surface.withOpacity(0.9),
+                colorScheme.surface.withValues(alpha: 0.9),
               ],
             ),
             borderRadius: BorderRadius.circular(25),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withValues(alpha: 0.2),
                 blurRadius: 15,
                 spreadRadius: 0,
                 offset: const Offset(0, 5),
               ),
             ],
             border: Border.all(
-              color: colorScheme.primary.withOpacity(0.2),
+              color: colorScheme.primary.withValues(alpha: 0.2),
               width: 1.5,
             ),
           ),
@@ -874,7 +873,7 @@ class RoutineWidgets {
               Container(
                 padding: const EdgeInsets.all(15),
                 decoration: BoxDecoration(
-                  color: colorScheme.primary.withOpacity(0.1),
+                  color: colorScheme.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -903,10 +902,9 @@ class RoutineWidgets {
                 ),
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: colorScheme.background.withOpacity(0.3),
+                  fillColor: colorScheme.surface.withValues(alpha: 0.3),
                   labelText: 'Nombre del entrenamiento',
-                  labelStyle:
-                      bodyStyle.copyWith(color: colorScheme.onBackground),
+                  labelStyle: bodyStyle.copyWith(color: colorScheme.onSurface),
                   prefixIcon: Icon(Amicons.flaticon_gym_rounded_fill,
                       color: colorScheme.primary),
                   border: OutlineInputBorder(
@@ -937,14 +935,15 @@ class RoutineWidgets {
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         side: BorderSide(
-                            color: colorScheme.onBackground.withOpacity(0.3)),
+                            color:
+                                colorScheme.onSurface.withValues(alpha: 0.3)),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16)),
                       ),
                       child: Text(
                         'Cancelar',
                         style: bodyStyle.copyWith(
-                          color: colorScheme.onBackground,
+                          color: colorScheme.onSurface,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -968,7 +967,7 @@ class RoutineWidgets {
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: colorScheme.primary.withOpacity(0.3),
+                            color: colorScheme.primary.withValues(alpha: 0.3),
                             blurRadius: 8,
                             spreadRadius: 0,
                             offset: const Offset(0, 3),
@@ -1175,20 +1174,20 @@ class RoutineWidgets {
                     end: Alignment.bottomRight,
                     colors: [
                       colorScheme.surface,
-                      colorScheme.surface.withOpacity(0.9),
+                      colorScheme.surface.withValues(alpha: 0.9),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(25),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
+                      color: Colors.black.withValues(alpha: 0.2),
                       blurRadius: 15,
                       spreadRadius: 0,
                       offset: const Offset(0, 5),
                     ),
                   ],
                   border: Border.all(
-                    color: colorScheme.primary.withOpacity(0.2),
+                    color: colorScheme.primary.withValues(alpha: 0.2),
                     width: 1.5,
                   ),
                 ),
@@ -1208,8 +1207,8 @@ class RoutineWidgets {
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                                 colors: [
-                                  colorScheme.primary.withOpacity(0.2),
-                                  colorScheme.primary.withOpacity(0.1),
+                                  colorScheme.primary.withValues(alpha: 0.2),
+                                  colorScheme.primary.withValues(alpha: 0.1),
                                 ],
                               ),
                               shape: BoxShape.circle,
@@ -1234,10 +1233,11 @@ class RoutineWidgets {
                           // Campo de búsqueda
                           Container(
                             decoration: BoxDecoration(
-                              color: colorScheme.background.withOpacity(0.2),
+                              color: colorScheme.surface.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: colorScheme.primary.withOpacity(0.2),
+                                color:
+                                    colorScheme.primary.withValues(alpha: 0.2),
                                 width: 1.5,
                               ),
                             ),
@@ -1249,18 +1249,19 @@ class RoutineWidgets {
                               decoration: InputDecoration(
                                 hintText: 'Buscar ejercicio',
                                 hintStyle: bodyStyle.copyWith(
-                                  color:
-                                      colorScheme.onBackground.withOpacity(0.5),
+                                  color: colorScheme.onSurface
+                                      .withValues(alpha: 0.5),
                                 ),
                                 prefixIcon: Icon(
                                   Amicons.iconly_search_curved_fill,
-                                  color: colorScheme.primary.withOpacity(0.7),
+                                  color: colorScheme.primary
+                                      .withValues(alpha: 0.7),
                                 ),
                                 suffixIcon: IconButton(
                                   icon: Icon(
                                     Amicons.iconly_close_square_curved_fill,
-                                    color: colorScheme.onBackground
-                                        .withOpacity(0.4),
+                                    color: colorScheme.onSurface
+                                        .withValues(alpha: 0.4),
                                     size: 20,
                                   ),
                                   onPressed: () {
@@ -1308,16 +1309,16 @@ class RoutineWidgets {
                                 children: [
                                   Icon(
                                     Amicons.iconly_search_curved_fill,
-                                    color: colorScheme.onBackground
-                                        .withOpacity(0.3),
+                                    color: colorScheme.onSurface
+                                        .withValues(alpha: 0.3),
                                     size: 40,
                                   ),
                                   const SizedBox(height: 15),
                                   Text(
                                     'No se encontraron ejercicios',
                                     style: subtitleStyle.copyWith(
-                                      color: colorScheme.onBackground
-                                          .withOpacity(0.5),
+                                      color: colorScheme.onSurface
+                                          .withValues(alpha: 0.5),
                                     ),
                                   ),
                                 ],
@@ -1342,12 +1343,12 @@ class RoutineWidgets {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 10, horizontal: 12),
                                     decoration: BoxDecoration(
-                                      color:
-                                          colorScheme.surface.withOpacity(0.5),
+                                      color: colorScheme.surface
+                                          .withValues(alpha: 0.5),
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
                                         color: colorScheme.primary
-                                            .withOpacity(0.1),
+                                            .withValues(alpha: 0.1),
                                         width: 1,
                                       ),
                                     ),
@@ -1357,7 +1358,7 @@ class RoutineWidgets {
                                           padding: const EdgeInsets.all(10),
                                           decoration: BoxDecoration(
                                             color: colorScheme.primary
-                                                .withOpacity(0.1),
+                                                .withValues(alpha: 0.1),
                                             borderRadius:
                                                 BorderRadius.circular(12),
                                           ),
@@ -1379,8 +1380,8 @@ class RoutineWidgets {
                                         ),
                                         Icon(
                                           Amicons.iconly_info_circle_fill,
-                                          color: colorScheme.onBackground
-                                              .withOpacity(0.5),
+                                          color: colorScheme.onSurface
+                                              .withValues(alpha: 0.5),
                                           size: 22,
                                         ),
                                       ],
@@ -1400,7 +1401,7 @@ class RoutineWidgets {
                           padding: const EdgeInsets.symmetric(
                               vertical: 16, horizontal: 24),
                           side: BorderSide(
-                            color: colorScheme.onBackground.withOpacity(0.3),
+                            color: colorScheme.onSurface.withValues(alpha: 0.3),
                           ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
@@ -1409,7 +1410,7 @@ class RoutineWidgets {
                         child: Text(
                           'Cancelar',
                           style: bodyStyle.copyWith(
-                            color: colorScheme.onBackground,
+                            color: colorScheme.onSurface,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -1464,20 +1465,20 @@ class RoutineWidgets {
                   end: Alignment.bottomRight,
                   colors: [
                     colorScheme.surface,
-                    colorScheme.surface.withOpacity(0.9),
+                    colorScheme.surface.withValues(alpha: 0.9),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(25),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withValues(alpha: 0.2),
                     blurRadius: 15,
                     spreadRadius: 0,
                     offset: const Offset(0, 5),
                   ),
                 ],
                 border: Border.all(
-                  color: colorScheme.primary.withOpacity(0.2),
+                  color: colorScheme.primary.withValues(alpha: 0.2),
                   width: 1.5,
                 ),
               ),
@@ -1497,8 +1498,8 @@ class RoutineWidgets {
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                colorScheme.primary.withOpacity(0.2),
-                                colorScheme.primary.withOpacity(0.1),
+                                colorScheme.primary.withValues(alpha: 0.2),
+                                colorScheme.primary.withValues(alpha: 0.1),
                               ],
                             ),
                             shape: BoxShape.circle,
@@ -1522,7 +1523,7 @@ class RoutineWidgets {
                         Text(
                           'Configura los detalles',
                           style: bodyStyle.copyWith(
-                            color: colorScheme.onBackground.withOpacity(0.7),
+                            color: colorScheme.onSurface.withValues(alpha: 0.7),
                             fontSize: 16,
                           ),
                           textAlign: TextAlign.center,
@@ -1577,8 +1578,8 @@ class RoutineWidgets {
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               side: BorderSide(
-                                  color: colorScheme.onBackground
-                                      .withOpacity(0.3)),
+                                  color: colorScheme.onSurface
+                                      .withValues(alpha: 0.3)),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16)),
                             ),
@@ -1587,14 +1588,14 @@ class RoutineWidgets {
                               children: [
                                 Icon(
                                   Amicons.iconly_arrow_left_curved_fill,
-                                  color: colorScheme.onBackground,
+                                  color: colorScheme.onSurface,
                                   size: 20,
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
                                   'Volver',
                                   style: bodyStyle.copyWith(
-                                    color: colorScheme.onBackground,
+                                    color: colorScheme.onSurface,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -1620,7 +1621,8 @@ class RoutineWidgets {
                               borderRadius: BorderRadius.circular(16),
                               boxShadow: [
                                 BoxShadow(
-                                  color: colorScheme.primary.withOpacity(0.3),
+                                  color: colorScheme.primary
+                                      .withValues(alpha: 0.3),
                                   blurRadius: 8,
                                   spreadRadius: 0,
                                   offset: const Offset(0, 3),
@@ -1803,20 +1805,20 @@ class RoutineWidgets {
               end: Alignment.bottomRight,
               colors: [
                 colorScheme.surface,
-                colorScheme.surface.withOpacity(0.9),
+                colorScheme.surface.withValues(alpha: 0.9),
               ],
             ),
             borderRadius: BorderRadius.circular(25),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withValues(alpha: 0.2),
                 blurRadius: 15,
                 spreadRadius: 0,
                 offset: const Offset(0, 5),
               ),
             ],
             border: Border.all(
-              color: colorScheme.secondary.withOpacity(0.2),
+              color: colorScheme.secondary.withValues(alpha: 0.2),
               width: 1.5,
             ),
           ),
@@ -1832,8 +1834,8 @@ class RoutineWidgets {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        colorScheme.secondary.withOpacity(0.2),
-                        colorScheme.secondary.withOpacity(0.1),
+                        colorScheme.secondary.withValues(alpha: 0.2),
+                        colorScheme.secondary.withValues(alpha: 0.1),
                       ],
                     ),
                     shape: BoxShape.circle,
@@ -1859,10 +1861,10 @@ class RoutineWidgets {
                 // Selector de ejercicio
                 Container(
                   decoration: BoxDecoration(
-                    color: colorScheme.background.withOpacity(0.2),
+                    color: colorScheme.surface.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: colorScheme.secondary.withOpacity(0.2),
+                      color: colorScheme.secondary.withValues(alpha: 0.2),
                       width: 1.5,
                     ),
                   ),
@@ -1885,7 +1887,7 @@ class RoutineWidgets {
                         border: InputBorder.none,
                         labelText: 'Selecciona un Ejercicio',
                         labelStyle: bodyStyle.copyWith(
-                          color: colorScheme.onBackground,
+                          color: colorScheme.onSurface,
                           fontSize: 16,
                         ),
                       ),
@@ -1898,7 +1900,7 @@ class RoutineWidgets {
                       hint: Text(
                         'Elige un ejercicio',
                         style: bodyStyle.copyWith(
-                          color: colorScheme.onBackground.withOpacity(0.6),
+                          color: colorScheme.onSurface.withValues(alpha: 0.6),
                           fontSize: 16,
                         ),
                       ),
@@ -1920,7 +1922,8 @@ class RoutineWidgets {
                             children: [
                               Icon(
                                 ejercicio['icono'],
-                                color: colorScheme.secondary.withOpacity(0.8),
+                                color: colorScheme.secondary
+                                    .withValues(alpha: 0.8),
                                 size: 20,
                               ),
                               const SizedBox(width: 12),
@@ -1938,10 +1941,10 @@ class RoutineWidgets {
                 // Selector de día
                 Container(
                   decoration: BoxDecoration(
-                    color: colorScheme.background.withOpacity(0.2),
+                    color: colorScheme.surface.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: colorScheme.secondary.withOpacity(0.2),
+                      color: colorScheme.secondary.withValues(alpha: 0.2),
                       width: 1.5,
                     ),
                   ),
@@ -1963,7 +1966,7 @@ class RoutineWidgets {
                         border: InputBorder.none,
                         labelText: 'Día de Entrenamiento',
                         labelStyle: bodyStyle.copyWith(
-                          color: colorScheme.onBackground,
+                          color: colorScheme.onSurface,
                           fontSize: 16,
                         ),
                       ),
@@ -1999,10 +2002,10 @@ class RoutineWidgets {
                 // Campo de series - con color secundario para edición
                 Container(
                   decoration: BoxDecoration(
-                    color: colorScheme.background.withOpacity(0.2),
+                    color: colorScheme.surface.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: colorScheme.secondary.withOpacity(0.2),
+                      color: colorScheme.secondary.withValues(alpha: 0.2),
                       width: 1.5,
                     ),
                   ),
@@ -2020,12 +2023,12 @@ class RoutineWidgets {
                       border: InputBorder.none,
                       labelText: 'Número de Series',
                       labelStyle: bodyStyle.copyWith(
-                        color: colorScheme.onBackground,
+                        color: colorScheme.onSurface,
                         fontSize: 16,
                       ),
                       hintText: 'Ej: 3, 4',
                       hintStyle: bodyStyle.copyWith(
-                        color: colorScheme.onBackground.withOpacity(0.5),
+                        color: colorScheme.onSurface.withValues(alpha: 0.5),
                         fontSize: 15,
                       ),
                       prefixIcon: Container(
@@ -2045,10 +2048,10 @@ class RoutineWidgets {
                 // Campo de repeticiones - con color secundario para edición
                 Container(
                   decoration: BoxDecoration(
-                    color: colorScheme.background.withOpacity(0.2),
+                    color: colorScheme.surface.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: colorScheme.secondary.withOpacity(0.2),
+                      color: colorScheme.secondary.withValues(alpha: 0.2),
                       width: 1.5,
                     ),
                   ),
@@ -2065,12 +2068,12 @@ class RoutineWidgets {
                       border: InputBorder.none,
                       labelText: 'Repeticiones por Serie',
                       labelStyle: bodyStyle.copyWith(
-                        color: colorScheme.onBackground,
+                        color: colorScheme.onSurface,
                         fontSize: 16,
                       ),
                       hintText: 'Ej: 10, 12, 15',
                       hintStyle: bodyStyle.copyWith(
-                        color: colorScheme.onBackground.withOpacity(0.5),
+                        color: colorScheme.onSurface.withValues(alpha: 0.5),
                         fontSize: 15,
                       ),
                       prefixIcon: Container(
@@ -2098,14 +2101,15 @@ class RoutineWidgets {
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           side: BorderSide(
-                              color: colorScheme.onBackground.withOpacity(0.3)),
+                              color:
+                                  colorScheme.onSurface.withValues(alpha: 0.3)),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16)),
                         ),
                         child: Text(
                           'Cancelar',
                           style: bodyStyle.copyWith(
-                            color: colorScheme.onBackground,
+                            color: colorScheme.onSurface,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -2129,7 +2133,8 @@ class RoutineWidgets {
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: colorScheme.secondary.withOpacity(0.3),
+                              color:
+                                  colorScheme.secondary.withValues(alpha: 0.3),
                               blurRadius: 8,
                               spreadRadius: 0,
                               offset: const Offset(0, 3),
@@ -2248,7 +2253,6 @@ class RoutineWidgets {
     );
   }
 
-  // Método para eliminar todos los ejercicios del día seleccionado
   void _eliminarTodosEjercicios(BuildContext context) async {
     try {
       // Verificar si hay un entrenamiento seleccionado
@@ -2272,23 +2276,27 @@ class RoutineWidgets {
         await controller.eliminarEjercicio(ejercicio.id);
       }
 
-      // Mostrar mensaje de éxito
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          'Se han eliminado todos los ejercicios de ${controller.diaSeleccionado}',
-          style: bodyStyle.copyWith(color: Colors.white),
-        ),
-        backgroundColor: colorScheme.primary,
-      ));
+      // Verificar si el contexto sigue montado antes de mostrar SnackBar
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            'Se han eliminado todos los ejercicios de ${controller.diaSeleccionado}',
+            style: bodyStyle.copyWith(color: Colors.white),
+          ),
+          backgroundColor: colorScheme.primary,
+        ));
+      }
     } catch (e) {
-      // Mostrar mensaje de error
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          'Error al eliminar ejercicios: ${e.toString()}',
-          style: bodyStyle.copyWith(color: Colors.white),
-        ),
-        backgroundColor: colorScheme.error,
-      ));
+      // Verificar si el contexto sigue montado antes de mostrar SnackBar de error
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+            'Error al eliminar ejercicios: ${e.toString()}',
+            style: bodyStyle.copyWith(color: Colors.white),
+          ),
+          backgroundColor: colorScheme.error,
+        ));
+      }
     }
   }
 
@@ -2314,14 +2322,14 @@ class RoutineWidgets {
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withValues(alpha: 0.2),
                 blurRadius: 15,
                 spreadRadius: 0,
                 offset: const Offset(0, 5),
               ),
             ],
             border: Border.all(
-              color: colorScheme.error.withOpacity(0.2),
+              color: colorScheme.error.withValues(alpha: 0.2),
               width: 1.5,
             ),
           ),
@@ -2331,7 +2339,7 @@ class RoutineWidgets {
               Container(
                 padding: const EdgeInsets.all(15),
                 decoration: BoxDecoration(
-                  color: colorScheme.error.withOpacity(0.1),
+                  color: colorScheme.error.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -2353,7 +2361,7 @@ class RoutineWidgets {
               Text(
                 '¿Estás seguro de que deseas eliminar este ejercicio?',
                 style: bodyStyle.copyWith(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white.withValues(alpha: 0.9),
                   fontSize: 16,
                   height: 1.5,
                 ),
@@ -2369,14 +2377,15 @@ class RoutineWidgets {
                       onPressed: () => Navigator.pop(context),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        side: BorderSide(color: Colors.white.withOpacity(0.3)),
+                        side: BorderSide(
+                            color: Colors.white.withValues(alpha: 0.3)),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16)),
                       ),
                       child: Text(
                         'Cancelar',
                         style: bodyStyle.copyWith(
-                          color: Colors.white.withOpacity(0.8),
+                          color: Colors.white.withValues(alpha: 0.8),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -2401,7 +2410,7 @@ class RoutineWidgets {
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: colorScheme.error.withOpacity(0.3),
+                            color: colorScheme.error.withValues(alpha: 0.3),
                             blurRadius: 8,
                             spreadRadius: 0,
                             offset: const Offset(0, 3),
@@ -2497,20 +2506,20 @@ class RoutineWidgets {
             end: Alignment.bottomRight,
             colors: [
               colorScheme.surface,
-              colorScheme.surface.withOpacity(0.95),
+              colorScheme.surface.withValues(alpha: 0.95),
             ],
           ),
           borderRadius: BorderRadius.circular(25),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 15,
               spreadRadius: 0,
               offset: const Offset(0, 5),
             ),
           ],
           border: Border.all(
-            color: colorScheme.primary.withOpacity(0.1),
+            color: colorScheme.primary.withValues(alpha: 0.1),
             width: 1.5,
           ),
         ),
@@ -2523,7 +2532,7 @@ class RoutineWidgets {
               height: 5,
               margin: const EdgeInsets.only(top: 16, bottom: 20),
               decoration: BoxDecoration(
-                color: colorScheme.onBackground.withOpacity(0.3),
+                color: colorScheme.onSurface.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
@@ -2536,7 +2545,7 @@ class RoutineWidgets {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: colorScheme.primary.withOpacity(0.1),
+                      color: colorScheme.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(
@@ -2609,7 +2618,7 @@ class RoutineWidgets {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
@@ -2617,7 +2626,7 @@ class RoutineWidgets {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(icon, color: color, size: 24),
@@ -2634,7 +2643,7 @@ class RoutineWidgets {
                 ),
                 Icon(
                   Amicons.iconly_arrow_right_curved_fill,
-                  color: color.withOpacity(0.7),
+                  color: color.withValues(alpha: 0.7),
                   size: 22,
                 ),
               ],
@@ -2654,10 +2663,10 @@ class RoutineWidgets {
   ) {
     return Container(
       decoration: BoxDecoration(
-        color: colorScheme.background.withOpacity(0.2),
+        color: colorScheme.surface.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: colorScheme.primary.withOpacity(0.2),
+          color: colorScheme.primary.withValues(alpha: 0.2),
           width: 1.5,
         ),
       ),
@@ -2675,12 +2684,12 @@ class RoutineWidgets {
           border: InputBorder.none,
           labelText: label,
           labelStyle: bodyStyle.copyWith(
-            color: colorScheme.onBackground,
+            color: colorScheme.onSurface,
             fontSize: 16,
           ),
           hintText: hint,
           hintStyle: bodyStyle.copyWith(
-            color: colorScheme.onBackground.withOpacity(0.5),
+            color: colorScheme.onSurface.withValues(alpha: 0.5),
             fontSize: 15,
           ),
           prefixIcon: Container(

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 class DatabaseService {
   // Referencia a la colección de rutinas
@@ -14,7 +15,7 @@ class DatabaseService {
       // Guardar en Firestore
       await workoutsCollection.doc(workoutId).set(workout);
     } catch (e) {
-      print('Error al guardar rutina: $e');
+      debugPrint('Error al guardar rutina: $e');
       throw Exception('Error al guardar rutina: $e');
     }
   }
@@ -35,7 +36,7 @@ class DatabaseService {
         return data;
       }).toList();
     } catch (e) {
-      print('Error al obtener rutinas: $e');
+      debugPrint('Error al obtener rutinas: $e');
       throw Exception('Error al obtener rutinas: $e');
     }
   }
@@ -55,7 +56,7 @@ class DatabaseService {
 
       return null;
     } catch (e) {
-      print('Error al obtener rutina: $e');
+      debugPrint('Error al obtener rutina: $e');
       throw Exception('Error al obtener rutina: $e');
     }
   }
@@ -68,7 +69,7 @@ class DatabaseService {
       // Actualizar en Firestore
       await workoutsCollection.doc(workoutId).update(workout);
     } catch (e) {
-      print('Error al actualizar rutina: $e');
+      debugPrint('Error al actualizar rutina: $e');
       throw Exception('Error al actualizar rutina: $e');
     }
   }
@@ -78,7 +79,7 @@ class DatabaseService {
     try {
       await workoutsCollection.doc(workoutId).delete();
     } catch (e) {
-      print('Error al eliminar rutina: $e');
+      debugPrint('Error al eliminar rutina: $e');
       throw Exception('Error al eliminar rutina: $e');
     }
   }
@@ -100,7 +101,7 @@ class DatabaseService {
         return data;
       }).toList();
     } catch (e) {
-      print('Error al obtener rutinas populares: $e');
+      debugPrint('Error al obtener rutinas populares: $e');
       throw Exception('Error al obtener rutinas populares: $e');
     }
   }
@@ -112,7 +113,7 @@ class DatabaseService {
           .doc(workoutId)
           .update({'saveCount': FieldValue.increment(1)});
     } catch (e) {
-      print('Error al incrementar contador: $e');
+      debugPrint('Error al incrementar contador: $e');
       throw Exception('Error al incrementar contador: $e');
     }
   }
@@ -147,7 +148,7 @@ class DatabaseService {
       // Incrementar contador en la original
       await incrementSaveCount(originalWorkoutId);
     } catch (e) {
-      print('Error al guardar rutina compartida: $e');
+      debugPrint('Error al guardar rutina compartida: $e');
       throw Exception('Error al guardar rutina compartida: $e');
     }
   }
@@ -169,7 +170,7 @@ class DatabaseService {
 
       return levels.toList();
     } catch (e) {
-      print('Error al obtener niveles: $e');
+      debugPrint('Error al obtener niveles: $e');
       return ['Principiante', 'Intermedio', 'Avanzado']; // Valores por defecto
     }
   }
@@ -191,7 +192,7 @@ class DatabaseService {
 
       return goals.toList();
     } catch (e) {
-      print('Error al obtener objetivos: $e');
+      debugPrint('Error al obtener objetivos: $e');
       return [
         'Hipertrofia',
         'Fuerza',

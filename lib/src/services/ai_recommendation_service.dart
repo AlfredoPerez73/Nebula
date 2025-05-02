@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 
 class SimpleAIService {
@@ -32,7 +33,7 @@ class SimpleAIService {
       throw Exception(
           'No se pudo generar la rutina. Por favor, intenta nuevamente.');
     } catch (e) {
-      print('Error al generar rutina: $e');
+      debugPrint('Error al generar rutina: $e');
       throw Exception('Error al generar la rutina: $e');
     }
   }
@@ -107,15 +108,15 @@ class SimpleAIService {
           return text; // Si se puede parsear, está bien
         } catch (e) {
           // Si falla, intentar reparar
-          print('Intentando reparar JSON: ${e.toString()}');
+          debugPrint('Intentando reparar JSON: ${e.toString()}');
           return _repairJson(text);
         }
       } else {
-        print('No se encontró estructura JSON válida');
+        debugPrint('No se encontró estructura JSON válida');
         return null;
       }
     } catch (e) {
-      print('Error al extraer JSON: $e');
+      debugPrint('Error al extraer JSON: $e');
       return null;
     }
   }
@@ -166,7 +167,7 @@ class SimpleAIService {
 
       // Verificar que termina correctamente
       if (!repairedJson.trim().endsWith('}')) {
-        repairedJson = repairedJson.trim() + '}';
+        repairedJson = '${repairedJson.trim()}}';
       }
 
       // Intentar parsear para validar - si falla, devolver null
@@ -174,12 +175,12 @@ class SimpleAIService {
         json.decode(repairedJson);
         return repairedJson;
       } catch (e) {
-        print('Error al parsear JSON reparado: $e');
-        print('JSON problemático reparado: $repairedJson');
+        debugPrint('Error al parsear JSON reparado: $e');
+        debugPrint('JSON problemático reparado: $repairedJson');
         return _createFallbackWorkout(text);
       }
     } catch (e) {
-      print('Error en la reparación de JSON: $e');
+      debugPrint('Error en la reparación de JSON: $e');
       return _createFallbackWorkout(text);
     }
   }
@@ -193,7 +194,7 @@ class SimpleAIService {
     for (RegExpMatch match in matches) {
       if (match.group(0) != null) {
         String original = match.group(0)!;
-        String fixed = original + '"';
+        String fixed = '$original"';
         fixedJson = fixedJson.replaceFirst(original, fixed);
       }
     }
@@ -203,9 +204,6 @@ class SimpleAIService {
 
   static String _ensureRequiredFields(String jsonText) {
     try {
-      // Verificar si podemos decodificar como JSON parcial
-      Map<String, dynamic> workout = json.decode(jsonText);
-
       // Lista de campos obligatorios en la raíz
       List<String> requiredRootFields = [
         'routineName',
@@ -222,17 +220,16 @@ class SimpleAIService {
       bool needComma = false;
       String modifiedJson = jsonText;
 
-      if (!modifiedJson.contains('"workoutDays"')) {
+      if (!modifiedJson.contains("workoutDays")) {
         // Si falta workoutDays, es un problema grave, añadirlo
-        if (modifiedJson.lastIndexOf('}') > 0) {
-          String toInsert = needComma ? ', ' : '';
-          toInsert += '"workoutDays": []';
-          modifiedJson =
-              modifiedJson.substring(0, modifiedJson.lastIndexOf('}')) +
-                  toInsert +
-                  modifiedJson.substring(modifiedJson.lastIndexOf('}'));
-          needComma = true;
-        }
+        bool needComma =
+            modifiedJson.lastIndexOf('}') > 0 && modifiedJson.contains('"');
+        String toInsert = needComma ? ', ' : '';
+        toInsert += '"workoutDays": []';
+        modifiedJson =
+            modifiedJson.substring(0, modifiedJson.lastIndexOf('}')) +
+                toInsert +
+                modifiedJson.substring(modifiedJson.lastIndexOf('}'));
       }
 
       for (String field in requiredRootFields) {
@@ -251,7 +248,7 @@ class SimpleAIService {
 
       return modifiedJson;
     } catch (e) {
-      print('Error al asegurar campos requeridos: $e');
+      debugPrint('Error al asegurar campos requeridos: $e');
       return jsonText;
     }
   }
@@ -322,7 +319,7 @@ class SimpleAIService {
 
       return json.encode(fallbackRoutine);
     } catch (e) {
-      print('Error al crear rutina de respaldo: $e');
+      debugPrint('Error al crear rutina de respaldo: $e');
 
       // Rutina absolutamente mínima si todo falla
       return '{"routineName":"Rutina básica","description":"Rutina general de entrenamiento","level":"Intermedio","goal":"Acondicionamiento general","daysPerWeek":3,"workoutDays":[{"day":"Día 1","focus":"Cuerpo completo","exercises":[{"name":"Sentadillas","muscle":"Piernas","sets":3,"reps":"10-12","rest":"60 segundos","notes":"Mantén la espalda recta"}],"notes":"Hidratarse bien"}],"nutritionTips":"Alimentación balanceada","restDayTips":"Descanso activo"}';
@@ -499,7 +496,7 @@ class SimpleAIService {
 
         if (generatedText != null) {
           // Imprimir para depuración
-          print(
+          debugPrint(
               'Respuesta recibida de Gemini (primeros 200 caracteres): ${generatedText.substring(0, min(200, generatedText.length))}...');
 
           final String? jsonStr = _extractJsonFromText(generatedText);
@@ -509,22 +506,23 @@ class SimpleAIService {
               // Validar que es JSON válido
               return jsonDecode(jsonStr);
             } catch (e) {
-              print('Error en la validación final del JSON: $e');
+              debugPrint('Error en la validación final del JSON: $e');
               return null;
             }
           } else {
-            print('No se pudo extraer JSON válido de la respuesta');
+            debugPrint('No se pudo extraer JSON válido de la respuesta');
           }
         } else {
-          print('No se encontró texto generado en la respuesta');
+          debugPrint('No se encontró texto generado en la respuesta');
         }
       } else {
-        print('Error en la API: ${response.statusCode} - ${response.body}');
+        debugPrint(
+            'Error en la API: ${response.statusCode} - ${response.body}');
       }
 
       return null;
     } catch (e) {
-      print('Error al llamar a la API: $e');
+      debugPrint('Error al llamar a la API: $e');
       return null;
     }
   }
